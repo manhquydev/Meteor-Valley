@@ -1,0 +1,4667 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thung Lũng Sao Băng (Starlight Valley - Cozy Pixel Farm)</title>
+  <style>
+/* ==========================================================================
+   THUNG LŨNG SAO BĂNG (STARLIGHT VALLEY v4.0 - COZY MINIMALIST EDITION)
+   Canvas-First Architecture & Progressive Disclosure (Zero Info Overload)
+   ========================================================================== */
+
+:root {
+  --bg-night: #141020;
+  --wood-dark: #3e2413;
+  --wood-mid: #6e4223;
+  --wood-light: #ab6f40;
+  --hud-glass: rgba(24, 18, 36, 0.9);
+  --parchment: #f8efd8;
+  --parchment-card: #fffdf7;
+  --gold: #ffd54f;
+  --green-accent: #66bb6a;
+  --purple-accent: #ce93d8;
+  --text-light: #fdf8f0;
+  --text-muted: #cbbdd9;
+  --text-dark: #2c1a0e;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.15); }
+::-webkit-scrollbar-thumb { background: #8c5830; border-radius: 3px; }
+
+html, body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: radial-gradient(circle at center, #251d38 0%, #110d1b 100%);
+  color: var(--text-light);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+}
+
+/* ==========================================================================
+   CLEAN 3-ROW COZY LAYOUT: TOP BAR (52px) | CANVAS STAGE (1fr) | BOTTOM DOCK (62px)
+   ========================================================================== */
+#game-stage {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-template-rows: 54px minmax(0, 1fr) 64px;
+  align-items: center;
+  justify-items: center;
+  padding: 4px 16px 6px;
+  overflow: hidden;
+}
+
+/* 1. TOP BAR: FLEX ROW WITH ZERO OVERLAP */
+#top-bar {
+  width: 100%;
+  max-width: 1180px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  z-index: 20;
+}
+
+.hud-cluster {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hud-widget {
+  background: var(--hud-glass);
+  border: 2px solid var(--wood-light);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+  border-radius: 8px;
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.level-badge {
+  background: var(--wood-mid);
+  border: 2px solid var(--gold);
+  color: var(--gold);
+  font-weight: 800;
+  font-size: 11.5px;
+  padding: 2px 7px;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+
+.energy-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 115px;
+}
+
+.energy-top-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.bar-track {
+  width: 100%;
+  height: 7px;
+  background: #120d1c;
+  border: 1px solid #6d4c41;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bar-fill-energy {
+  height: 100%;
+  background: linear-gradient(90deg, #43a047, #b2ff59);
+  transition: width 0.2s ease-out;
+}
+
+/* COMPACT SEED STRIP */
+#seed-strip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.seed-pill {
+  position: relative;
+  width: 32px;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 2px solid rgba(255, 255, 255, 0.16);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.12s, border-color 0.12s, background 0.12s;
+}
+
+.seed-pill:hover {
+  transform: translateY(-2px);
+  border-color: var(--wood-light);
+}
+
+.seed-pill.active {
+  background: rgba(102, 187, 106, 0.28);
+  border-color: #76ff03;
+  box-shadow: 0 0 8px rgba(118, 255, 3, 0.4);
+}
+
+.seed-pill-count {
+  position: absolute;
+  bottom: -2px;
+  right: 2px;
+  font-size: 9.5px;
+  font-weight: 800;
+  color: var(--gold);
+  text-shadow: 1px 1px 0 #000, -1px -1px 0 #000;
+}
+
+.clock-pill {
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wallet-pill {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-weight: 800;
+  font-size: 12.5px;
+}
+
+.gold-text { color: var(--gold); }
+.star-text { color: #ea80fc; }
+
+.nav-icon-btn {
+  position: relative;
+  background: var(--wood-mid);
+  color: var(--text-light);
+  border: 2px solid var(--wood-dark);
+  box-shadow: inset 0 2px 0 var(--wood-light), 0 3px 0 #1a0f07;
+  padding: 6px 11px;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: transform 0.1s, filter 0.1s;
+}
+
+.nav-icon-btn:hover:not(:disabled) {
+  filter: brightness(1.12);
+  transform: translateY(-1px);
+}
+
+.nav-icon-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.nav-icon-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.nav-icon-btn.gold-btn {
+  background: #d98218;
+  border-color: #5c3304;
+  box-shadow: inset 0 2px 0 #ffba52, 0 3px 0 #2e1901;
+}
+
+.nav-icon-btn.active-mode {
+  background: #2e7d32;
+  border-color: #1b5e20;
+  box-shadow: inset 0 2px 0 #66bb6a, 0 3px 0 #0d3310;
+}
+
+.nav-icon-btn.purple-btn {
+  background: #6a1b9a;
+  border-color: #38006b;
+  box-shadow: inset 0 2px 0 #ab47bc, 0 3px 0 #1f003b;
+}
+
+.notif-dot {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 11px;
+  height: 11px;
+  background: #ff1744;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  display: none;
+}
+
+.notif-dot.show { display: block; }
+
+/* 2. CENTER CANVAS VIEWPORT */
+#canvas-viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 0;
+  padding: 4px;
+}
+
+canvas#game-canvas {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  aspect-ratio: 16 / 11;
+  object-fit: contain;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  border: 4px solid var(--wood-light);
+  box-shadow: 0 0 0 4px var(--wood-dark), 0 14px 40px rgba(0, 0, 0, 0.85);
+  border-radius: 8px;
+  cursor: crosshair;
+  background-color: #4f9128;
+}
+
+/* SUBTLE 1-LINE STEP PILL AT BOTTOM OF CANVAS */
+#step-guide-pill {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(24, 16, 38, 0.9);
+  border: 1.5px solid var(--gold);
+  color: #fff9c4;
+  padding: 5px 14px;
+  border-radius: 18px;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+  z-index: 19;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+/* SUBTLE HOVER MICRO-PILL */
+#hover-micro-pill {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(20, 14, 32, 0.88);
+  border: 1px solid rgba(255, 213, 79, 0.55);
+  color: var(--text-light);
+  padding: 4px 12px;
+  border-radius: 14px;
+  font-size: 11.5px;
+  font-weight: 600;
+  pointer-events: none;
+  z-index: 18;
+  opacity: 0;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+}
+
+#hover-micro-pill.visible { opacity: 1; }
+
+/* 3. BOTTOM HOTBAR ROW */
+#hud-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  z-index: 20;
+}
+
+#hotbar-slots {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--hud-glass);
+  border: 2px solid var(--wood-light);
+  padding: 4px 8px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
+}
+
+.hotbar-slot {
+  width: 48px;
+  height: 44px;
+  background: rgba(16, 12, 24, 0.85);
+  border: 2px solid #5d4575;
+  border-radius: 6px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.1s, border-color 0.1s;
+}
+
+.hotbar-slot:hover {
+  border-color: var(--wood-light);
+  transform: translateY(-2px);
+}
+
+.hotbar-slot.selected {
+  background: #442d17;
+  border-color: var(--gold);
+  box-shadow: 0 0 10px rgba(255, 213, 79, 0.5);
+  transform: translateY(-2px);
+}
+
+.slot-key {
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  font-size: 9px;
+  color: var(--text-muted);
+  font-weight: 800;
+}
+
+.slot-count {
+  position: absolute;
+  bottom: 1px;
+  right: 3px;
+  font-size: 10px;
+  color: var(--gold);
+  font-weight: 800;
+  text-shadow: 1px 1px 0 #000;
+}
+
+.slot-label {
+  font-size: 8.5px;
+  color: #e4d7f5;
+  margin-top: 1px;
+}
+
+/* ==========================================================================
+   RPG DIALOGUE BAR, FISHING POPUP & TOASTS
+   ========================================================================== */
+#rpg-dialogue {
+  position: absolute;
+  bottom: 46px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(90%, 560px);
+  background: rgba(24, 16, 38, 0.96);
+  border: 3px solid var(--gold);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.85);
+  border-radius: 8px;
+  padding: 10px 14px;
+  display: none;
+  align-items: center;
+  gap: 12px;
+  z-index: 25;
+}
+
+#rpg-dialogue.active { display: flex; }
+
+.npc-avatar-box {
+  width: 44px;
+  height: 44px;
+  background: #32254a;
+  border: 2px solid var(--wood-light);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.dialogue-content { flex: 1; min-width: 0; }
+.dialogue-speaker { font-weight: 800; color: var(--gold); font-size: 12.5px; }
+.dialogue-text { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+
+#fishing-bar-ui {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  background: rgba(20, 14, 34, 0.96);
+  border: 3px solid var(--gold);
+  border-radius: 8px;
+  padding: 14px;
+  z-index: 30;
+  display: none;
+  text-align: center;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.85);
+}
+
+#fishing-bar-ui.active { display: block; }
+
+.fish-track {
+  width: 100%;
+  height: 24px;
+  background: #10253a;
+  border: 2px solid var(--gold);
+  border-radius: 4px;
+  position: relative;
+  margin: 10px 0;
+  overflow: hidden;
+}
+
+.fish-sweet-spot {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: rgba(118, 255, 3, 0.55);
+  border-left: 2px solid #fff;
+  border-right: 2px solid #fff;
+}
+
+.fish-cursor {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  width: 9px;
+  background: var(--gold);
+  box-shadow: 0 0 8px #fff;
+}
+
+#toast-container {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  z-index: 28;
+  pointer-events: none;
+}
+
+.toast-msg {
+  background: rgba(24, 16, 38, 0.94);
+  color: var(--text-light);
+  border: 2px solid var(--gold);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+/* ==========================================================================
+   CLEAN, SCANNABLE POPUP MODALS (CONCISE CARDS, NO TEXT WALLS)
+   ========================================================================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 6, 18, 0.72);
+  backdrop-filter: blur(2px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+  padding: 16px;
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal-window {
+  width: 100%;
+  max-width: 740px;
+  max-height: 82vh;
+  background: var(--parchment);
+  color: var(--text-dark);
+  border: 4px solid var(--wood-dark);
+  box-shadow: inset 0 0 0 3px var(--wood-light), 0 16px 44px rgba(0, 0, 0, 0.85);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-header {
+  background: var(--wood-dark);
+  color: var(--gold);
+  padding: 10px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 3px solid var(--wood-light);
+  flex-shrink: 0;
+}
+
+.modal-header h2 { font-size: 15.5px; }
+
+.modal-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  background: #dec596;
+  border-bottom: 3px solid var(--wood-dark);
+  padding: 6px 12px 0;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.tab-btn {
+  padding: 7px 13px;
+  background: #c4a772;
+  border: 2px solid var(--wood-dark);
+  border-bottom: none;
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 12px;
+  color: var(--text-dark);
+  cursor: pointer;
+  border-radius: 6px 6px 0 0;
+}
+
+.tab-btn.active {
+  background: var(--parchment);
+}
+
+.modal-body {
+  padding: 14px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 10px;
+}
+
+.shop-card {
+  background: var(--parchment-card);
+  border: 2px solid #9e6b40;
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.shop-card-top {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.shop-icon {
+  width: 42px;
+  height: 42px;
+  background: #f0dfc0;
+  border: 2px solid #9e6b40;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.shop-title { font-weight: 800; font-size: 13.5px; color: #3b200d; }
+.shop-meta { font-size: 11px; color: #2e6b22; font-weight: 700; }
+.shop-desc { font-size: 11.5px; color: #5c3b20; }
+
+.banner-box {
+  grid-column: 1 / -1;
+  background: var(--parchment-card);
+  border: 2px solid #9e6b40;
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+</style>
+</head>
+<body>
+  <!-- FULL-SCREEN COZY GAME STAGE (90%+ CANVAS, ZERO SIDEBAR CLUTTER) -->
+  <div id="game-stage">
+
+    <!-- 1. TOP BAR: PLAYER STATUS + SEED STRIP ON LEFT, CLOCK + MENUS ON RIGHT -->
+    <header id="top-bar">
+      <div class="hud-cluster">
+        <div class="hud-widget">
+          <span id="level-text" class="level-badge">Lv.1</span>
+          <div class="energy-compact">
+            <div class="energy-top-row">
+              <span>⚡ Năng lượng</span>
+              <span id="energy-text">100/100</span>
+            </div>
+            <div class="bar-track">
+              <div id="energy-bar" class="bar-fill-energy" style="width: 100%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hud-widget" title="Chọn nhanh hạt giống để gieo">
+          <span style="font-size:11px; font-weight:800; color:#cbbdd9;">Hạt:</span>
+          <div id="seed-strip"></div>
+        </div>
+      </div>
+
+      <div class="hud-cluster">
+        <div class="hud-widget clock-pill">
+          <span id="hud-season">🌸 Xuân</span>
+          <span>•</span>
+          <span id="hud-day">Ngày 1</span>
+          <span>•</span>
+          <span id="hud-clock">06:30</span>
+          <span id="hud-weather">☀️</span>
+        </div>
+
+        <div class="hud-widget wallet-pill">
+          <span title="Vàng">💰 <span id="hud-gold" class="gold-text">260</span></span>
+          <span title="Mảnh Sao Băng">🌠 <span id="hud-stars" class="star-text">2</span></span>
+        </div>
+
+        <button id="btn-menu-quests" class="nav-icon-btn">
+          📜 Nhiệm Vụ
+          <span id="dot-quests" class="notif-dot"></span>
+        </button>
+        <button id="btn-menu-shop" class="nav-icon-btn gold-btn">
+          🏪 Cửa Hàng
+        </button>
+        <button id="btn-menu-shrine" class="nav-icon-btn purple-btn">
+          🏛️ Đền & Bếp
+          <span id="dot-shrine" class="notif-dot"></span>
+        </button>
+        <button id="btn-menu-guide" class="nav-icon-btn">
+          📖 Cẩm Nang
+        </button>
+        <button id="btn-audio" class="nav-icon-btn" title="Bật/Tắt Âm thanh">🔊</button>
+      </div>
+    </header>
+
+    <!-- 2. CENTER CANVAS VIEWPORT -->
+    <main id="canvas-viewport">
+      <div id="toast-container"></div>
+
+      <!-- SUBTLE 1-LINE HOVER MICRO-TOOLTIP -->
+      <div id="hover-micro-pill"></div>
+
+      <!-- FISHING MINIGAME POPUP -->
+      <div id="fishing-bar-ui">
+        <h3 style="color:#ffd54f; font-size:15px;">🎣 CÁ CHÉP KOI CẮN CÂU!</h3>
+        <p style="font-size:11.5px; margin-top:4px;">Bấm <b>SPACE</b> khi vạch sáng đi vào vùng xanh!</p>
+        <div class="fish-track">
+          <div id="fish-sweet-spot" class="fish-sweet-spot"></div>
+          <div id="fish-cursor" class="fish-cursor"></div>
+        </div>
+        <button id="btn-strike-fish" class="nav-icon-btn gold-btn">⚡ KÉO CẦN NGAY! (Space)</button>
+      </div>
+
+      <!-- RPG DIALOGUE BAR (ONLY SHOWN ON STORY MILESTONES) -->
+      <div id="rpg-dialogue">
+        <div id="dlg-avatar" class="npc-avatar-box">🧚</div>
+        <div class="dialogue-content">
+          <div id="dlg-speaker" class="dialogue-speaker">Tinh Linh Lumia</div>
+          <div id="dlg-text" class="dialogue-text"></div>
+        </div>
+        <button id="btn-close-dlg" class="nav-icon-btn gold-btn">Đóng ✕</button>
+      </div>
+
+      <!-- MAIN PIXEL ART FARM CANVAS -->
+      <canvas id="game-canvas"></canvas>
+
+      <!-- 1-LINE CONTEXTUAL STEP GUIDE PILL -->
+      <div id="step-guide-pill" title="Click để xem chi tiết nhiệm vụ">
+        👆 Bước 1/3: Click vào 2 cây Củ Cải Đỏ đang chín trên cánh đồng để thu hoạch!
+      </div>
+    </main>
+
+    <!-- 3. BOTTOM-CENTER: COMPACT TOOL HOTBAR -->
+    <footer id="hud-bottom">
+      <button id="btn-smart-mode" class="nav-icon-btn active-mode" title="Tự động Cuốc, Gieo, Tưới & Thu hoạch chỉ bằng 1 Click hoặc Kéo chuột">
+        ✨ 1-Chạm: BẬT
+      </button>
+
+      <div id="hotbar-slots"></div>
+
+      <button id="btn-sell-all" class="nav-icon-btn gold-btn" title="Bán nhanh toàn bộ nông sản trong kho">
+        🚚 Bán Kho
+      </button>
+      <button id="btn-sleep" class="nav-icon-btn" title="Ngủ qua đêm để hồi 100% Năng lượng">
+        🌙 Ngủ
+      </button>
+    </footer>
+
+  </div>
+
+  <!-- FOCUSED POPUP MODAL (DYNAMICALLY FILTERS TABS BY CATEGORY) -->
+  <div id="main-modal" class="modal-overlay">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h2 id="modal-title-text">🏪 Cửa Hàng Nông Trại</h2>
+        <button id="btn-close-modal" class="nav-icon-btn">✖ Đóng (ESC)</button>
+      </div>
+      <div id="modal-tabs-bar" class="modal-tabs"></div>
+      <div id="modal-body-content" class="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- END-OF-DAY SUMMARY MODAL -->
+  <div id="day-summary-modal" class="modal-overlay">
+    <div class="modal-window" style="max-width: 480px;">
+      <div class="modal-header">
+        <h2>🌙 Tổng Kết Ngày — Thung Lũng Sao Băng</h2>
+      </div>
+      <div id="day-summary-body" style="padding: 16px;"></div>
+      <div style="padding: 0 16px 16px; text-align: center;">
+        <button id="btn-close-day-summary" class="nav-icon-btn gold-btn" style="padding: 8px 22px; font-size: 13px;">🌅 Bắt Đầu Ngày Mới!</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+// Auto-generated crisp Pixel Art Icon Data URLs (16x16 upscaled 3x with nearest-neighbor)
+window.PIXEL_ICONS = {
+  "radish": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAA2klEQVR4nO2YwQnCQBBFN5IStBMLEHIQxCIszSIk4EGwADvRHvQisocs7DizLA/+O4UlCfn8x7CbIQUxnffvpfXb6Tos3ZOve1hFvKQn+ACuGkvaWPHohG8AHyBkEqRk10lT6As+gKvG524bMoU294emEBZzdSVt1ofj7/o1X/7+IKtO+AbwAarqaq1NiRqd8A3gA4yeh1toYwXfgAL0RgF6E7YXikJ7IRo6kfUGHyDsv5BVJ482OfgG8AHCFMop6RSlTQ6+AXwA14mshhba5OAbwAcQQggh0HwAqX02QW6k+w4AAAAASUVORK5CYII=",
+  "strawberry": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAA4ElEQVR4nO2YsQ3CMBBFHZQRYBMGQEpBwRK0TETLEikokBiATWAHqEDXnPDFdwpP3KtS2JK//tPJTlcaGE7bZ8v+N5f9uZu6d+FxgDnBBzBX56WNhlUnfAP4AFV13TfrUG00Vtfb1/PhG8AHUCuyarMcD5/vx+7ovl7TCd8APoCbQtGkQr9Kb90QPW2s6/EN4APkXWhu8AHMU0gjetpo4BvABzA/6qMnUs3kkeAbwAeY/EuvFF0nr9dWDfgG8AGaFJJYp1OLNhJ8A/gAbgpJNJ28tJHgG8AHSJIkSZIk+WdeYq9AQxT4WHwAAAAASUVORK5CYII=",
+  "pumpkin": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAuUlEQVR4nGNkoAFwXuD+H5v43oSdjNS2i4naBtIbDHkPUC1K6ZlskMGQj4Eh7wGiovfrbEmsyYPWgDv1OUH3DfkYGPIewBlFuJINl5UZnP3t2Cmsemdc9sIqnqG7Das4MWbiSk5DPgaGvAdQooWSZEMtQGpyGvIxMOqBgQajHhhoMOqBgQajHhhoMOqBgQY0aU6TCkab00MZjHbqBxoMeQ+MglEwCkbBKBgFo2AUjIJRMApGwSgYKAAAicYxNv9vI8MAAAAASUVORK5CYII=",
+  "sunflower": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAA40lEQVR4nO2XIQ7CMBiFW87ALSAEjUUguQHBIXC7BA6P4wrgEBwDj0Rwh+HGIGvoS9v9vOR9alu67P/yXtLVO5D6tqzRdxD86OSR9YNSg/QFvUAwrtJVQQlViz4BeoGPWGJqs9o+muvpZJxliGo3e9/czz/Xt+tEnwC9QFSF9odhP9N8UW2enc9VoX9CAtZIwBoJWAP/Tpfe1GI2rzb0CdALQAdo53Sozw69AFyhGObHRWfNrutL9u/RJ0AvkBRpqCooKdWiT4BeAI4uV21CoHWiT4BeQBuZNRKwRgJCCCGESOAFOckzRZ/7eaoAAAAASUVORK5CYII=",
+  "eggplant": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAx0lEQVR4nO2YMQ5AQBBFl7iN3gVInECvdAFxBrfQKZxgEy6gdx46UZAYM7L5yX+VYof5+X83YyNnRD6Uu2T9UvvI4ruxxUtCAi9AZaM0Nk9o4gTvALyARFPcjK1JE4vzn2vhHYAXIN79UznfnjxZl57Pa799bqjyhagneAfgBbyy6+/YPPEmTvAOUEBoKCA0qlnoj5NHCrwD8ALMZiErOAuhofqpt4qTNDZX4B2AF2ByveecPE6a2FyBdwBeACGEEEIIIYSQUBxnESdcmTYAoAAAAABJRU5ErkJggg==",
+  "starfruit": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAvklEQVR4nO2YMQ6EMAwELyceQs9f4K3wF3p+AiUgYRHLzp1G2qkgRZLVmrVF+TRgX6f9ab0Mc8k+65u94a/BC0iz1Cob8+CkcsI7gBcQstEsm348n7fl/RKBcsI7gBfQXV+8SZJFJMHwDuAFmF+/u5ycyePFSiq8A3gBVQ0kq2F5qWlweAfwAtwzSOtm552L8A7gBcRSqDFKIQJps5A3PbL2xzuAF3CzpcbWFr8HI3fAO4AXIIQQQgghhBDiXxx0kzlYUT9xhAAAAABJRU5ErkJggg==",
+  "tool_smart": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAA0ElEQVR4nO2YwQ2DMBAEMQ+aCb2kpIiS6IU0w4f8IkfKSbZ8hz3SzpMHZrXD2ZCmAK738/p3PT325L3W7H3Du8EHcKvU0sZc2EknfAP4AE011mpjPkSDTvgG8AF+qvNSIppcOXwD+ABFb38vtUqmE74BfIDqDSRap9pNDd8APkDIFLI0iDhy4xvABzArKqnb66uqZS18A/gA7v9pWtmO86vTa100hYZnCIVybSwsnfAN4AN0U6hEG4tcJ3wD+ACaQr3BBxhCoRydhYQQQghxIx+DZjxCyGhTlAAAAABJRU5ErkJggg==",
+  "tool_hoe": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAxUlEQVR4nO2UsQ3CMBQFk4hNGIOOCTID9DTMQUNPZsgEdIzBLNA+JEcE55v4pHelCydPd3LbFGa8P14R9/T7XZs67yIuXxP8gKSWpURlM4XmhDeAH7CJumhONs9xSJ5v+0P2d/EG8AOKvELK5XT8mtb5esv+D7wB/IAiCZXORsEbwA8IS+if2Sh4A/gBi5SulY2CN4Af8LPeGrJR8AbwA2apri0bBW8AP2BSe83ZKHgD+AEfCVCyUfAG8AOMMcYYY4wx2bwBfZUubWjtv2UAAAAASUVORK5CYII=",
+  "tool_water": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAoUlEQVR4nO3VMQ5AMBjFcRWTmziDzWhyVJPR5gxuYmWSdPBJSxN98f/t6Mt7KVe8MM7L/ub509C17umzZYoDfEk+QHR11mxiZ5DqPfINyAeInlAzbUluHsva15dnsr4r34B8gOrrA9wJmat8A/IBsruFQvg3lXwD8gGyvoV81g9OvgH5AFlPyJqNT74B+QDZTShkNj75BuQDAAAAAAAA4J8O3p4dYVAWHKkAAAAASUVORK5CYII=",
+  "tool_seed": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAuklEQVR4nO3YvQ3CMBiEYRulROzAEAyTOj0NPQU9TfrUDJMhskNED60LLPnIj3XS+9Sx5dPnnJTEIHpeu4+6RnHrh6g8f9jqIHuxD1A0rq2vTU7JdbKfgH2AZsnid3te5RDH1/T3WvsJ2AfIvuUlzbPnFco1kv0E7APILZS7NvfTKO3zmC8/91QbyX4CBKiNALXJLZS2RNoeaass2VNlPwH7AHyR1WYfQPoHEwL/hVZnHwAAAAAAAJj6AmZzJ+E+6IgfAAAAAElFTkSuQmCC",
+  "tool_scythe": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAu0lEQVR4nO3WsQ2DMBSEYRuxVbpMwA70NJkjDT07ZIJ0zAXtS2HZYJ7JL93XBqSc7vREDBU+33WreT9neD5i7pnO8w+0gA+QrSgE/6mUSM0J3wA+QJ/64ehsSi5GynsaT08U3wA+wM+ESmZTMxUP+AbwAZJXyPKYTcnlec2LvoX+XtOLctVsLHwD+ADuE/KYjYVvAB/AZULes7HwDeADXDahlrOx8A3gA1RVetdsLHwD+AAiIiIiIiJylx3IRytnoogETAAAAABJRU5ErkJggg==",
+  "tool_rod": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAyElEQVR4nO2XMQrCMBhGjXTS2UP0Es6l13B38RaCi13rZbyEJ+km1C1EaOEPTZo++N4UQpv043sk1O0K8bhexqn52/PlYtbZp/mccuADRNW1lDlt+qbz4097kEIoqtwbWE6buukmn7GAbwAfIItCqS4pC/gG8AGSKbSmNiH4BvABFilUSpsQfAP4ANEK5dDmfT/78SnyXXwD+ACm2nOfNuN38Ou76qg/MhSzdW3hkrKAbwAf4E8HijYh+AbwAYQQQgghhBBClOIHMWww5HJgL2oAAAAASUVORK5CYII=",
+  "sprinkler": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAkklEQVR4nO3WoQ2AQAyF4R6STZgBh0QxBAMgGQHJAAyBQuKYgU2wMAGiuZKm4f/05chLy8slMVJt1605f7ZlsvhuYXGJp/AB1GPUroqWdrXCTyB8AJMmEBFZ90O1Wl1T00IiBPBHAG9ZTaBtnjc5jRR+AgTwRgBv6r9/nJdPn9PT0POcDoUA3sIHAAAAAAAAwD89jrMULLuAFrQAAAAASUVORK5CYII=",
+  "lantern": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAArklEQVR4nO3XsQ3CMBSEYYJSwQSZIBskEhVzIFEyVcpImSMVEtmACZgAWqgpKI73JOuU/6vt2KezrLjaJDkf+7cyfpxvVca624yPlGQfQK7xOTTSUVHtLw9pT/YN2AeoI5N3hy5lE6/r8vdc+wbsA4SO0Jd20sbfTynL2jdAgNIIUFreLZR0q6jsG7APEDpCkX+YLPYN2AcIPazVh/wvkQe+fQP2AQAAAAAAALBOH9unFO/J40KMAAAAAElFTkSuQmCC",
+  "egg": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAiElEQVR4nO3XMQqAMBBEUSOChRf0iLmghSDEUpuFLK6sg/9VFqIOM0UsQ5B2bM1zf5mWEvHeMeIhmeQDuGv0TsXLOy35BuQDdNVlzmav1/W8hnzQXc+c5BuQD2BWlDUbizUn+QbkA/gnlIQJfRUBsskHeHYWehlnIQX8kWWTDwAAAAAAAIB/OgEkFyAqjz+ZYwAAAABJRU5ErkJggg==",
+  "milk": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAhklEQVR4nO3VOwqAQAxFUSNT6Up0IRYu2MKF6Eq0EsbKwmJgfhKC9/SBPF4g0hQYltOXzD/2uZPc2bbGAprMB0iuzl9HlbMJEdcn7WS+AfMBour6+mxCYs7JfAPmA7iS4XHN/j8v25R/oeYbIIA2AmjjkWkjgDYCaCOANvMBAAAAAAAA8E83TMMTL5WfFB8AAAAASUVORK5CYII=",
+  "honey": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAhklEQVR4nO3WsQmAMBCF4YulTuAiClYuYulUli5iJegiTqCtLmDQE+Jx8H9lSOAe74oEUera+tS+0RinJWjuZ6kG+Yv7AK/q2ocy6drEFP32OJ/7BtwHiFYUW5u8qdJNIyLHvN6ex9bJfQMEsEYAawSwRgBrBLDGd9qa+wAAAAAAAAAA8MEFSnkTJ05NlosAAAAASUVORK5CYII=",
+  "fish": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAjklEQVR4nO3XsQ2AIBCFYTBWbqKDWDiwhYPoJrZSSkPCkUvgJf9XEiK+3OXEGJys5/t5POc5lmjZP3kc2pN8AFO5QvBrFatSa8lXQD7AXLOp1Db3/i9vl7kbm+XvI18B+QDFuveaNlbyFZAPUDU6Rmin/EPGFBoJd6He5AO4XWD4I2skHwAAAAAAAAAAGiQ7ICJ3x2ftzAAAAABJRU5ErkJggg=="
+};
+
+
+/**
+ * ============================================================================
+ * THUNG LŨNG SAO BĂNG: HUYỀN THOẠI CÂY ĐẠI THỤ (STARLIGHT VALLEY v3.0 DEFINITIVE)
+ * js/config.js - Cấu hình Cốt truyện 5 Chương, 4 Mùa, Cây trồng, Hiến tế Đền Thờ,
+ *                Chợ Sao Băng (Star Merchant), Bách Khoa Toàn Thư & Công thức
+ * ============================================================================
+ */
+
+window.GAME_CONFIG = {
+  TILE_SIZE: 48,
+  GRID_COLS: 16,
+  GRID_ROWS: 11,
+  DAY_DURATION_SEC: 120,
+  DAYS_PER_SEASON: 5,
+
+  SEASONS: [
+    {
+      id: 'spring',
+      name: 'Mùa Xuân',
+      icon: '🌸',
+      grassMain: '#5da632',
+      grassDark: '#4f9128',
+      grassLight: '#7ac74a',
+      flowerColor: '#ff80ab',
+      bonusDesc: 'Củ Cải Đỏ & Dâu Tây lớn nhanh hơn +25%',
+      boostCrops: ['radish', 'strawberry']
+    },
+    {
+      id: 'summer',
+      name: 'Mùa Hạ',
+      icon: '☀️',
+      grassMain: '#4c992a',
+      grassDark: '#3f8420',
+      grassLight: '#6db843',
+      flowerColor: '#ffd54f',
+      bonusDesc: 'Hoa Hướng Dương & Khế Ngàn Sao lớn nhanh hơn +25%',
+      boostCrops: ['sunflower', 'starfruit']
+    },
+    {
+      id: 'autumn',
+      name: 'Mùa Thu',
+      icon: '🍁',
+      grassMain: '#b88232',
+      grassDark: '#9c6b24',
+      grassLight: '#d49d46',
+      flowerColor: '#ff7043',
+      bonusDesc: 'Bí Ngô Hoàng Kim & Cà Tím Ánh Trăng bán được giá +25%',
+      boostCrops: ['pumpkin', 'eggplant']
+    },
+    {
+      id: 'winter',
+      name: 'Mùa Đông',
+      icon: '❄️',
+      grassMain: '#9ec3d6',
+      grassDark: '#86aec4',
+      grassLight: '#cbe4f2',
+      flowerColor: '#80d8ff',
+      bonusDesc: 'Tỉ lệ xuất hiện Mưa Sao Băng & sản lượng Cá Chép Koi gấp đôi!',
+      boostCrops: ['eggplant', 'starfruit']
+    }
+  ],
+
+  STORY_CHAPTERS: [
+    {
+      chapter: 1,
+      title: 'Chương 1: Bức Thư Của Ông Nội',
+      npc: 'lumia',
+      introText: 'Ông Nội để lại mảnh đất này cùng lời nhắn: "Hãy đánh thức Cây Đại Thụ Ánh Sao ở phía Bắc nông trại." Hãy thu hoạch những củ cải đầu mùa và tích lũy 300G nhé!',
+      goalDesc: 'Thu hoạch 4 nông sản bất kỳ & tích lũy 300 Vàng',
+      check: (g) => g.stats.harvested >= 4 && g.gold >= 300,
+      progressText: (g) => `Thu hoạch ${Math.min(4, g.stats.harvested)}/4 | Vàng ${Math.min(300, g.gold)}/300`,
+      rewardGold: 200,
+      rewardStars: 2,
+      unlockText: 'Đánh thức Rễ Cây Đại Thụ (Cấp 1) & nhận +200G, +2 🌠 Mảnh Sao!'
+    },
+    {
+      chapter: 2,
+      title: 'Chương 2: Mầm Sống Tái Sinh',
+      npc: 'bamai',
+      introText: 'Bà Mai mỉm cười: "Trồng 4 cây theo ô vuông 2x2 sẽ tạo Đột Biến Khổng Lồ! Hãy hoàn thành Gói Hiến Tế đầu tiên tại Đền Thờ hoặc thu hoạch đủ 12 cây nhé!"',
+      goalDesc: 'Hoàn thành 1 Gói Hiến Tế Đền Thờ (hoặc thu hoạch 12 cây)',
+      check: (g) => g.completedBundles.length >= 1 || g.stats.harvested >= 12,
+      progressText: (g) => `Hiến tế ${g.completedBundles.length}/1 gói | Thu hoạch ${Math.min(12, g.stats.harvested)}/12`,
+      rewardGold: 350,
+      rewardStars: 3,
+      unlockText: 'Thân Cây Đại Thụ đâm chồi (Cấp 2) & tặng 1 Vòi Tưới Tự Động 3x3!'
+    },
+    {
+      chapter: 3,
+      title: 'Chương 3: Hương Vị Của Thung Lũng',
+      npc: 'colinh',
+      introText: 'Cô Linh Đầu Bếp nhắn nhủ: "Nông sản tươi kết hợp với trứng gà, sữa bò hay cá Koi từ Hồ Sao Băng sẽ tạo nên những món ăn tuyệt hảo trong Nhà Bếp!"',
+      goalDesc: 'Nuôi ít nhất 2 Vật Nuôi & chế biến 2 món ăn trong Bếp',
+      check: (g) => g.animals.length >= 2 && g.stats.dishesCooked >= 2,
+      progressText: (g) => `Vật nuôi ${Math.min(2, g.animals.length)}/2 | Nấu ăn ${Math.min(2, g.stats.dishesCooked)}/2`,
+      rewardGold: 500,
+      rewardStars: 3,
+      unlockText: 'Tán Lá Ánh Sao tỏa sáng (Cấp 3) & giảm 25% năng lượng tiêu hao!'
+    },
+    {
+      chapter: 4,
+      title: 'Chương 4: Đêm Mưa Sao Băng Huyền Diệu',
+      npc: 'bactam',
+      introText: 'Bác Tâm Thợ Rèn chỉ lên bầu trời: "Khi bạn gọi Mưa Sao Băng xuống nông trại, các tinh thể sao sẽ biến cây trồng thành Cây Ánh Sao trị giá gấp 4 lần!"',
+      goalDesc: 'Thu hoạch 3 cây Đột Biến (Khổng Lồ / Ánh Sao) & hoàn thành 3 Gói Hiến Tế',
+      check: (g) => g.stats.mutatedHarvested >= 3 && g.completedBundles.length >= 3,
+      progressText: (g) => `Đột biến ${Math.min(3, g.stats.mutatedHarvested)}/3 | Hiến tế ${Math.min(3, g.completedBundles.length)}/3`,
+      rewardGold: 800,
+      rewardStars: 5,
+      unlockText: 'Hoa Đại Thụ Nở Rộ (Cấp 4) & mở khóa phước lành tăng giá bán!'
+    },
+    {
+      chapter: 5,
+      title: 'Chương 5: Huyền Thoại Cây Đại Thụ Ánh Sao',
+      npc: 'lumia',
+      introText: 'Tinh Linh Lumia xúc động: "Chỉ còn bước cuối cùng thôi! Hãy hoàn tất cả 4 Gói Hiến Tế tại Đền Thờ để Cây Đại Thụ thức tỉnh hoàn toàn!"',
+      goalDesc: 'Hoàn thành toàn bộ 4 Gói Hiến Tế Đền Thờ & đạt Cấp độ 5',
+      check: (g) => g.completedBundles.length >= 4 && g.level >= 5,
+      progressText: (g) => `Hiến tế ${Math.min(4, g.completedBundles.length)}/4 | Cấp độ ${Math.min(5, g.level)}/5`,
+      rewardGold: 2000,
+      rewardStars: 10,
+      unlockText: '🏆 ĐẠI THỤ ÁNH SAO THỨC TỈNH (Cấp 5 Tối Thượng) - Mọi nông sản bán +50% giá trị vĩnh viễn!'
+    }
+  ],
+
+  BUNDLES: [
+    {
+      id: 'bundle_spring',
+      name: 'Gói Hiến Tế Mầm Xanh',
+      icon: '🌱',
+      desc: 'Dâng tặng những nông sản tươi ngon đầu mùa để đánh thức bộ rễ Cây Đại Thụ.',
+      requirements: { radish: 3, strawberry: 2 },
+      rewardText: '+250 Vàng, +2 🌠 Sao & +1 Vòi Tưới Tự Động',
+      rewardGold: 250,
+      rewardStars: 2,
+      rewardDevice: 'sprinkler'
+    },
+    {
+      id: 'bundle_ranch',
+      name: 'Gói Hiến Tế Đồng Cỏ Ấm',
+      icon: '🥚',
+      desc: 'Sản vật từ đàn vật nuôi chăm chỉ và vườn hoa hướng dương rực rỡ.',
+      requirements: { sunflower: 2, egg: 2 },
+      rewardText: '+400 Vàng, +2 🌠 Sao & +1 Đèn Lồng Đom Đóm',
+      rewardGold: 400,
+      rewardStars: 2,
+      rewardDevice: 'lantern'
+    },
+    {
+      id: 'bundle_pond',
+      name: 'Gói Hiến Tế Thủy Tinh Hồ Sao',
+      icon: '🐟',
+      desc: 'Kết tinh của dòng nước lấp lánh và vụ mùa thu hoạch trù phú.',
+      requirements: { fish: 2, pumpkin: 2 },
+      rewardText: '+550 Vàng, +3 🌠 Sao & +2 Hạt Khế Ngàn Sao',
+      rewardGold: 550,
+      rewardStars: 3,
+      rewardSeed: { id: 'starfruit', qty: 2 }
+    },
+    {
+      id: 'bundle_starlight',
+      name: 'Gói Hiến Tế Ngân Hà Tối Thượng',
+      icon: '🌟',
+      desc: 'Những tuyệt phẩm quý giá nhất của Thung Lũng Sao Băng để Đại Thụ nở hoa vĩnh cửu.',
+      requirements: { starfruit: 2, eggplant: 2, honey: 1 },
+      rewardText: '+1.200 Vàng, +5 🌠 Sao & Phước Lành Đại Thụ (+25% giá bán)',
+      rewardGold: 1200,
+      rewardStars: 5
+    }
+  ],
+
+  STAR_SHOP_ITEMS: [
+    {
+      id: 'instant_grow',
+      name: 'Bụi Tiên Tăng Trưởng',
+      icon: '✨',
+      starCost: 1,
+      desc: 'Phép màu của Tinh Linh Lumia: Làm chín ngay lập tức toàn bộ cây trồng đang có trên cánh đồng!'
+    },
+    {
+      id: 'star_mutate_3',
+      name: 'Tinh Thể Đột Biến Ngân Hà',
+      icon: '🌈',
+      starCost: 2,
+      desc: 'Truyền năng lượng tinh tú làm tối đa 3 cây trên đồng đột biến thành Cây Ánh Sao (x4 giá trị) và chín ngay!'
+    },
+    {
+      id: 'summon_rain',
+      name: 'Bùa Gọi Mưa Rào Mùa Vụ',
+      icon: '🌧️',
+      starCost: 1,
+      desc: 'Gọi cơn mưa mát lành tưới ướt toàn bộ ô đất canh tác suốt cả ngày và hồi +50⚡ Năng lượng!'
+    },
+    {
+      id: 'summon_meteor',
+      name: 'Nghi Thức Đêm Mưa Sao Băng',
+      icon: '🌠',
+      starCost: 2,
+      desc: 'Chuyển sang bầu trời đêm huyền ảo và gọi mưa sao băng rơi xuống ban phước Đột Biến cho nông trại!'
+    }
+  ],
+
+  NPCS: {
+    lumia: {
+      id: 'lumia',
+      name: 'Tinh Linh Lumia',
+      role: 'Hộ Vệ Cây Đại Thụ',
+      icon: '🧚',
+      color: '#80d8ff',
+      quote: 'Mỗi giọt nước và ánh sao bạn chăm bón đều giúp Cây Đại Thụ hồi sinh!'
+    },
+    bamai: {
+      id: 'bamai',
+      name: 'Bà Mai',
+      role: 'Chủ Tiệm Hạt Giống',
+      icon: '👵',
+      color: '#81c784',
+      quote: 'Trồng 4 cây cùng loại thành ô vuông 2x2 sẽ tạo ra Cây Khổng Lồ gấp 3 sản lượng đấy cháu!'
+    },
+    bactam: {
+      id: 'bactam',
+      name: 'Bác Tâm',
+      role: 'Thợ Rèn & Cơ Khí',
+      icon: '🧔',
+      color: '#ff8a65',
+      quote: 'Nâng cấp Bình Tưới Bạc và Cuốc Vàng sẽ giúp cháu làm một phát 9 ô đất (3x3) cực nhàn!'
+    },
+    colinh: {
+      id: 'colinh',
+      name: 'Cô Linh',
+      role: 'Đầu Bếp Nông Trại',
+      icon: '👩‍🍳',
+      color: '#f48fb1',
+      quote: 'Đừng bán hết nông sản thô nhé, đem vào Bếp nấu thành Bánh hoặc Súp bán lời gấp 2.5 lần!'
+    },
+    laokien: {
+      id: 'laokien',
+      name: 'Lão Ngư Kiên',
+      role: 'Bậc Thầy Hồ Sao Băng',
+      icon: '🎣',
+      color: '#ffd54f',
+      quote: 'Hồ nước góc Đông Nam nông trại có rất nhiều Cá Chép Koi và cả Rương Kho Báu cổ xưa!'
+    }
+  },
+
+  CROPS: {
+    radish: {
+      id: 'radish',
+      name: 'Củ Cải Đỏ',
+      emoji: '🥕',
+      pixelRow: 0,
+      seedPrice: 15,
+      sellPrice: 38,
+      growTime: 15,
+      xp: 10,
+      regrow: false,
+      color: '#eb4034',
+      lightColor: '#ff8a80',
+      desc: 'Lớn cực nhanh (15s)! Cây khởi đầu lý tưởng để xoay vòng vốn.'
+    },
+    strawberry: {
+      id: 'strawberry',
+      name: 'Dâu Tây Ngọt',
+      emoji: '🍓',
+      pixelRow: 1,
+      seedPrice: 45,
+      sellPrice: 44,
+      growTime: 24,
+      xp: 16,
+      regrow: true,
+      regrowStage: 2,
+      color: '#f0325a',
+      lightColor: '#ff80ab',
+      desc: 'Thu hoạch xong vẫn giữ lại gốc và tự động ra lứa quả mới liên tục!'
+    },
+    pumpkin: {
+      id: 'pumpkin',
+      name: 'Bí Ngô Hoàng Kim',
+      emoji: '🎃',
+      pixelRow: 2,
+      seedPrice: 60,
+      sellPrice: 145,
+      growTime: 32,
+      xp: 26,
+      regrow: false,
+      color: '#f59b19',
+      lightColor: '#ffd54f',
+      desc: 'Trồng theo cụm 2x2 dễ hợp nhất thành Bí Ngô Khổng Lồ (x3 sản lượng)!'
+    },
+    sunflower: {
+      id: 'sunflower',
+      name: 'Hoa Hướng Dương',
+      emoji: '🌻',
+      pixelRow: 3,
+      seedPrice: 50,
+      sellPrice: 115,
+      growTime: 22,
+      xp: 20,
+      regrow: false,
+      auraBoost: 0.30,
+      color: '#ffd700',
+      lightColor: '#fff59d',
+      desc: 'Tỏa năng lượng mặt trời giúp toàn bộ 8 ô cây xung quanh lớn nhanh hơn +30%!'
+    },
+    eggplant: {
+      id: 'eggplant',
+      name: 'Cà Tím Ánh Trăng',
+      emoji: '🍆',
+      pixelRow: 4,
+      seedPrice: 80,
+      sellPrice: 185,
+      growTime: 34,
+      xp: 32,
+      regrow: true,
+      regrowStage: 2,
+      nightBoost: 2.2,
+      color: '#9444d2',
+      lightColor: '#ea80fc',
+      desc: 'Hấp thụ ánh trăng: lớn nhanh gấp 2.2 lần vào ban đêm và thu hoạch nhiều lần!'
+    },
+    starfruit: {
+      id: 'starfruit',
+      name: 'Khế Ngàn Sao',
+      emoji: '🌟',
+      pixelRow: 5,
+      seedPrice: 150,
+      sellPrice: 390,
+      growTime: 42,
+      xp: 60,
+      regrow: false,
+      color: '#50e6ff',
+      lightColor: '#ffff8d',
+      desc: 'Giống cây huyền thoại của Thung Lũng Sao Băng! Tỉ lệ đột biến Ánh Sao cao gấp đôi.'
+    }
+  },
+
+  ANIMALS: {
+    chicken: {
+      id: 'chicken',
+      name: 'Gà Cục Tác',
+      icon: '🐔',
+      price: 180,
+      produceId: 'egg',
+      produceName: 'Trứng Gà Tươi',
+      goldenProduceName: 'Trứng Hoàng Kim',
+      produceIcon: '🥚',
+      produceValue: 48,
+      produceInterval: 20,
+      desc: 'Chạy lon ton quanh đồng cỏ. Click vuốt ve mỗi ngày để nhận Trứng Hoàng Kim!'
+    },
+    cow: {
+      id: 'cow',
+      name: 'Bò Sữa Mũm Mĩm',
+      icon: '🐄',
+      price: 420,
+      produceId: 'milk',
+      produceName: 'Sữa Tươi Nguyên Kem',
+      goldenProduceName: 'Sữa Hoàng Kim',
+      produceIcon: '🥛',
+      produceValue: 115,
+      produceInterval: 28,
+      desc: 'Cung cấp nguồn sữa béo ngậy để làm bánh kem dâu tây và phô mai.'
+    },
+    bee: {
+      id: 'bee',
+      name: 'Tổ Ong Mật Hoa',
+      icon: '🐝',
+      price: 300,
+      produceId: 'honey',
+      produceName: 'Mật Ong Rừng',
+      goldenProduceName: 'Mật Ong Sao Băng',
+      produceIcon: '🍯',
+      produceValue: 90,
+      produceInterval: 24,
+      desc: 'Ong bay quanh vườn hoa tạo mật ngọt để nấu Súp Bí Ngô & Rượu Khế Sao!'
+    }
+  },
+
+  DEVICES: {
+    sprinkler: {
+      id: 'sprinkler',
+      name: 'Vòi Tưới Tự Động (3x3)',
+      icon: '💦',
+      price: 220,
+      desc: 'Đặt lên ô đất để tự động tưới ẩm toàn bộ 9 ô xung quanh (3x3) mỗi 3.5 giây!'
+    },
+    lantern: {
+      id: 'lantern',
+      name: 'Đèn Lồng Đom Đóm (3x3)',
+      icon: '🏮',
+      price: 250,
+      desc: 'Thắp sáng lung linh vào ban đêm, tăng +20% tốc độ lớn & gấp đôi tỉ lệ Đột Biến Ánh Sao vùng 3x3!'
+    }
+  },
+
+  RECIPES: [
+    {
+      id: 'radish_salad',
+      name: 'Salad Củ Cải Giòn',
+      icon: '🥗',
+      ingredients: { radish: 2 },
+      sellPrice: 115,
+      energyRestore: 40,
+      desc: 'Món khai vị thanh mát từ 2 Củ Cải Đỏ. Ăn hồi 40⚡ Năng lượng hoặc bán lời cao!'
+    },
+    {
+      id: 'strawberry_cake',
+      name: 'Bánh Kem Dâu Tây',
+      icon: '🍰',
+      ingredients: { strawberry: 2, egg: 1, milk: 1 },
+      sellPrice: 380,
+      energyRestore: 85,
+      desc: 'Bánh kem mềm mịn thơm lừng mùi dâu tươi, trứng và sữa tươi.'
+    },
+    {
+      id: 'pumpkin_soup',
+      name: 'Súp Bí Ngô Mật Ong',
+      icon: '🍲',
+      ingredients: { pumpkin: 1, honey: 1 },
+      sellPrice: 350,
+      energyRestore: 80,
+      desc: 'Súp bí ngô quyện mật ong rừng, tăng tốc độ chạy +45% khi thưởng thức!'
+    },
+    {
+      id: 'star_elixir',
+      name: 'Rượu Mật Khế Ngàn Sao',
+      icon: '🍹',
+      ingredients: { starfruit: 1, honey: 1 },
+      sellPrice: 820,
+      energyRestore: 100,
+      desc: 'Tuyệt phẩm thượng hạng của Thung Lũng Sao Băng, lấp lánh ánh ngân hà!'
+    },
+    {
+      id: 'grilled_koi',
+      name: 'Cá Chép Nướng Thảo Mộc',
+      icon: '🍱',
+      ingredients: { fish: 1, radish: 1 },
+      sellPrice: 220,
+      energyRestore: 60,
+      desc: 'Cá tươi câu từ Hồ Sao Băng nướng cùng củ cải giòn ngọt.'
+    }
+  ],
+
+  UPGRADES: [
+    {
+      id: 'watering_can_2',
+      name: 'Bình Tưới Bạc (Tưới 3x3)',
+      icon: '🚿',
+      price: 260,
+      type: 'tool',
+      desc: 'Một lần tưới làm ướt cả vùng 9 ô đất (3x3) xung quanh!'
+    },
+    {
+      id: 'hoe_2',
+      name: 'Cuốc Chim Hoàng Kim (Cuốc 3x3)',
+      icon: '⛏️',
+      price: 320,
+      type: 'tool',
+      desc: 'Một nhát cuốc xới tung 9 ô đất (3x3) cùng lúc, tiết kiệm thể lực!'
+    },
+    {
+      id: 'cat_skill',
+      name: 'Vòng Cổ Chuông Vàng Cho Mèo',
+      icon: '🐱',
+      price: 220,
+      type: 'pet',
+      desc: 'Mèo cưng chạy nhanh gấp đôi và tự động thu hoạch cây chín quanh bạn!'
+    },
+    {
+      id: 'greenhouse_charm',
+      name: 'Đài Quan Sát Sao Băng',
+      icon: '🔭',
+      price: 550,
+      type: 'farm',
+      desc: 'Tăng tần suất Mưa Sao Băng ban đêm và cộng thêm +35% giá bán mọi nông sản!'
+    }
+  ]
+};
+
+
+/**
+ * ============================================================================
+ * THUNG LŨNG SAO BĂNG (STARLIGHT VALLEY: PIXEL FARM)
+ * js/audio.js - Bộ tổng hợp âm thanh Chiptune 8-Bit & Hiệu ứng âm thanh (Web Audio API)
+ * Không cần file MP3 ngoài, hoạt động 100% offline!
+ * ============================================================================
+ */
+
+class SoundSystem {
+  constructor() {
+    this.ctx = null;
+    this.muted = false;
+    this.bgmPlaying = false;
+    this.bgmTimer = null;
+    this.noteIndex = 0;
+
+    // Giai điệu Pentatonic êm dịu phong cách Harvest Moon / Stardew Valley
+    this.melody = [
+      { f: 523.25, d: 0.35 }, // C5
+      { f: 659.25, d: 0.35 }, // E5
+      { f: 783.99, d: 0.50 }, // G5
+      { f: 659.25, d: 0.35 }, // E5
+      { f: 587.33, d: 0.35 }, // D5
+      { f: 523.25, d: 0.50 }, // C5
+      { f: 440.00, d: 0.35 }, // A4
+      { f: 392.00, d: 0.65 }, // G4
+      { f: 440.00, d: 0.35 }, // A4
+      { f: 523.25, d: 0.35 }, // C5
+      { f: 587.33, d: 0.45 }, // D5
+      { f: 659.25, d: 0.45 }, // E5
+      { f: 783.99, d: 0.35 }, // G5
+      { f: 880.00, d: 0.55 }, // A5
+      { f: 783.99, d: 0.70 }, // G5
+      { f: 0,      d: 0.35 }  // Rest
+    ];
+  }
+
+  init() {
+    if (!this.ctx) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) {
+        this.ctx = new AudioCtx();
+      }
+    }
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
+  }
+
+  toggleMute() {
+    this.muted = !this.muted;
+    if (this.muted) {
+      this.stopBGM();
+    } else {
+      this.startBGM();
+    }
+    return this.muted;
+  }
+
+  playTone(freq, duration = 0.12, type = 'triangle', volume = 0.12, slideTo = null) {
+    if (this.muted) return;
+    this.init();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, now);
+    if (slideTo) {
+      osc.frequency.exponentialRampToValueAtTime(slideTo, now + duration);
+    }
+
+    gain.gain.setValueAtTime(0.001, now);
+    gain.gain.linearRampToValueAtTime(volume, now + 0.015);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + duration + 0.02);
+  }
+
+  playHoe() {
+    this.playTone(150, 0.09, 'square', 0.10, 85);
+  }
+
+  playPlant() {
+    this.playTone(340, 0.08, 'sine', 0.12, 520);
+  }
+
+  playWater() {
+    this.playTone(480, 0.11, 'sine', 0.10, 260);
+    setTimeout(() => this.playTone(620, 0.09, 'sine', 0.08, 340), 50);
+  }
+
+  playHarvest() {
+    this.playTone(523.25, 0.09, 'triangle', 0.15, 659.25);
+    setTimeout(() => this.playTone(659.25, 0.11, 'triangle', 0.15, 783.99), 65);
+    setTimeout(() => this.playTone(1046.5, 0.16, 'triangle', 0.16), 130);
+  }
+
+  playCoin() {
+    this.playTone(987.77, 0.07, 'square', 0.09);
+    setTimeout(() => this.playTone(1318.51, 0.18, 'square', 0.10), 70);
+  }
+
+  playStar() {
+    const notes = [587.33, 783.99, 987.77, 1174.66, 1567.98];
+    notes.forEach((n, idx) => {
+      setTimeout(() => this.playTone(n, 0.18, 'sine', 0.11), idx * 55);
+    });
+  }
+
+  playLevelUp() {
+    const notes = [440, 554.37, 659.25, 880];
+    notes.forEach((n, idx) => {
+      setTimeout(() => this.playTone(n, 0.22, 'triangle', 0.16), idx * 95);
+    });
+  }
+
+  playPet() {
+    this.playTone(620, 0.10, 'sine', 0.12, 880);
+    setTimeout(() => this.playTone(880, 0.14, 'sine', 0.12, 740), 100);
+  }
+
+  startBGM() {
+    if (this.muted || this.bgmPlaying) return;
+    this.init();
+    this.bgmPlaying = true;
+    const step = () => {
+      if (!this.bgmPlaying || this.muted) return;
+      const item = this.melody[this.noteIndex % this.melody.length];
+      this.noteIndex++;
+      if (item.f > 0) {
+        this.playTone(item.f, item.d * 0.9, 'sine', 0.035);
+        // Bass note nhẹ nhàng
+        if (this.noteIndex % 4 === 1) {
+          this.playTone(item.f / 2, item.d * 1.4, 'triangle', 0.025);
+        }
+      }
+      this.bgmTimer = setTimeout(step, item.d * 1000);
+    };
+    step();
+  }
+
+  stopBGM() {
+    this.bgmPlaying = false;
+    if (this.bgmTimer) {
+      clearTimeout(this.bgmTimer);
+      this.bgmTimer = null;
+    }
+  }
+}
+
+window.SFX = new SoundSystem();
+
+
+/**
+ * ============================================================================
+ * THUNG LŨNG SAO BĂNG: HUYỀN THOẠI CÂY ĐẠI THỤ (STARLIGHT VALLEY v3.0 DEFINITIVE)
+ * js/sprites.js - Bộ dựng đồ họa Pixel Art 16x16 sắc nét + Bảng hiệu Pixel không lỗi font
+ * ============================================================================
+ */
+
+class PixelSpriteRenderer {
+  constructor() {
+    this.cache = {};
+    this.externalImages = {};
+    this.loadExternalSprites();
+    this.buildPixelCache();
+  }
+
+  loadExternalSprites() {
+    const files = ['tileset', 'crops', 'characters', 'npc_portraits', 'items_icons'];
+    files.forEach(name => {
+      const img = new Image();
+      img.src = `assets/${name}.png`;
+      img.onload = () => {
+        this.externalImages[name] = img;
+      };
+      img.onerror = () => {};
+    });
+  }
+
+  createPixelCanvas(w = 16, h = 16) {
+    const c = document.createElement('canvas');
+    c.width = w;
+    c.height = h;
+    const ctx = c.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
+    return { c, ctx };
+  }
+
+  drawAsciiMatrix(ctx, grid, palette, ox = 0, oy = 0) {
+    for (let r = 0; r < grid.length; r++) {
+      const row = grid[r];
+      for (let c = 0; c < row.length; c++) {
+        const ch = row[c];
+        if (palette[ch]) {
+          ctx.fillStyle = palette[ch];
+          ctx.fillRect(ox + c, oy + r, 1, 1);
+        }
+      }
+    }
+  }
+
+  buildPixelCache() {
+    window.GAME_CONFIG.SEASONS.forEach(s => {
+      this.cache[`grass_${s.id}_0`] = this.makeSeasonGrassTile(s, false);
+      this.cache[`grass_${s.id}_1`] = this.makeSeasonGrassTile(s, true);
+    });
+
+    this.cache.dry_soil = this.makeSoilTile(false);
+    this.cache.wet_soil = this.makeSoilTile(true);
+    this.cache.path = this.makePathTile();
+    this.cache.wood_bridge = this.makeBridgeTile();
+
+    this.cache.farmer = this.makeFarmerSprite();
+    this.cache.cat = this.makeCatSprite();
+    this.cache.chicken = this.makeChickenSprite();
+    this.cache.cow = this.makeCowSprite();
+    this.cache.bee = this.makeBeeSprite();
+
+    this.cache.sprinkler = this.makeSprinklerSprite();
+    this.cache.lantern = this.makeLanternSprite();
+    this.cache.weed = this.makeWeedSprite();
+    this.cache.rock = this.makeRockSprite();
+    this.cache.stump = this.makeStumpSprite();
+
+    // Sản phẩm vật nuôi dạng Pixel Art 16x16 để hiển thị trên bong bóng không cần emoji
+    this.cache.prod_egg = this.makeEggSprite();
+    this.cache.prod_milk = this.makeMilkSprite();
+    this.cache.prod_honey = this.makeHoneySprite();
+  }
+
+  makeEggSprite() {
+    const { c, ctx } = this.createPixelCanvas(16, 16);
+    const grid = [
+      "................",
+      "......KKKK......",
+      "....KKWWWWKK....",
+      "...KWWYYYYWWK...",
+      "..KWWYYYYWWWWK..",
+      "..KWWWWWWWWWWK..",
+      "..KWWWWWWWWWWK..",
+      "...KWWWWWWWWK...",
+      "....KKKKKKKK....",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................"
+    ];
+    this.drawAsciiMatrix(ctx, grid, { K: '#4a2c18', W: '#fffdf7', Y: '#ffd54f' });
+    return c;
+  }
+
+  makeMilkSprite() {
+    const { c, ctx } = this.createPixelCanvas(16, 16);
+    const grid = [
+      "................",
+      ".....BBBBBB.....",
+      "....KWWWWWWK....",
+      "...KWWWWWWWWK...",
+      "...KWWBBBBWWK...",
+      "...KWWBBBBWWK...",
+      "...KWWWWWWWWK...",
+      "...KWWWWWWWWK...",
+      "....KKKKKKKK....",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................"
+    ];
+    this.drawAsciiMatrix(ctx, grid, { K: '#37474f', W: '#ffffff', B: '#29b6f6' });
+    return c;
+  }
+
+  makeHoneySprite() {
+    const { c, ctx } = this.createPixelCanvas(16, 16);
+    const grid = [
+      "................",
+      "....KKKKKKKK....",
+      "...KOOOOOOOOk...",
+      "..KOYYYYYYYYOK..",
+      "..KOYYYYYYYYOK..",
+      "..KOYYYYYYYYOK..",
+      "...KOOOOOOOOk...",
+      "....KKKKKKKK....",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................"
+    ];
+    this.drawAsciiMatrix(ctx, grid, { K: '#4e342e', O: '#f57f17', Y: '#ffd54f', k: '#4e342e' });
+    return c;
+  }
+
+  makeSeasonGrassTile(seasonCfg, withFlower) {
+    const { c, ctx } = this.createPixelCanvas(16, 16);
+    ctx.fillStyle = seasonCfg.grassMain;
+    ctx.fillRect(0, 0, 16, 16);
+    ctx.fillStyle = seasonCfg.grassDark;
+    for (let y = 0; y < 16; y += 2) {
+      for (let x = (y % 4 === 0 ? 0 : 2); x < 16; x += 4) {
+        ctx.fillRect(x, y, 1, 1);
+      }
+    }
+    ctx.fillStyle = seasonCfg.grassLight;
+    [[3, 4], [11, 11], [6, 13], [13, 4]].forEach(([bx, by]) => {
+      ctx.fillRect(bx, by, 1, 2);
+      ctx.fillRect(bx + 1, by - 1, 1, 2);
+    });
+    if (withFlower) {
+      [[5, 6], [11, 10]].forEach(([fx, fy]) => {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(fx - 1, fy, 3, 1);
+        ctx.fillRect(fx, fy - 1, 1, 3);
+        ctx.fillStyle = seasonCfg.flowerColor;
+        ctx.fillRect(fx, fy, 1, 1);
+      });
+    }
+    return c;
+  }
+
+  makeSoilTile(isWet) {
+    const { c, ctx } = this.createPixelCanvas(16, 16);
+    ctx.fillStyle = 'rgba(0,0,0,0.18)';
+    ctx.fillRect(0, 0, 16, 16);
+
+    const main = isWet ? '#6b4226' : '#b57c4a';
+    const ridgeDark = isWet ? '#4d2c16' : '#8c5a30';
+    const ridgeLight = isWet ? '#825332' : '#cc925e';
+
+    ctx.fillStyle = main;
+    ctx.fillRect(1, 1, 14, 14);
+    for (let y = 2; y <= 12; y += 3) {
+      ctx.fillStyle = ridgeDark;
+      ctx.fillRect(2, y, 12, 1);
+      ctx.fillStyle = ridgeLight;
+      ctx.fillRect(2, y + 1, 12, 1);
+    }
+    return c;
+  }
+
+  makePathTile() {
+    const { c, ctx } = this.createPixelCanvas(16, 16);
+    const stones = [
+      { x: 1, y: 1, w: 6, h: 6, col: '#b0b8c0' },
+      { x: 8, y: 2, w: 7, h: 5, col: '#9aa2aa' },
+      { x: 2, y: 8, w: 6, h: 7, col: '#a0a8b0' },
+      { x: 9, y: 8, w: 6, h: 6, col: '#b8c0c8' }
+    ];
+    stones.forEach(s => {
+      ctx.fillStyle = '#555d66';
+      ctx.fillRect(s.x, s.y, s.w, s.h);
+      ctx.fillStyle = s.col;
+      ctx.fillRect(s.x, s.y, s.w - 1, s.h - 1);
+    });
+    return c;
+  }
+
+  makeBridgeTile() {
+    const { c, ctx } = this.createPixelCanvas(16, 16);
+    ctx.fillStyle = '#734626';
+    ctx.fillRect(0, 0, 16, 16);
+    ctx.fillStyle = '#996236';
+    for (let x = 1; x < 16; x += 4) {
+      ctx.fillRect(x, 1, 3, 14);
+    }
+    ctx.fillStyle = '#4a2c18';
+    ctx.fillRect(0, 2, 16, 1);
+    ctx.fillRect(0, 13, 16, 1);
+    return c;
+  }
+
+  makeFarmerSprite() {
+    const { c, ctx } = this.createPixelCanvas(16, 16);
+    const grid = [
+      "....RRRRRRRR....",
+      "...RRRRRRRRRR...",
+      "..YYYYYYYYYYYY..",
+      "...BBBBBBBBBB...",
+      "...BSSSSSSSSB...",
+      "...BSKSSSSKSB...",
+      "...BSSSSSSSSB...",
+      "....SSSSSSSS....",
+      "...CCCCCCCCCC...",
+      "..CCBBBBBBBBCC..",
+      "..CCBBBBBBBBCC..",
+      "...BBBBBBBBBB...",
+      "...BBBBBBBBBB...",
+      "....BBB..BBB....",
+      "....DDD..DDD....",
+      "................"
+    ];
+    this.drawAsciiMatrix(ctx, grid, {
+      R: '#d94336', Y: '#ffd54f', B: '#3b73c4',
+      S: '#ffdbac', K: '#1f1f29', C: '#f06252', D: '#5c3820'
+    });
+    return c;
+  }
+
+  makeCatSprite() {
+    const { c, ctx } = this.createPixelCanvas(16, 16);
+    const grid = [
+      "................",
+      "................",
+      "................",
+      "...OO......OO...",
+      "..OOOO....OOOO..",
+      "..OOOOOOOOOOOO..",
+      "..OOKOOWWOOKOO..",
+      "..OOOOOPPOOOOO..",
+      "...OOOOOOOOOO...",
+      "..OOOOOOOOOOOO..",
+      "..OOOOOOOOOOOO..",
+      "..OOOOOOOOOOOO..",
+      "...OO.OOOO.OO...",
+      "...WW......WW...",
+      "................",
+      "................"
+    ];
+    this.drawAsciiMatrix(ctx, grid, {
+      O: '#f59b2d', W: '#fff8ee', K: '#212121', P: '#ff8a9e'
+    });
+    return c;
+  }
+
+  makeChickenSprite() {
+    const { c, ctx } = this.createPixelCanvas(16, 16);
+    const grid = [
+      "................",
+      "................",
+      "......RRRR......",
+      ".....WWWWWW.....",
+      "....WWKWWWWY....",
+      "....WWWWWWWWY...",
+      "...WWWWWWWWWW...",
+      "...WWWWWWWWWW...",
+      "...WWWWWWWWWW...",
+      "....WWWWWWWW....",
+      ".....WWWWWW.....",
+      "......Y..Y......",
+      "......Y..Y......",
+      "................",
+      "................",
+      "................"
+    ];
+    this.drawAsciiMatrix(ctx, grid, {
+      R: '#e53935', W: '#fffdf7', K: '#1c1c1c', Y: '#ffb300'
+    });
+    return c;
+  }
+
+  makeCowSprite() {
+    const { c, ctx } = this.createPixelCanvas(16, 16);
+    const grid = [
+      "................",
+      "..BB........BB..",
+      "...WWWWWWWWWW...",
+      "..WWBBWWWWWWWW..",
+      "..WWBBWWWWWWWW..",
+      "..WWKWWWWWWKWW..",
+      "...PPPPPPPPPP...",
+      "...PKPPPPPPKP...",
+      "..WWWWWWWWWWWW..",
+      "..WWBBBWWWWWBB..",
+      "..WWBBBWWWWWBB..",
+      "...WWWWWWWWWW...",
+      "...WW.WW.WW.WW..",
+      "...DD.DD.DD.DD..",
+      "................",
+      "................"
+    ];
+    this.drawAsciiMatrix(ctx, grid, {
+      W: '#fafafa', B: '#373742', K: '#141419', P: '#ffb2c5', D: '#543d32'
+    });
+    return c;
+  }
+
+  makeBeeSprite() {
+    const { c, ctx } = this.createPixelCanvas(16, 16);
+    const grid = [
+      "................",
+      "................",
+      ".....WW..WW.....",
+      "....WWWWWWWW....",
+      "....WWWWWWWW....",
+      "...YYBBYYBBYY...",
+      "..KYYBBYYBBYY...",
+      "...YYBBYYBBYY...",
+      "....YYBBYYBB....",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................"
+    ];
+    this.drawAsciiMatrix(ctx, grid, {
+      W: 'rgba(215, 245, 255, 0.85)', Y: '#ffd600', B: '#2b241e', K: '#000000'
+    });
+    return c;
+  }
+
+  makeSprinklerSprite() {
+    const { c, ctx } = this.createPixelCanvas(16, 16);
+    const grid = [
+      "................",
+      "................",
+      "......BBBB......",
+      "....BBBBBBBB....",
+      "......SSSS......",
+      "......SSSS......",
+      ".....SSSSSS.....",
+      ".....SSSSSS.....",
+      "....GGGGGGGG....",
+      "....GGGGGGGG....",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................"
+    ];
+    this.drawAsciiMatrix(ctx, grid, { B: '#29b6f6', S: '#cfd8dc', G: '#546e7a' });
+    return c;
+  }
+
+  makeLanternSprite() {
+    const { c, ctx } = this.createPixelCanvas(16, 16);
+    const grid = [
+      ".......DD.......",
+      ".....DDDDDD.....",
+      "....GGGGGGGG....",
+      "....GYYYYYYG....",
+      "....GYWWWWYG....",
+      "....GYWWWWYG....",
+      "....GYYYYYYG....",
+      "....GGGGGGGG....",
+      "......DDDD......",
+      ".......DD.......",
+      ".......DD.......",
+      "......DDDD......",
+      "................",
+      "................",
+      "................",
+      "................"
+    ];
+    this.drawAsciiMatrix(ctx, grid, { D: '#5d4037', G: '#ff7043', Y: '#ffee58', W: '#ffffff' });
+    return c;
+  }
+
+  makeWeedSprite() {
+    const { c, ctx } = this.createPixelCanvas(16, 16);
+    const grid = [
+      "................",
+      "................",
+      "....G......G....",
+      "....GG....GG....",
+      "..G..GG..GG..G..",
+      "..GG.GGGGGG.GG..",
+      "...GGGGGGGGGG...",
+      "....GGGGGGGG....",
+      ".....DDDDDD.....",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................"
+    ];
+    this.drawAsciiMatrix(ctx, grid, { G: '#388e3c', D: '#1b5e20' });
+    return c;
+  }
+
+  makeRockSprite() {
+    const { c, ctx } = this.createPixelCanvas(16, 16);
+    const grid = [
+      "................",
+      "................",
+      "................",
+      ".....LLLLLL.....",
+      "...LLLLLLLLLL...",
+      "..LLLLMMMMMMLL..",
+      "..LLMMMMMMMMMM..",
+      "..MMMMMMMMDDDD..",
+      "..MMMMDDDDDDDD..",
+      "...DDDDDDDDDD...",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................"
+    ];
+    this.drawAsciiMatrix(ctx, grid, { L: '#b0bec5', M: '#78909c', D: '#455a64' });
+    return c;
+  }
+
+  makeStumpSprite() {
+    const { c, ctx } = this.createPixelCanvas(16, 16);
+    const grid = [
+      "................",
+      "................",
+      "....LLLLLLLL....",
+      "...LMMMMMMMMl...",
+      "...LLLLLLLLLL...",
+      "...DDDDDDDDDD...",
+      "...DDDDDDDDDD...",
+      "..DDDDDDDDDDDD..",
+      ".DDDD.DDDD.DDDD.",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................"
+    ];
+    this.drawAsciiMatrix(ctx, grid, { L: '#d7ccc8', M: '#a1887f', D: '#6d4c41' });
+    return c;
+  }
+
+  drawPixelBadgeLabel(ctx, cx, cy, text, bgColor = 'rgba(24, 16, 38, 0.82)', borderColor = '#ffd54f', textColor = '#fff8e7') {
+    ctx.save();
+    ctx.font = 'bold 10px monospace';
+    ctx.textAlign = 'center';
+    const w = ctx.measureText(text).width + 12;
+    const h = 16;
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(cx - w / 2, cy - h / 2, w, h);
+    ctx.strokeStyle = borderColor;
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(cx - w / 2, cy - h / 2, w, h);
+    ctx.fillStyle = textColor;
+    ctx.fillText(text, cx, cy + 3.5);
+    ctx.restore();
+  }
+
+  drawCrop(ctx, cropCfg, stage, px, py, size, isMutated = false, isGiant = false, time = 0, progress = 0) {
+    ctx.save();
+    const sway = Math.sin(time * 3 + px * 0.1) * 1.5;
+
+    if (stage === 0) {
+      ctx.fillStyle = '#ffe082';
+      ctx.fillRect(px + size * 0.3, py + size * 0.65, 5, 5);
+      ctx.fillRect(px + size * 0.58, py + size * 0.72, 5, 5);
+      ctx.fillRect(px + size * 0.45, py + size * 0.52, 5, 5);
+    } else if (stage === 1) {
+      ctx.fillStyle = '#66bb6a';
+      ctx.fillRect(px + size * 0.46, py + size * 0.55, 4, 12);
+      ctx.fillStyle = '#a5d6a7';
+      ctx.fillRect(px + size * 0.34 + sway * 0.4, py + size * 0.48, 7, 5);
+      ctx.fillRect(px + size * 0.52 + sway * 0.4, py + size * 0.48, 7, 5);
+    } else if (stage === 2) {
+      ctx.fillStyle = '#388e3c';
+      ctx.fillRect(px + size * 0.28 + sway * 0.6, py + size * 0.42, size * 0.44, size * 0.36);
+      ctx.fillStyle = '#66bb6a';
+      ctx.fillRect(px + size * 0.33 + sway * 0.6, py + size * 0.34, size * 0.34, size * 0.28);
+    } else if (stage === 3) {
+      ctx.fillStyle = '#2e7d32';
+      ctx.fillRect(px + size * 0.24 + sway * 0.8, py + size * 0.35, size * 0.52, size * 0.42);
+      ctx.fillStyle = cropCfg.lightColor;
+      ctx.fillRect(px + size * 0.32 + sway, py + size * 0.3, 6, 6);
+      ctx.fillRect(px + size * 0.56 + sway, py + size * 0.36, 6, 6);
+    } else {
+      const scale = isGiant ? 1.32 : 1.0;
+      const cx = px + size * 0.5 + sway;
+      const cy = py + size * 0.54;
+
+      if (isMutated) {
+        const glowAlpha = 0.35 + 0.25 * Math.sin(time * 6);
+        ctx.fillStyle = `rgba(213, 128, 255, ${glowAlpha})`;
+        ctx.beginPath();
+        ctx.arc(cx, cy, size * 0.44 * scale, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.fillStyle = '#43a047';
+      ctx.fillRect(cx - 11 * scale, cy - 17 * scale, 22 * scale, 8 * scale);
+      ctx.fillStyle = '#81c784';
+      ctx.fillRect(cx - 7 * scale, cy - 21 * scale, 14 * scale, 5 * scale);
+
+      ctx.fillStyle = isMutated ? '#e040fb' : cropCfg.color;
+      ctx.fillRect(cx - 12 * scale, cy - 9 * scale, 24 * scale, 20 * scale);
+      ctx.fillRect(cx - 9 * scale, cy - 12 * scale, 18 * scale, 25 * scale);
+
+      ctx.fillStyle = isMutated ? '#84ffff' : cropCfg.lightColor;
+      ctx.fillRect(cx - 8 * scale, cy - 7 * scale, 6 * scale, 6 * scale);
+
+      // Ngôi sao Pixel nảy lên báo hiệu thu hoạch
+      const bounce = Math.sin(time * 5.5) * 3;
+      ctx.fillStyle = '#181425';
+      ctx.fillRect(cx - 5, py + 1 + bounce, 10, 10);
+      ctx.fillStyle = isMutated ? '#00e5ff' : '#ffd700';
+      ctx.fillRect(cx - 3, py + 3 + bounce, 6, 6);
+    }
+
+    // Thanh tiến trình mini mượt mà dưới chân cây đang lớn
+    if (stage < 4 && progress > 0) {
+      const barW = size - 12;
+      const bx = px + 6;
+      const by = py + size - 7;
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+      ctx.fillRect(bx, by, barW, 4);
+      ctx.fillStyle = '#76ff03';
+      ctx.fillRect(bx + 1, by + 1, Math.max(2, (barW - 2) * Math.min(1, progress)), 2);
+    }
+    ctx.restore();
+  }
+
+  drawFarmhouse(ctx, x, y, tileSize, isNight) {
+    const w = tileSize * 3;
+    const h = tileSize * 2.2;
+    ctx.save();
+    ctx.fillStyle = 'rgba(0,0,0,0.28)';
+    ctx.fillRect(x + 6, y + h - 8, w - 8, 12);
+
+    ctx.fillStyle = '#d7a15c';
+    ctx.fillRect(x + 8, y + tileSize * 0.85, w - 16, tileSize * 1.25);
+    ctx.fillStyle = '#b07838';
+    for (let ry = y + tileSize; ry < y + tileSize * 2.0; ry += 8) {
+      ctx.fillRect(x + 8, ry, w - 16, 2);
+    }
+
+    ctx.fillStyle = '#8e2424';
+    ctx.fillRect(x, y + tileSize * 0.5, w, tileSize * 0.42);
+    ctx.fillStyle = '#b73232';
+    ctx.fillRect(x + 6, y + tileSize * 0.22, w - 12, tileSize * 0.32);
+    ctx.fillStyle = '#d44646';
+    ctx.fillRect(x + 16, y, w - 32, tileSize * 0.26);
+
+    ctx.fillStyle = '#5d3a1a';
+    ctx.fillRect(x + 22, y + tileSize * 1.25, 24, tileSize * 0.85);
+    ctx.fillStyle = '#ffd54f';
+    ctx.fillRect(x + 40, y + tileSize * 1.65, 4, 4);
+
+    ctx.fillStyle = '#4a2c18';
+    ctx.fillRect(x + w - 56, y + tileSize * 1.2, 32, 26);
+    ctx.fillStyle = isNight ? '#ffeb3b' : '#81d4fa';
+    ctx.fillRect(x + w - 52, y + tileSize * 1.2 + 4, 24, 18);
+
+    this.drawPixelBadgeLabel(ctx, x + w / 2, y + tileSize * 0.65, 'NHÀ CHÍNH (NGỦ)', 'rgba(74, 44, 24, 0.9)', '#ffd54f', '#fff8e7');
+    ctx.restore();
+  }
+
+  drawSacredStarTree(ctx, x, y, tileSize, treeLevel, time) {
+    const cx = x + tileSize;
+    const cy = y + tileSize * 1.35;
+    ctx.save();
+
+    ctx.fillStyle = '#607d8b';
+    ctx.fillRect(cx - 40, cy - 12, 80, 22);
+    ctx.fillStyle = '#90a4ae';
+    ctx.fillRect(cx - 34, cy - 16, 68, 18);
+
+    const glowRadius = 24 + treeLevel * 8 + Math.sin(time * 3) * 4;
+    const grad = ctx.createRadialGradient(cx, cy - 28, 4, cx, cy - 28, glowRadius);
+    grad.addColorStop(0, 'rgba(224, 64, 251, 0.6)');
+    grad.addColorStop(1, 'rgba(128, 216, 255, 0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(cx, cy - 28, glowRadius, 0, Math.PI * 2);
+    ctx.fill();
+
+    const trunkW = 14 + treeLevel * 3;
+    const trunkH = 26 + treeLevel * 6;
+    ctx.fillStyle = '#6d4c41';
+    ctx.fillRect(cx - trunkW / 2, cy - trunkH, trunkW, trunkH);
+
+    const canopyRadius = 18 + treeLevel * 6;
+    ctx.fillStyle = treeLevel >= 4 ? '#ab47bc' : '#26a69a';
+    ctx.fillRect(cx - canopyRadius, cy - trunkH - canopyRadius * 0.8, canopyRadius * 2, canopyRadius * 1.1);
+    ctx.fillStyle = treeLevel >= 5 ? '#ea80fc' : '#4db6ac';
+    ctx.fillRect(cx - canopyRadius * 0.75, cy - trunkH - canopyRadius * 1.2, canopyRadius * 1.5, canopyRadius * 0.9);
+
+    for (let i = 0; i < treeLevel + 1; i++) {
+      const sx = cx - canopyRadius * 0.6 + (i * 13) % (canopyRadius * 1.2);
+      const sy = cy - trunkH - 12 - (i * 7) % 18;
+      ctx.fillStyle = '#ffd700';
+      ctx.fillRect(sx, sy, 5, 5);
+    }
+
+    this.drawPixelBadgeLabel(ctx, cx, cy + 16, `ĐẠI THỤ CẤP ${treeLevel}/5`, 'rgba(49, 27, 146, 0.88)', '#ea80fc', '#ffd54f');
+    ctx.restore();
+  }
+
+  drawShippingBin(ctx, x, y, tileSize) {
+    ctx.save();
+    ctx.fillStyle = 'rgba(0,0,0,0.25)';
+    ctx.fillRect(x + 4, y + tileSize - 6, tileSize - 8, 6);
+    ctx.fillStyle = '#6d4c41';
+    ctx.fillRect(x + 6, y + 12, tileSize - 12, tileSize - 16);
+    ctx.fillStyle = '#ffb300';
+    ctx.fillRect(x + 4, y + 8, tileSize - 8, 8);
+    this.drawPixelBadgeLabel(ctx, x + tileSize / 2, y + 28, 'BÁN ĐỒ', 'rgba(74, 44, 24, 0.9)', '#ffd54f', '#ffd54f');
+    ctx.restore();
+  }
+}
+
+window.SPRITES = new PixelSpriteRenderer();
+
+
+/**
+ * ============================================================================
+ * THUNG LŨNG SAO BĂNG: HUYỀN THOẠI CÂY ĐẠI THỤ (STARLIGHT VALLEY v3.0 DEFINITIVE)
+ * js/world.js - Quản lý Bản đồ 16x11, Khung lưới 3x3 AoE Preview, 4 Mùa & Thời tiết
+ * ============================================================================
+ */
+
+class FarmWorld {
+  constructor() {
+    this.cols = window.GAME_CONFIG.GRID_COLS;
+    this.rows = window.GAME_CONFIG.GRID_ROWS;
+    this.tileSize = window.GAME_CONFIG.TILE_SIZE;
+
+    this.day = 1;
+    this.seasonIndex = 0;
+    this.timeOfDay = 0.28;
+    this.weather = 'sunny';
+    this.tiles = [];
+    this.particles = [];
+    this.floatingTexts = [];
+    this.shootingStars = [];
+    this.fireflies = [];
+
+    this.initGrid();
+    this.initFireflies();
+  }
+
+  getCurrentSeason() {
+    return window.GAME_CONFIG.SEASONS[this.seasonIndex % window.GAME_CONFIG.SEASONS.length];
+  }
+
+  initGrid() {
+    this.tiles = [];
+    for (let r = 0; r < this.rows; r++) {
+      const row = [];
+      for (let c = 0; c < this.cols; c++) {
+        let type = 'grass';
+        let obstacle = null;
+
+        if (r >= 1 && r <= 2 && c >= 1 && c <= 3) {
+          type = 'house_zone';
+        } else if (r === 2 && c === 4) {
+          type = 'shipping_bin';
+        } else if (r === 2 && c === 5) {
+          type = 'kitchen_oven';
+        } else if (r >= 1 && r <= 2 && c >= 7 && c <= 8) {
+          type = 'sacred_tree';
+        } else if ((r === 3 && c >= 1 && c <= 9) || (c === 5 && r >= 3 && r <= 4)) {
+          type = 'path';
+        } else if (r >= 7 && r <= 9 && c >= 11 && c <= 14) {
+          type = (r === 8 && c === 11) ? 'bridge' : 'water';
+        } else if (r >= 4 && r <= 6 && c >= 2 && c <= 4) {
+          type = 'soil';
+        } else if (c >= 6 && r >= 4 && r <= 9 && Math.random() < 0.14) {
+          const rand = Math.random();
+          obstacle = rand < 0.5 ? 'weed' : (rand < 0.8 ? 'rock' : 'stump');
+        }
+
+        row.push({
+          r,
+          c,
+          type,
+          flowerVariant: (r * 7 + c * 13) % 5 === 0,
+          watered: false,
+          crop: null,
+          device: null,
+          obstacle
+        });
+      }
+      this.tiles.push(row);
+    }
+
+    const t1 = this.getTile(4, 2);
+    const t2 = this.getTile(4, 3);
+    const t3 = this.getTile(4, 4);
+    if (t1 && t2 && t3) {
+      t1.watered = true;
+      t1.crop = { id: 'radish', stage: 4, progress: 1, isMutated: false, isGiant: false };
+      t2.watered = true;
+      t2.crop = { id: 'radish', stage: 4, progress: 1, isMutated: false, isGiant: false };
+      t3.watered = true;
+      t3.crop = { id: 'strawberry', stage: 3, progress: 0.8, isMutated: false, isGiant: false };
+    }
+  }
+
+  initFireflies() {
+    this.fireflies = [];
+    for (let i = 0; i < 22; i++) {
+      this.fireflies.push({
+        x: Math.random() * this.cols * this.tileSize,
+        y: Math.random() * this.rows * this.tileSize,
+        vx: (Math.random() - 0.5) * 18,
+        vy: (Math.random() - 0.5) * 18,
+        phase: Math.random() * Math.PI * 2
+      });
+    }
+  }
+
+  getTile(r, c) {
+    if (r < 0 || r >= this.rows || c < 0 || c >= this.cols) return null;
+    return this.tiles[r][c];
+  }
+
+  isNight() {
+    return this.timeOfDay >= 0.76 || this.timeOfDay < 0.22;
+  }
+
+  getFormattedClock() {
+    const totalMinutes = Math.floor(this.timeOfDay * 24 * 60);
+    const h = Math.floor(totalMinutes / 60) % 24;
+    const m = Math.floor((totalMinutes % 60) / 10) * 10;
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+  }
+
+  spawnParticles(x, y, color = '#ffd700', count = 10) {
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 25 + Math.random() * 65;
+      this.particles.push({
+        x,
+        y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 30,
+        size: 3 + Math.floor(Math.random() * 4),
+        color,
+        life: 0.55 + Math.random() * 0.35
+      });
+    }
+  }
+
+  spawnFloatingText(x, y, text, color = '#fff8e7') {
+    this.floatingTexts.push({ x, y, text, color, life: 1.3 });
+  }
+
+  triggerMeteorImpact() {
+    const plantedTiles = [];
+    for (let r = 0; r < this.rows; r++) {
+      for (let c = 0; c < this.cols; c++) {
+        const t = this.tiles[r][c];
+        if (t.crop && !t.crop.isMutated) plantedTiles.push(t);
+      }
+    }
+    const targetTile = plantedTiles.length > 0
+      ? plantedTiles[Math.floor(Math.random() * plantedTiles.length)]
+      : this.getTile(5, 4);
+
+    const tx = (targetTile.c + 0.5) * this.tileSize;
+    const ty = (targetTile.r + 0.5) * this.tileSize;
+
+    this.shootingStars.push({
+      x: tx - 220,
+      y: ty - 220,
+      tx,
+      ty,
+      progress: 0,
+      targetTile
+    });
+  }
+
+  checkGiantCrops() {
+    for (let r = 0; r < this.rows - 1; r++) {
+      for (let c = 0; c < this.cols - 1; c++) {
+        const t00 = this.tiles[r][c];
+        const t01 = this.tiles[r][c + 1];
+        const t10 = this.tiles[r + 1][c];
+        const t11 = this.tiles[r + 1][c + 1];
+        if (
+          t00.crop && t01.crop && t10.crop && t11.crop &&
+          t00.crop.stage === 4 &&
+          t00.crop.id === t01.crop.id &&
+          t00.crop.id === t10.crop.id &&
+          t00.crop.id === t11.crop.id &&
+          !t00.crop.isGiant
+        ) {
+          t00.crop.isGiant = true;
+          const px = (c + 0.5) * this.tileSize;
+          const py = (r + 0.5) * this.tileSize;
+          this.spawnParticles(px, py, '#ffd700', 18);
+          this.spawnFloatingText(px, py - 10, '✨ ĐỘT BIẾN KHỔNG LỒ (x3)!', '#ffd700');
+          window.SFX.playStar();
+        }
+      }
+    }
+  }
+
+  update(dt, game) {
+    this.timeOfDay += dt / window.GAME_CONFIG.DAY_DURATION_SEC;
+    if (this.timeOfDay >= 1.0) {
+      game.advanceToNextDay(true);
+    }
+
+    if (this.weather === 'rainy') {
+      for (let r = 0; r < this.rows; r++) {
+        for (let c = 0; c < this.cols; c++) {
+          const t = this.tiles[r][c];
+          if (t.type === 'soil' && !t.watered && Math.random() < dt * 0.8) {
+            t.watered = true;
+          }
+        }
+      }
+    }
+
+    if (this.weather === 'meteor' && this.isNight() && Math.random() < dt * 0.24) {
+      this.triggerMeteorImpact();
+    }
+
+    for (let i = this.shootingStars.length - 1; i >= 0; i--) {
+      const s = this.shootingStars[i];
+      s.progress += dt * 1.6;
+      if (s.progress >= 1) {
+        if (s.targetTile && s.targetTile.crop) {
+          s.targetTile.crop.isMutated = true;
+          s.targetTile.crop.stage = 4;
+          s.targetTile.crop.progress = 1;
+          this.spawnFloatingText(s.tx, s.ty - 12, '🌠 ĐỘT BIẾN ÁNH SAO (x4)!', '#e040fb');
+          window.SFX.playStar();
+        } else {
+          game.starShards += 1;
+          this.spawnFloatingText(s.tx, s.ty - 12, '+1 🌠 Mảnh Sao Băng!', '#84ffff');
+          window.SFX.playStar();
+        }
+        this.spawnParticles(s.tx, s.ty, '#e040fb', 20);
+        this.shootingStars.splice(i, 1);
+      }
+    }
+
+    this.updateCropsAndDevices(dt);
+
+    for (let i = this.particles.length - 1; i >= 0; i--) {
+      const p = this.particles[i];
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      p.vy += 120 * dt;
+      p.life -= dt;
+      if (p.life <= 0) this.particles.splice(i, 1);
+    }
+
+    for (let i = this.floatingTexts.length - 1; i >= 0; i--) {
+      const ft = this.floatingTexts[i];
+      ft.y -= 24 * dt;
+      ft.life -= dt;
+      if (ft.life <= 0) this.floatingTexts.splice(i, 1);
+    }
+
+    for (const f of this.fireflies) {
+      f.x += f.vx * dt;
+      f.y += f.vy * dt;
+      f.phase += dt * 4;
+      if (f.x < 0 || f.x > this.cols * this.tileSize) f.vx *= -1;
+      if (f.y < 0 || f.y > this.rows * this.tileSize) f.vy *= -1;
+    }
+  }
+
+  updateCropsAndDevices(dt) {
+    this.sprinklerTimer = (this.sprinklerTimer || 0) + dt;
+    const triggerSprinklers = this.sprinklerTimer >= 3.5;
+    if (triggerSprinklers) this.sprinklerTimer = 0;
+
+    const season = this.getCurrentSeason();
+
+    for (let r = 0; r < this.rows; r++) {
+      for (let c = 0; c < this.cols; c++) {
+        const tile = this.tiles[r][c];
+
+        if (tile.device === 'sprinkler' && triggerSprinklers) {
+          for (let dr = -1; dr <= 1; dr++) {
+            for (let dc = -1; dc <= 1; dc++) {
+              const nb = this.getTile(r + dr, c + dc);
+              if (nb && nb.type === 'soil' && !nb.watered) {
+                nb.watered = true;
+                this.spawnParticles(
+                  (nb.c + 0.5) * this.tileSize,
+                  (nb.r + 0.5) * this.tileSize,
+                  '#4fc3f7',
+                  4
+                );
+              }
+            }
+          }
+        }
+
+        if (tile.crop && tile.watered && tile.crop.stage < 4) {
+          const cfg = window.GAME_CONFIG.CROPS[tile.crop.id];
+          let speedMultiplier = 1.0;
+
+          if (season.boostCrops.includes(tile.crop.id)) {
+            speedMultiplier += 0.25;
+          }
+
+          let hasLanternNearby = false;
+          for (let dr = -1; dr <= 1; dr++) {
+            for (let dc = -1; dc <= 1; dc++) {
+              const nb = this.getTile(r + dr, c + dc);
+              if (!nb) continue;
+              if (nb.crop && nb.crop.id === 'sunflower') speedMultiplier += 0.30;
+              if (nb.device === 'lantern') {
+                hasLanternNearby = true;
+                speedMultiplier += 0.20;
+              }
+            }
+          }
+
+          if (cfg.nightBoost && this.isNight()) {
+            speedMultiplier *= cfg.nightBoost;
+          }
+
+          tile.crop.progress += (dt * speedMultiplier) / cfg.growTime;
+          const newStage = Math.min(4, Math.floor(tile.crop.progress * 4));
+          if (newStage > tile.crop.stage) {
+            tile.crop.stage = newStage;
+            if (newStage === 4) {
+              const baseMutChance = (tile.crop.id === 'starfruit' ? 0.22 : 0.10) + (hasLanternNearby ? 0.18 : 0);
+              if (Math.random() < baseMutChance) {
+                tile.crop.isMutated = true;
+                const px = (c + 0.5) * this.tileSize;
+                const py = (r + 0.5) * this.tileSize;
+                this.spawnParticles(px, py, '#e040fb', 15);
+                this.spawnFloatingText(px, py - 8, '✨ Cây Nhiễm Bụi Sao!', '#ea80fc');
+              }
+              this.checkGiantCrops();
+            }
+          }
+        }
+      }
+    }
+  }
+
+  render(ctx, time, hoverTile, treeLevel = 1, game = null) {
+    const ts = this.tileSize;
+    const season = this.getCurrentSeason();
+    const grass0 = window.SPRITES.cache[`grass_${season.id}_0`];
+    const grass1 = window.SPRITES.cache[`grass_${season.id}_1`];
+
+    for (let r = 0; r < this.rows; r++) {
+      for (let c = 0; c < this.cols; c++) {
+        const tile = this.tiles[r][c];
+        const px = c * ts;
+        const py = r * ts;
+
+        ctx.drawImage(tile.flowerVariant ? grass1 : grass0, px, py, ts, ts);
+
+        if (tile.type === 'water') {
+          ctx.fillStyle = '#2b82c9';
+          ctx.fillRect(px, py, ts, ts);
+          const wave = Math.sin(time * 3 + r + c) * 4;
+          ctx.fillStyle = '#64b5f6';
+          ctx.fillRect(px + 8 + wave, py + 12, 14, 4);
+          ctx.fillRect(px + 20 - wave, py + 30, 12, 4);
+        } else if (tile.type === 'bridge') {
+          ctx.drawImage(window.SPRITES.cache.wood_bridge, px, py, ts, ts);
+        } else if (tile.type === 'path') {
+          ctx.drawImage(window.SPRITES.cache.path, px, py, ts, ts);
+        } else if (tile.type === 'soil') {
+          const img = tile.watered ? window.SPRITES.cache.wet_soil : window.SPRITES.cache.dry_soil;
+          ctx.drawImage(img, px, py, ts, ts);
+        }
+
+        if (tile.obstacle) {
+          const obsImg = window.SPRITES.cache[tile.obstacle];
+          if (obsImg) ctx.drawImage(obsImg, px + 4, py + 4, ts - 8, ts - 8);
+        }
+
+        if (tile.device) {
+          const devImg = window.SPRITES.cache[tile.device];
+          if (devImg) ctx.drawImage(devImg, px + 4, py + 4, ts - 8, ts - 8);
+          if (tile.device === 'lantern' && this.isNight()) {
+            ctx.fillStyle = 'rgba(255, 238, 88, 0.16)';
+            ctx.beginPath();
+            ctx.arc(px + ts / 2, py + ts / 2, ts * 1.6, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+
+        if (tile.crop) {
+          const cfg = window.GAME_CONFIG.CROPS[tile.crop.id];
+          window.SPRITES.drawCrop(
+            ctx,
+            cfg,
+            tile.crop.stage,
+            px,
+            py,
+            ts,
+            tile.crop.isMutated,
+            tile.crop.isGiant,
+            time,
+            tile.crop.progress
+          );
+        }
+
+        if (tile.type === 'shipping_bin') {
+          window.SPRITES.drawShippingBin(ctx, px, py, ts);
+        } else if (tile.type === 'kitchen_oven') {
+          ctx.drawImage(window.SPRITES.cache.path, px, py, ts, ts);
+          ctx.fillStyle = '#5d4037';
+          ctx.fillRect(px + 6, py + 8, ts - 12, ts - 12);
+          ctx.fillStyle = '#ff7043';
+          ctx.fillRect(px + 12, py + 20, ts - 24, 14);
+          window.SPRITES.drawPixelBadgeLabel(ctx, px + ts / 2, py + 14, 'NHÀ BẾP', 'rgba(74, 44, 24, 0.9)', '#ff8a65', '#fff8e7');
+        }
+      }
+    }
+
+    // Vẽ Nhà Chính & Đền Thờ Cây Đại Thụ
+    window.SPRITES.drawFarmhouse(ctx, 1 * ts, 0.5 * ts, ts, this.isNight());
+    window.SPRITES.drawSacredStarTree(ctx, 7 * ts, 0.6 * ts, ts, treeLevel, time);
+
+    // Nhãn Hồ Sao Băng bằng Pixel Badge sắc nét
+    window.SPRITES.drawPixelBadgeLabel(ctx, 12.5 * ts, 6.65 * ts, 'HỒ SAO BĂNG (CÂU CÁ)', 'rgba(16, 42, 67, 0.9)', '#4fc3f7', '#80d8ff');
+
+    // Khung 3x3 AoE Preview khi cầm công cụ diện rộng hoặc trỏ vào thiết bị 3x3
+    if (hoverTile && game) {
+      const show3x3 =
+        game.selectedTool === 'sprinkler' ||
+        game.selectedTool === 'lantern' ||
+        (game.selectedTool === 'hoe' && game.upgrades.hoe_2) ||
+        (game.selectedTool === 'water' && game.upgrades.watering_can_2) ||
+        hoverTile.device === 'sprinkler' ||
+        hoverTile.device === 'lantern' ||
+        (hoverTile.crop && hoverTile.crop.id === 'sunflower');
+
+      ctx.save();
+      if (show3x3) {
+        const aoeColor = (game.selectedTool === 'water' || game.selectedTool === 'sprinkler' || hoverTile.device === 'sprinkler')
+          ? 'rgba(79, 195, 247, 0.25)'
+          : 'rgba(255, 213, 79, 0.24)';
+        const strokeCol = (game.selectedTool === 'water' || game.selectedTool === 'sprinkler' || hoverTile.device === 'sprinkler')
+          ? '#4fc3f7'
+          : '#ffd54f';
+
+        const c0 = Math.max(0, hoverTile.c - 1);
+        const r0 = Math.max(0, hoverTile.r - 1);
+        const c1 = Math.min(this.cols - 1, hoverTile.c + 1);
+        const r1 = Math.min(this.rows - 1, hoverTile.r + 1);
+
+        ctx.fillStyle = aoeColor;
+        ctx.fillRect(c0 * ts, r0 * ts, (c1 - c0 + 1) * ts, (r1 - r0 + 1) * ts);
+        ctx.strokeStyle = strokeCol;
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 3]);
+        ctx.strokeRect(c0 * ts + 2, r0 * ts + 2, (c1 - c0 + 1) * ts - 4, (r1 - r0 + 1) * ts - 4);
+        ctx.setLineDash([]);
+      }
+
+      ctx.strokeStyle = 'rgba(255, 235, 59, 0.95)';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(hoverTile.c * ts + 2, hoverTile.r * ts + 2, ts - 4, ts - 4);
+      ctx.restore();
+    }
+  }
+
+  renderWeatherAndLighting(ctx, width, height, time) {
+    if (this.weather === 'rainy') {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(144, 202, 249, 0.55)';
+      ctx.lineWidth = 2;
+      for (let i = 0; i < 55; i++) {
+        const rx = ((i * 97 + time * 260) % width);
+        const ry = ((i * 53 + time * 520) % height);
+        ctx.beginPath();
+        ctx.moveTo(rx, ry);
+        ctx.lineTo(rx - 6, ry + 14);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    let overlayColor = null;
+    if (this.timeOfDay >= 0.65 && this.timeOfDay < 0.76) {
+      const t = (this.timeOfDay - 0.65) / 0.11;
+      overlayColor = `rgba(120, 55, 90, ${t * 0.35})`;
+    } else if (this.isNight()) {
+      overlayColor = this.weather === 'meteor'
+        ? 'rgba(18, 12, 48, 0.52)'
+        : 'rgba(14, 18, 42, 0.52)';
+    }
+
+    if (overlayColor) {
+      ctx.fillStyle = overlayColor;
+      ctx.fillRect(0, 0, width, height);
+    }
+
+    if (this.isNight()) {
+      for (const f of this.fireflies) {
+        const alpha = 0.35 + 0.55 * Math.abs(Math.sin(f.phase));
+        ctx.fillStyle = `rgba(212, 255, 105, ${alpha})`;
+        ctx.fillRect(f.x, f.y, 4, 4);
+      }
+    }
+
+    for (const s of this.shootingStars) {
+      const cx = s.x + (s.tx - s.x) * s.progress;
+      const cy = s.y + (s.ty - s.y) * s.progress;
+      ctx.save();
+      ctx.strokeStyle = '#e040fb';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx - 35, cy - 35);
+      ctx.stroke();
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(cx - 4, cy - 4, 8, 8);
+      ctx.restore();
+    }
+
+    for (const p of this.particles) {
+      ctx.fillStyle = p.color;
+      ctx.fillRect(p.x, p.y, p.size, p.size);
+    }
+
+    ctx.save();
+    ctx.font = 'bold 13px monospace';
+    ctx.textAlign = 'center';
+    for (const ft of this.floatingTexts) {
+      ctx.fillStyle = '#000000';
+      ctx.fillText(ft.text, ft.x + 1, ft.y + 1);
+      ctx.fillStyle = ft.color;
+      ctx.fillText(ft.text, ft.x, ft.y);
+    }
+    ctx.restore();
+  }
+}
+
+window.FarmWorld = FarmWorld;
+
+
+/**
+ * ============================================================================
+ * THUNG LŨNG SAO BĂNG: HUYỀN THOẠI CÂY ĐẠI THỤ (STARLIGHT VALLEY v3.0 DEFINITIVE)
+ * js/entities.js - Nhân vật Nông dân, Mèo cưng AI & Đàn vật nuôi với Bong bóng Pixel
+ * ============================================================================
+ */
+
+class PlayerFarmer {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.targetX = null;
+    this.targetY = null;
+    this.onArriveCallback = null;
+    this.speed = 195;
+    this.speedBoostTimer = 0;
+    this.facing = 1;
+    this.walkTimer = 0;
+    this.actionAnimTimer = 0;
+  }
+
+  moveTo(tx, ty, callback = null) {
+    this.targetX = tx;
+    this.targetY = ty;
+    this.onArriveCallback = callback;
+  }
+
+  update(dt, keys, maxWidth, maxHeight) {
+    if (this.speedBoostTimer > 0) this.speedBoostTimer -= dt;
+    if (this.actionAnimTimer > 0) this.actionAnimTimer -= dt;
+
+    const currentSpeed = this.speed * (this.speedBoostTimer > 0 ? 1.45 : 1.0);
+    let dx = 0;
+    let dy = 0;
+
+    if (keys['KeyW'] || keys['ArrowUp']) dy -= 1;
+    if (keys['KeyS'] || keys['ArrowDown']) dy += 1;
+    if (keys['KeyA'] || keys['ArrowLeft']) dx -= 1;
+    if (keys['KeyD'] || keys['ArrowRight']) dx += 1;
+
+    if (dx !== 0 || dy !== 0) {
+      this.targetX = null;
+      this.targetY = null;
+      this.onArriveCallback = null;
+      const len = Math.hypot(dx, dy);
+      this.x += (dx / len) * currentSpeed * dt;
+      this.y += (dy / len) * currentSpeed * dt;
+      if (dx !== 0) this.facing = dx > 0 ? 1 : -1;
+      this.walkTimer += dt * 10;
+    } else if (this.targetX !== null && this.targetY !== null) {
+      const distX = this.targetX - this.x;
+      const distY = this.targetY - this.y;
+      const dist = Math.hypot(distX, distY);
+      if (dist <= 18) {
+        this.targetX = null;
+        this.targetY = null;
+        if (this.onArriveCallback) {
+          const cb = this.onArriveCallback;
+          this.onArriveCallback = null;
+          cb();
+        }
+      } else {
+        this.x += (distX / dist) * currentSpeed * dt;
+        this.y += (distY / dist) * currentSpeed * dt;
+        if (Math.abs(distX) > 2) this.facing = distX > 0 ? 1 : -1;
+        this.walkTimer += dt * 10;
+      }
+    } else {
+      this.walkTimer = 0;
+    }
+
+    this.x = Math.max(24, Math.min(maxWidth - 24, this.x));
+    this.y = Math.max(36, Math.min(maxHeight - 24, this.y));
+  }
+
+  render(ctx) {
+    ctx.save();
+    const bob = Math.abs(Math.sin(this.walkTimer)) * 4;
+    ctx.translate(this.x, this.y - bob);
+
+    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    ctx.fillRect(-14, 16 + bob, 28, 6);
+
+    if (this.facing < 0) {
+      ctx.scale(-1, 1);
+    }
+
+    if (this.actionAnimTimer > 0) {
+      ctx.rotate(Math.sin(this.actionAnimTimer * 25) * 0.25);
+    }
+
+    ctx.drawImage(window.SPRITES.cache.farmer, -22, -26, 44, 44);
+    ctx.restore();
+  }
+}
+
+class PetCat {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.upgraded = false;
+    this.harvestTimer = 0;
+  }
+
+  update(dt, player, game) {
+    const dist = Math.hypot(player.x - 36 - this.x, player.y + 10 - this.y);
+    const speed = this.upgraded ? 185 : 135;
+
+    if (dist > 42) {
+      this.x += ((player.x - 36 - this.x) / dist) * speed * dt;
+      this.y += ((player.y + 10 - this.y) / dist) * speed * dt;
+    }
+
+    if (this.upgraded) {
+      this.harvestTimer += dt;
+      if (this.harvestTimer >= 2.0) {
+        this.harvestTimer = 0;
+        const c = Math.floor(this.x / game.world.tileSize);
+        const r = Math.floor(this.y / game.world.tileSize);
+        for (let dr = -1; dr <= 1; dr++) {
+          for (let dc = -1; dc <= 1; dc++) {
+            const tile = game.world.getTile(r + dr, c + dc);
+            if (tile && tile.crop && tile.crop.stage === 4) {
+              game.harvestTile(tile, true);
+              return;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  render(ctx, time) {
+    const bob = Math.abs(Math.sin(time * 5)) * 2;
+    ctx.save();
+    ctx.fillStyle = 'rgba(0,0,0,0.22)';
+    ctx.fillRect(this.x - 10, this.y + 12, 20, 4);
+    ctx.drawImage(window.SPRITES.cache.cat, this.x - 16, this.y - 18 - bob, 32, 32);
+    if (this.upgraded) {
+      ctx.fillStyle = '#ffd700';
+      ctx.fillRect(this.x - 2, this.y - 2, 4, 4);
+    }
+    ctx.restore();
+  }
+}
+
+class FarmAnimal {
+  constructor(typeId, x, y) {
+    this.typeId = typeId;
+    this.cfg = window.GAME_CONFIG.ANIMALS[typeId];
+    this.x = x;
+    this.y = y;
+    this.vx = (Math.random() - 0.5) * 26;
+    this.vy = (Math.random() - 0.5) * 26;
+    this.changeDirTimer = 2 + Math.random() * 3;
+    this.produceTimer = this.cfg.produceInterval * 0.5;
+    this.hasProductReady = false;
+    this.affection = 0;
+  }
+
+  update(dt) {
+    this.changeDirTimer -= dt;
+    if (this.changeDirTimer <= 0) {
+      this.changeDirTimer = 2.5 + Math.random() * 4;
+      if (Math.random() < 0.35) {
+        this.vx = 0;
+        this.vy = 0;
+      } else {
+        this.vx = (Math.random() - 0.5) * 30;
+        this.vy = (Math.random() - 0.5) * 30;
+      }
+    }
+
+    this.x = Math.max(460, Math.min(710, this.x + this.vx * dt));
+    this.y = Math.max(70, Math.min(280, this.y + this.vy * dt));
+
+    if (!this.hasProductReady) {
+      this.produceTimer += dt;
+      if (this.produceTimer >= this.cfg.produceInterval) {
+        this.produceTimer = 0;
+        this.hasProductReady = true;
+      }
+    }
+  }
+
+  render(ctx, time) {
+    const sprite = window.SPRITES.cache[this.typeId];
+    const bob = (this.vx !== 0 || this.vy !== 0) ? Math.abs(Math.sin(time * 7)) * 3 : 0;
+
+    ctx.save();
+    ctx.fillStyle = 'rgba(0,0,0,0.22)';
+    ctx.fillRect(this.x - 14, this.y + 14, 28, 5);
+
+    if (this.vx < 0) {
+      ctx.translate(this.x, this.y - bob);
+      ctx.scale(-1, 1);
+      ctx.drawImage(sprite, -20, -20, 40, 40);
+    } else {
+      ctx.drawImage(sprite, this.x - 20, this.y - 20 - bob, 40, 40);
+    }
+
+    // Bong bóng sản phẩm vẽ bằng Pixel Art 100% sắc nét
+    if (this.hasProductReady) {
+      const floatY = Math.sin(time * 5) * 3;
+      const bx = this.x - 13;
+      const by = this.y - 44 + floatY;
+      ctx.fillStyle = '#fff8e7';
+      ctx.fillRect(bx, by, 26, 22);
+      ctx.strokeStyle = '#4a2c18';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(bx, by, 26, 22);
+
+      const prodSprite = window.SPRITES.cache[`prod_${this.cfg.produceId}`];
+      if (prodSprite) {
+        ctx.drawImage(prodSprite, bx + 3, by + 2, 20, 20);
+      }
+    }
+    ctx.restore();
+  }
+}
+
+window.PlayerFarmer = PlayerFarmer;
+window.PetCat = PetCat;
+window.FarmAnimal = FarmAnimal;
+
+
+/**
+ * ============================================================================
+ * THUNG LŨNG SAO BĂNG (STARLIGHT VALLEY v4.0 - COZY MINIMALIST EDITION)
+ * js/ui.js - Progressive Disclosure UI: Màn hình chính thoáng đãng 92% Canvas,
+ *            Hướng dẫn 1 dòng theo ngữ cảnh, và Cửa sổ chia theo nhóm gọn gàng
+ * ============================================================================
+ */
+
+class GameUI {
+  constructor(game) {
+    this.game = game;
+    this.currentGroup = 'shop';
+    this.activeModalTab = 'seeds';
+
+    this.MODAL_GROUPS = {
+      quests: {
+        title: '📜 Sổ Nhiệm Vụ & Hành Trình Đại Thụ',
+        tabs: [
+          { id: 'story', label: '🌟 Cốt Truyện Chính (5 Chương)' },
+          { id: 'commissions', label: '🤝 Ủy Thác Dân Làng' }
+        ]
+      },
+      shop: {
+        title: '🏪 Cửa Hàng Nông Trại & Lò Rèn',
+        tabs: [
+          { id: 'seeds', label: '🌱 Hạt Giống' },
+          { id: 'animals', label: '🐔 Vật Nuôi & Máy' },
+          { id: 'upgrades', label: '⚒️ Nâng Cấp' },
+          { id: 'starshop', label: '🌠 Phép Sao Băng' }
+        ]
+      },
+      shrine: {
+        title: '🏛️ Đền Thờ Đại Thụ, Nhà Bếp & Kho Đồ',
+        tabs: [
+          { id: 'bundles', label: '🏛️ Hiến Tế Đại Thụ' },
+          { id: 'kitchen', label: '🍳 Nhà Bếp' },
+          { id: 'inventory', label: '🧺 Kho Nông Sản' }
+        ]
+      },
+      guide: {
+        title: '📖 Cẩm Nang & Bách Khoa Sưu Tầm',
+        tabs: [
+          { id: 'almanac', label: '📚 Bách Khoa (15 Món)' },
+          { id: 'rules', label: '🎮 Mẹo Chơi Tóm Tắt & Sao Lưu' }
+        ]
+      }
+    };
+  }
+
+  pixelIconHtml(key, fallbackEmoji = '🌟', size = 20) {
+    if (window.PIXEL_ICONS && window.PIXEL_ICONS[key]) {
+      return `<img src="${window.PIXEL_ICONS[key]}" alt="${key}" style="width:${size}px;height:${size}px;image-rendering:pixelated;vertical-align:middle;" />`;
+    }
+    return `<span>${fallbackEmoji}</span>`;
+  }
+
+  showToast(msg) {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+    const div = document.createElement('div');
+    div.className = 'toast-msg';
+    div.textContent = msg;
+    container.appendChild(div);
+    setTimeout(() => {
+      if (div.parentNode) div.parentNode.removeChild(div);
+    }, 2600);
+  }
+
+  showDialogue(npcId, customText = null) {
+    const npc = window.GAME_CONFIG.NPCS[npcId] || window.GAME_CONFIG.NPCS.lumia;
+    const box = document.getElementById('rpg-dialogue');
+    document.getElementById('dlg-avatar').textContent = npc.icon;
+    document.getElementById('dlg-speaker').textContent = `${npc.name} — ${npc.role}`;
+    document.getElementById('dlg-text').textContent = customText || npc.quote;
+    box.classList.add('active');
+  }
+
+  hideDialogue() {
+    document.getElementById('rpg-dialogue').classList.remove('active');
+  }
+
+  updateHUD() {
+    const g = this.game;
+    const season = g.world.getCurrentSeason();
+
+    document.getElementById('hud-gold').textContent = g.gold.toLocaleString('vi-VN');
+    document.getElementById('hud-stars').textContent = g.starShards;
+    document.getElementById('hud-season').textContent = `${season.icon} ${season.name.replace('Mùa ', '')}`;
+    document.getElementById('hud-day').textContent = `Ngày ${g.world.day}`;
+    document.getElementById('hud-clock').textContent = g.world.getFormattedClock();
+
+    const weatherIcons = { sunny: '☀️', rainy: '🌧️', meteor: '🌠' };
+    document.getElementById('hud-weather').textContent = weatherIcons[g.world.weather] || '☀️';
+
+    const energyPct = Math.max(0, Math.min(100, (g.energy / g.maxEnergy) * 100));
+    document.getElementById('energy-bar').style.width = `${energyPct}%`;
+    document.getElementById('energy-text').textContent = `${Math.floor(g.energy)}/${g.maxEnergy}`;
+    document.getElementById('level-text').textContent = `Lv.${g.level}`;
+
+    const smartBtn = document.getElementById('btn-smart-mode');
+    if (smartBtn) {
+      smartBtn.className = g.smartMode ? 'nav-icon-btn active-mode' : 'nav-icon-btn';
+      smartBtn.textContent = g.smartMode ? '✨ 1-Chạm: BẬT' : '🛠️ 1-Chạm: TẮT';
+    }
+
+    this.updateStepGuidePill();
+    this.updateNotificationDots();
+    this.renderSeedStrip();
+    this.renderHotbar();
+  }
+
+  updateStepGuidePill() {
+    const g = this.game;
+    const pill = document.getElementById('step-guide-pill');
+    if (!pill) return;
+
+    if (g.stats.harvested < 2) {
+      pill.textContent = '👆 Bước 1/3: Click vào 2 cây Củ Cải Đỏ đang chín trên cánh đồng để thu hoạch!';
+    } else if (g.stats.harvested === 2 && Object.values(g.seeds).reduce((a, b) => a + b, 0) >= 9) {
+      pill.textContent = '🌱 Bước 2/3: Giữ & kéo chuột trái qua các ô đất trống để gieo hạt và tưới nước!';
+    } else {
+      const chap = window.GAME_CONFIG.STORY_CHAPTERS.find(c => c.chapter === g.storyChapter);
+      if (chap) {
+        if (chap.check(g)) {
+          pill.textContent = `🎁 Chương ${chap.chapter} đã hoàn thành! Click vào đây để nhận thưởng!`;
+        } else {
+          pill.textContent = `🎯 Chương ${chap.chapter}: ${chap.goalDesc} (${chap.progressText(g)})`;
+        }
+      } else {
+        pill.textContent = `🏆 Cây Đại Thụ Cấp 5/5 — Thung Lũng Sao Băng Phồn Thịnh!`;
+      }
+    }
+  }
+
+  updateNotificationDots() {
+    const g = this.game;
+    const chap = window.GAME_CONFIG.STORY_CHAPTERS.find(c => c.chapter === g.storyChapter);
+    const chapReady = chap && chap.check(g);
+    const questReady = g.quests.some(q => g.getQuestProgress(q) >= q.target);
+    const dotQuests = document.getElementById('dot-quests');
+    if (dotQuests) dotQuests.classList.toggle('show', !!(chapReady || questReady));
+
+    const bundleReady = window.GAME_CONFIG.BUNDLES.some(b =>
+      !g.completedBundles.includes(b.id) &&
+      Object.entries(b.requirements).every(([k, q]) => (g.inventory[k] || 0) >= q)
+    );
+    const dotShrine = document.getElementById('dot-shrine');
+    if (dotShrine) dotShrine.classList.toggle('show', !!bundleReady);
+  }
+
+  renderSeedStrip() {
+    const g = this.game;
+    const strip = document.getElementById('seed-strip');
+    if (!strip) return;
+    strip.innerHTML = '';
+
+    Object.values(window.GAME_CONFIG.CROPS).forEach(crop => {
+      const count = g.seeds[crop.id] || 0;
+      const pill = document.createElement('div');
+      pill.className = 'seed-pill' + (g.selectedSeed === crop.id ? ' active' : '');
+      pill.title = `${crop.name} (Đang có: ${count} hạt | Lớn: ${crop.growTime}s)`;
+      pill.onclick = () => {
+        g.selectedSeed = crop.id;
+        this.updateHUD();
+      };
+      pill.innerHTML = `
+        ${this.pixelIconHtml(crop.id, crop.emoji, 20)}
+        <span class="seed-pill-count">${count}</span>
+      `;
+      strip.appendChild(pill);
+    });
+  }
+
+  renderHotbar() {
+    const g = this.game;
+    const tools = [
+      { id: 'smart', key: '1', iconKey: 'tool_smart', emoji: '✨', label: 'Tự Động', count: '' },
+      { id: 'hoe', key: '2', iconKey: 'tool_hoe', emoji: '⛏️', label: 'Cuốc', count: g.upgrades.hoe_2 ? '3x3' : '' },
+      { id: 'water', key: '3', iconKey: 'tool_water', emoji: '💧', label: 'Tưới', count: g.upgrades.watering_can_2 ? '3x3' : '' },
+      { id: 'seed', key: '4', iconKey: 'tool_seed', emoji: '🌱', label: 'Gieo', count: g.seeds[g.selectedSeed] || 0 },
+      { id: 'scythe', key: '5', iconKey: 'tool_scythe', emoji: '🧺', label: 'Gặt', count: '' },
+      { id: 'sprinkler', key: '6', iconKey: 'sprinkler', emoji: '💦', label: 'Vòi 3x3', count: g.devices.sprinkler || 0 },
+      { id: 'lantern', key: '7', iconKey: 'lantern', emoji: '🏮', label: 'Đèn 3x3', count: g.devices.lantern || 0 },
+      { id: 'rod', key: '8', iconKey: 'tool_rod', emoji: '🎣', label: 'Câu Cá', count: '' }
+    ];
+
+    const bar = document.getElementById('hotbar-slots');
+    if (!bar) return;
+    bar.innerHTML = '';
+    tools.forEach(t => {
+      const slot = document.createElement('div');
+      slot.className = 'hotbar-slot' + (g.selectedTool === t.id ? ' selected' : '');
+      slot.onclick = () => g.selectTool(t.id);
+      slot.innerHTML = `
+        <span class="slot-key">${t.key}</span>
+        <span>${this.pixelIconHtml(t.iconKey, t.emoji, 20)}</span>
+        <span class="slot-label">${t.label}</span>
+        ${t.count !== '' ? `<span class="slot-count">${t.count}</span>` : ''}
+      `;
+      bar.appendChild(slot);
+    });
+  }
+
+  updateTileInspector(tile) {
+    const pill = document.getElementById('hover-micro-pill');
+    if (!pill) return;
+    if (!tile) {
+      pill.classList.remove('visible');
+      return;
+    }
+
+    let text = '';
+    if (tile.type === 'sacred_tree') {
+      text = `🏛️ Đền Thờ Đại Thụ Cấp ${this.game.treeLevel}/5 — Click để Hiến Tế`;
+    } else if (tile.type === 'water') {
+      text = `🎣 Hồ Sao Băng — Click để thả câu Cá Chép Koi`;
+    } else if (tile.type === 'shipping_bin') {
+      text = `📦 Thùng Giao Hàng — Click để bán nhanh toàn bộ nông sản`;
+    } else if (tile.type === 'kitchen_oven') {
+      text = `🍳 Nhà Bếp — Click để nấu món ăn (giá trị x2.5)`;
+    } else if (tile.type === 'house_zone') {
+      text = `🏡 Nhà Chính — Click để ngủ qua đêm & hồi 100%⚡`;
+    } else if (tile.crop) {
+      const cCfg = window.GAME_CONFIG.CROPS[tile.crop.id];
+      const pct = Math.min(100, Math.floor(tile.crop.progress * 100));
+      const mutTag = tile.crop.isMutated ? ' [🌠 Ánh Sao x4]' : (tile.crop.isGiant ? ' [✨ Khổng Lồ x3]' : '');
+      text = `${cCfg.emoji} ${cCfg.name} (${pct}%)${mutTag} — ${tile.crop.stage === 4 ? '✔ Click để thu hoạch!' : (tile.watered ? '💧 Đang lớn' : '⚠ Click để tưới nước')}`;
+    } else if (tile.obstacle) {
+      const names = { weed: '🌿 Cỏ Dại', rock: '🪨 Đá Cuội', stump: '🪵 Gốc Cây' };
+      text = `${names[tile.obstacle]} — Click để dọn sạch (+5 XP)`;
+    } else if (tile.device) {
+      const dCfg = window.GAME_CONFIG.DEVICES[tile.device];
+      text = `${dCfg.icon} ${dCfg.name} đang hoạt động`;
+    }
+
+    if (text) {
+      pill.textContent = text;
+      pill.classList.add('visible');
+    } else {
+      pill.classList.remove('visible');
+    }
+  }
+
+  openModalGroup(groupKey, defaultTab = null) {
+    const group = this.MODAL_GROUPS[groupKey] || this.MODAL_GROUPS.shop;
+    this.currentGroup = groupKey;
+    this.activeModalTab = defaultTab || group.tabs[0].id;
+
+    document.getElementById('modal-title-text').textContent = group.title;
+    const tabsBar = document.getElementById('modal-tabs-bar');
+    tabsBar.innerHTML = '';
+    group.tabs.forEach(t => {
+      const btn = document.createElement('button');
+      btn.className = 'tab-btn' + (t.id === this.activeModalTab ? ' active' : '');
+      btn.textContent = t.label;
+      btn.onclick = () => {
+        this.activeModalTab = t.id;
+        this.openModalGroup(groupKey, t.id);
+      };
+      tabsBar.appendChild(btn);
+    });
+
+    document.getElementById('main-modal').classList.add('open');
+    this.renderModalContent();
+  }
+
+  openModal(tabId) {
+    for (const [gKey, gVal] of Object.entries(this.MODAL_GROUPS)) {
+      if (gVal.tabs.some(t => t.id === tabId)) {
+        this.openModalGroup(gKey, tabId);
+        return;
+      }
+    }
+    this.openModalGroup('shop', 'seeds');
+  }
+
+  closeModal() {
+    document.getElementById('main-modal').classList.remove('open');
+  }
+
+  showDaySummaryModal(summaryData) {
+    const modal = document.getElementById('day-summary-modal');
+    const content = document.getElementById('day-summary-body');
+    if (!modal || !content) return;
+
+    const weatherLabels = {
+      sunny: '☀️ Nắng Ấm',
+      rainy: '🌧️ Mưa Rào (Tự tưới cây)',
+      meteor: '🌠 Đêm Mưa Sao Băng'
+    };
+
+    content.innerHTML = `
+      <div style="text-align:center; margin-bottom:10px; font-weight:800; color:#4a2c18;">
+        Khép lại Ngày ${summaryData.endedDay} → Bước sang Ngày ${summaryData.newDay} (${summaryData.seasonName})
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+        <div class="shop-card">
+          <div class="shop-meta">💰 Vàng kiếm được</div>
+          <div class="shop-title" style="font-size:16px; color:#b26a00;">+${summaryData.goldEarnedToday.toLocaleString('vi-VN')}G</div>
+        </div>
+        <div class="shop-card">
+          <div class="shop-meta">🧺 Đã thu hoạch</div>
+          <div class="shop-title" style="font-size:16px; color:#2e7d32;">${summaryData.harvestedToday} nông sản</div>
+        </div>
+        <div class="shop-card">
+          <div class="shop-meta">🌳 Cấp Đại Thụ</div>
+          <div class="shop-title">Cấp ${this.game.treeLevel}/5 (+${Math.round((this.game.getPriceMultiplier() - 1) * 100)}% giá)</div>
+        </div>
+        <div class="shop-card">
+          <div class="shop-meta">🌤️ Thời tiết hôm nay</div>
+          <div class="shop-title" style="color:#1565c0;">${weatherLabels[summaryData.nextWeather]}</div>
+        </div>
+      </div>
+    `;
+    modal.classList.add('open');
+  }
+
+  closeDaySummaryModal() {
+    const modal = document.getElementById('day-summary-modal');
+    if (modal) modal.classList.remove('open');
+  }
+
+  renderModalContent() {
+    const g = this.game;
+    const body = document.getElementById('modal-body-content');
+    body.innerHTML = '';
+
+    // 1. TAB STORY (5 CHƯƠNG NGẮN GỌN, TRỰC QUAN)
+    if (this.activeModalTab === 'story') {
+      window.GAME_CONFIG.STORY_CHAPTERS.forEach(chap => {
+        const isCurrent = chap.chapter === g.storyChapter;
+        const isDone = chap.chapter < g.storyChapter;
+        const canClaim = isCurrent && chap.check(g);
+        const npc = window.GAME_CONFIG.NPCS[chap.npc] || window.GAME_CONFIG.NPCS.lumia;
+
+        const card = document.createElement('div');
+        card.className = 'shop-card';
+        card.style.gridColumn = '1 / -1';
+        if (isCurrent) card.style.borderColor = '#6a1b9a';
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+            <div class="shop-card-top">
+              <div class="shop-icon">${npc.icon}</div>
+              <div>
+                <div class="shop-title">${chap.title}</div>
+                <div class="shop-desc">${chap.goalDesc}</div>
+                <div class="shop-meta" style="margin-top:2px;">
+                  ${isDone ? '✔ Đã hoàn thành' : (isCurrent ? `Tiến độ: ${chap.progressText(g)}` : '🔒 Mở khóa sau chương trước')}
+                </div>
+              </div>
+            </div>
+            <div>
+              ${canClaim
+                ? `<button class="nav-icon-btn gold-btn">🎁 Nhận Thưởng (+${chap.rewardGold}G)</button>`
+                : `<span style="font-size:11.5px; font-weight:800; color:#6a1b9a;">💰+${chap.rewardGold}G | 🌠+${chap.rewardStars}</span>`}
+            </div>
+          </div>
+        `;
+        if (canClaim) {
+          card.querySelector('button').onclick = () => {
+            g.completeStoryChapter();
+            this.renderModalContent();
+          };
+        }
+        body.appendChild(card);
+      });
+      return;
+    }
+
+    // 2. TAB COMMISSIONS (ỦY THÁC DÂN LÀNG)
+    if (this.activeModalTab === 'commissions') {
+      g.quests.forEach(q => {
+        const npc = window.GAME_CONFIG.NPCS[q.npc] || window.GAME_CONFIG.NPCS.bamai;
+        const current = Math.min(q.target, g.getQuestProgress(q));
+        const isDone = current >= q.target;
+
+        const card = document.createElement('div');
+        card.className = 'shop-card';
+        card.innerHTML = `
+          <div class="shop-card-top">
+            <div class="shop-icon">${npc.icon}</div>
+            <div>
+              <div class="shop-title">${q.title}</div>
+              <div class="shop-meta">Tiến độ: ${current}/${q.target}</div>
+              <div class="shop-desc">Thưởng: 💰${q.rewardGold}G + 🌠${q.rewardStars} Sao</div>
+            </div>
+          </div>
+          <button class="nav-icon-btn ${isDone ? 'gold-btn' : ''}" ${!isDone ? 'disabled' : ''}>
+            ${isDone ? '🎁 Nhận Phần Thưởng' : `Đang thực hiện (${current}/${q.target})`}
+          </button>
+        `;
+        if (isDone) {
+          card.querySelector('button').onclick = () => {
+            g.claimQuest(q.id);
+            this.renderModalContent();
+          };
+        }
+        body.appendChild(card);
+      });
+      return;
+    }
+
+    // 3. TAB SEEDS
+    if (this.activeModalTab === 'seeds') {
+      const shortHints = {
+        radish: 'Lớn siêu tốc 15s',
+        strawberry: 'Tự ra quả nhiều lần',
+        pumpkin: 'Trồng 2x2 tạo quả Khổng Lồ',
+        sunflower: 'Tăng +30% tốc độ 8 ô cạnh',
+        eggplant: 'Lớn nhanh x2.2 vào ban đêm',
+        starfruit: 'Tỉ lệ đột biến Ánh Sao x2'
+      };
+      Object.values(window.GAME_CONFIG.CROPS).forEach(crop => {
+        const owned = g.seeds[crop.id] || 0;
+        const card = document.createElement('div');
+        card.className = 'shop-card';
+        card.innerHTML = `
+          <div class="shop-card-top">
+            <div class="shop-icon">${this.pixelIconHtml(crop.id, crop.emoji, 26)}</div>
+            <div>
+              <div class="shop-title">${crop.name}</div>
+              <div class="shop-meta">⏱ ${crop.growTime}s • 💰 Bán ${crop.sellPrice}G</div>
+              <div class="shop-desc">${shortHints[crop.id] || ''}</div>
+            </div>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:11.5px; font-weight:800;">Có: ${owned}</span>
+            <div style="display:flex; gap:5px;">
+              <button class="nav-icon-btn" data-buy="${crop.id}" data-qty="1">+1 (${crop.seedPrice}G)</button>
+              <button class="nav-icon-btn gold-btn" data-buy="${crop.id}" data-qty="5">+5 (${crop.seedPrice * 5}G)</button>
+            </div>
+          </div>
+        `;
+        card.querySelectorAll('button').forEach(btn => {
+          btn.onclick = () => g.buySeed(btn.dataset.buy, parseInt(btn.dataset.qty, 10));
+        });
+        body.appendChild(card);
+      });
+      return;
+    }
+
+    // 4. TAB ANIMALS & DEVICES
+    if (this.activeModalTab === 'animals') {
+      Object.values(window.GAME_CONFIG.ANIMALS).forEach(anim => {
+        const count = g.animals.filter(a => a.typeId === anim.id).length;
+        const card = document.createElement('div');
+        card.className = 'shop-card';
+        card.innerHTML = `
+          <div class="shop-card-top">
+            <div class="shop-icon">${anim.icon}</div>
+            <div>
+              <div class="shop-title">${anim.name}</div>
+              <div class="shop-meta">Tạo ${anim.produceIcon} (${anim.produceValue}G) mỗi ${anim.produceInterval}s</div>
+            </div>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:11.5px; font-weight:800;">Đang nuôi: ${count}</span>
+            <button class="nav-icon-btn gold-btn">Mua (${anim.price}G)</button>
+          </div>
+        `;
+        card.querySelector('button').onclick = () => g.buyAnimal(anim.id);
+        body.appendChild(card);
+      });
+
+      Object.values(window.GAME_CONFIG.DEVICES).forEach(dev => {
+        const count = g.devices[dev.id] || 0;
+        const card = document.createElement('div');
+        card.className = 'shop-card';
+        card.innerHTML = `
+          <div class="shop-card-top">
+            <div class="shop-icon">${this.pixelIconHtml(dev.id, dev.icon, 26)}</div>
+            <div>
+              <div class="shop-title">${dev.name}</div>
+              <div class="shop-meta">${dev.id === 'sprinkler' ? 'Tự động tưới nước vùng 3x3' : 'Tăng x2 đột biến vùng 3x3'}</div>
+            </div>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:11.5px; font-weight:800;">Trong túi: ${count}</span>
+            <button class="nav-icon-btn">Mua (${dev.price}G)</button>
+          </div>
+        `;
+        card.querySelector('button').onclick = () => g.buyDevice(dev.id);
+        body.appendChild(card);
+      });
+      return;
+    }
+
+    // 5. TAB UPGRADES
+    if (this.activeModalTab === 'upgrades') {
+      window.GAME_CONFIG.UPGRADES.forEach(up => {
+        const isOwned = !!g.upgrades[up.id];
+        const card = document.createElement('div');
+        card.className = 'shop-card';
+        card.innerHTML = `
+          <div class="shop-card-top">
+            <div class="shop-icon">${up.icon}</div>
+            <div>
+              <div class="shop-title">${up.name}</div>
+              <div class="shop-desc">${up.desc}</div>
+            </div>
+          </div>
+          <button class="nav-icon-btn ${isOwned ? '' : 'gold-btn'}" ${isOwned ? 'disabled' : ''}>
+            ${isOwned ? '✔ Đã Sở Hữu' : `Nâng Cấp (${up.price}G)`}
+          </button>
+        `;
+        if (!isOwned) {
+          card.querySelector('button').onclick = () => g.buyUpgrade(up.id);
+        }
+        body.appendChild(card);
+      });
+      return;
+    }
+
+    // 6. TAB STAR SHOP
+    if (this.activeModalTab === 'starshop') {
+      window.GAME_CONFIG.STAR_SHOP_ITEMS.forEach(item => {
+        const canBuy = g.starShards >= item.starCost;
+        const card = document.createElement('div');
+        card.className = 'shop-card';
+        card.innerHTML = `
+          <div class="shop-card-top">
+            <div class="shop-icon">${item.icon}</div>
+            <div>
+              <div class="shop-title">${item.name}</div>
+              <div class="shop-desc">${item.desc}</div>
+            </div>
+          </div>
+          <button class="nav-icon-btn purple-btn" ${!canBuy ? 'disabled' : ''}>
+            🌠 Dùng ${item.starCost} Mảnh Sao
+          </button>
+        `;
+        if (canBuy) {
+          card.querySelector('button').onclick = () => g.useStarShopItem(item.id);
+        }
+        body.appendChild(card);
+      });
+      return;
+    }
+
+    // 7. TAB BUNDLES (ĐỀN THỜ ĐẠI THỤ)
+    if (this.activeModalTab === 'bundles') {
+      window.GAME_CONFIG.BUNDLES.forEach(b => {
+        const isDone = g.completedBundles.includes(b.id);
+        const reqListHtml = Object.entries(b.requirements).map(([itemKey, needQty]) => {
+          const haveQty = g.inventory[itemKey] || 0;
+          const ok = haveQty >= needQty;
+          return `<span style="color:${ok ? '#2e7d32' : '#c62828'}; font-weight:700;">${this.pixelIconHtml(itemKey, g.getItemIcon(itemKey), 15)} ${g.getItemLabel(itemKey)}: ${haveQty}/${needQty}</span>`;
+        }).join(' &nbsp;•&nbsp; ');
+
+        const canComplete = !isDone && Object.entries(b.requirements).every(([k, q]) => (g.inventory[k] || 0) >= q);
+
+        const card = document.createElement('div');
+        card.className = 'shop-card';
+        card.innerHTML = `
+          <div>
+            <div class="shop-card-top">
+              <div class="shop-icon">${b.icon}</div>
+              <div>
+                <div class="shop-title">${b.name}</div>
+                <div class="shop-meta">🎁 ${b.rewardText}</div>
+              </div>
+            </div>
+            <div style="background:#f3e2b8; padding:6px 8px; border-radius:6px; font-size:11.5px; margin-top:6px;">
+              ${reqListHtml}
+            </div>
+          </div>
+          <button class="nav-icon-btn ${isDone ? '' : 'gold-btn'}" ${(!canComplete || isDone) ? 'disabled' : ''}>
+            ${isDone ? '✔ Đã Hiến Tế' : '🏛️ Dâng Vật Phẩm'}
+          </button>
+        `;
+        if (canComplete && !isDone) {
+          card.querySelector('button').onclick = () => g.completeBundle(b.id);
+        }
+        body.appendChild(card);
+      });
+      return;
+    }
+
+    // 8. TAB KITCHEN
+    if (this.activeModalTab === 'kitchen') {
+      window.GAME_CONFIG.RECIPES.forEach(rec => {
+        const ingText = Object.entries(rec.ingredients)
+          .map(([k, q]) => `${g.getItemLabel(k)} (${g.inventory[k] || 0}/${q})`)
+          .join(' + ');
+        const canCook = Object.entries(rec.ingredients).every(([k, q]) => (g.inventory[k] || 0) >= q);
+
+        const card = document.createElement('div');
+        card.className = 'shop-card';
+        card.innerHTML = `
+          <div>
+            <div class="shop-card-top">
+              <div class="shop-icon">${rec.icon}</div>
+              <div>
+                <div class="shop-title">${rec.name}</div>
+                <div class="shop-meta">💰 Bán ${rec.sellPrice}G | ⚡ Hồi ${rec.energyRestore}</div>
+              </div>
+            </div>
+            <div style="font-size:11px; font-weight:700; color:#6b3b06; margin-top:6px;">Cần: ${ingText}</div>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="nav-icon-btn gold-btn" data-act="sell" ${!canCook ? 'disabled' : ''}>Bán (+${rec.sellPrice}G)</button>
+            <button class="nav-icon-btn" data-act="eat" ${!canCook ? 'disabled' : ''}>Ăn (⚡+${rec.energyRestore})</button>
+          </div>
+        `;
+        card.querySelector('[data-act="sell"]').onclick = () => g.cookRecipe(rec, false);
+        card.querySelector('[data-act="eat"]').onclick = () => g.cookRecipe(rec, true);
+        body.appendChild(card);
+      });
+      return;
+    }
+
+    // 9. TAB INVENTORY
+    if (this.activeModalTab === 'inventory') {
+      const entries = Object.entries(g.inventory).filter(([, qty]) => qty > 0);
+      if (entries.length === 0) {
+        body.innerHTML = `<div class="banner-box" style="text-align:center; padding:24px;">
+          <h3>🧺 Kho Nông Sản Đang Trống</h3>
+          <p style="margin-top:4px; font-size:12px;">Hãy ra cánh đồng thu hoạch cây chín, nhặt trứng gà hoặc câu cá Koi nhé!</p>
+        </div>`;
+        return;
+      }
+
+      entries.forEach(([key, qty]) => {
+        const unitPrice = g.getItemSellPrice(key);
+        const card = document.createElement('div');
+        card.className = 'shop-card';
+        card.innerHTML = `
+          <div class="shop-card-top">
+            <div class="shop-icon">${this.pixelIconHtml(key, g.getItemIcon(key), 26)}</div>
+            <div>
+              <div class="shop-title">${g.getItemLabel(key)}</div>
+              <div class="shop-meta">Số lượng: ${qty} • Giá: ${unitPrice}G</div>
+            </div>
+          </div>
+          <button class="nav-icon-btn gold-btn">Bán Hết (+${(qty * unitPrice).toLocaleString('vi-VN')}G)</button>
+        `;
+        card.querySelector('button').onclick = () => g.sellInventoryItem(key);
+        body.appendChild(card);
+      });
+      return;
+    }
+
+    // 10. TAB ALMANAC (BÁCH KHOA)
+    if (this.activeModalTab === 'almanac') {
+      const allKeys = [
+        ...Object.keys(window.GAME_CONFIG.CROPS),
+        'egg', 'milk', 'honey', 'fish',
+        ...window.GAME_CONFIG.RECIPES.map(r => r.id)
+      ];
+      const discoveredCount = allKeys.filter(k => (g.discovered[k] || 0) > 0).length;
+      const pct = Math.round((discoveredCount / allKeys.length) * 100);
+
+      const header = document.createElement('div');
+      header.className = 'banner-box';
+      header.innerHTML = `
+        <div style="display:flex; justify-content:space-between; font-weight:800; margin-bottom:4px;">
+          <span>📚 Tiến độ Bách Khoa Nông Trại</span>
+          <span>${discoveredCount}/${allKeys.length} (${pct}%)</span>
+        </div>
+        <div class="bar-track" style="height:9px;">
+          <div class="bar-fill-energy" style="width:${pct}%;"></div>
+        </div>
+      `;
+      body.appendChild(header);
+
+      allKeys.forEach(k => {
+        const count = g.discovered[k] || 0;
+        const isFound = count > 0;
+        const recipeObj = window.GAME_CONFIG.RECIPES.find(r => r.id === k);
+        const label = recipeObj ? recipeObj.name : g.getItemLabel(k);
+        const iconHtml = recipeObj ? recipeObj.icon : this.pixelIconHtml(k, g.getItemIcon(k), 24);
+
+        const card = document.createElement('div');
+        card.className = 'shop-card';
+        card.style.opacity = isFound ? '1' : '0.55';
+        card.innerHTML = `
+          <div class="shop-card-top">
+            <div class="shop-icon">${iconHtml}</div>
+            <div>
+              <div class="shop-title">${isFound ? label : '???'}</div>
+              <div class="shop-meta">${isFound ? `Đã thu thập: ${count}` : 'Chưa khám phá'}</div>
+            </div>
+          </div>
+        `;
+        body.appendChild(card);
+      });
+      return;
+    }
+
+    // 11. TAB RULES (4 THẺ TRỰC QUAN NGẮN GỌN)
+    if (this.activeModalTab === 'rules') {
+      body.innerHTML = `
+        <div class="shop-card">
+          <div class="shop-title">✨ 1. Điều Khiển 1-Chạm & Kéo Chuột</div>
+          <div class="shop-desc">Chỉ cần <b>Click hoặc Giữ & Kéo chuột trái</b> lên ô đất để tự động Cuốc → Gieo → Tưới → Thu hoạch!</div>
+        </div>
+        <div class="shop-card">
+          <div class="shop-title">🎃 2. Cây Khổng Lồ 2×2 (×3 Sản Lượng)</div>
+          <div class="shop-desc">Trồng 4 cây cùng loại tạo thành ô vuông <b>2×2</b> liền kề nhau để hợp nhất thành Cây Khổng Lồ!</div>
+        </div>
+        <div class="shop-card">
+          <div class="shop-title">🌠 3. Cây Ánh Sao (×4 Giá Trị)</div>
+          <div class="shop-desc">Đặt <b>Đèn Đom Đóm</b> gần cây hoặc dùng <b>Mảnh Sao Băng</b> trong Chợ Phép Thuật để đột biến cây!</div>
+        </div>
+        <div class="shop-card">
+          <div class="shop-title">🏛️ 4. Đánh Thức Cây Đại Thụ</div>
+          <div class="shop-desc">Nộp nông sản tại <b>Đền Thờ</b> và hoàn thành <b>5 Chương Nhiệm Vụ</b> để tăng vĩnh viễn giá bán!</div>
+        </div>
+        <div class="banner-box" style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-weight:800; font-size:12.5px;">💾 Quản lý dữ liệu lưu tự động</span>
+          <div style="display:flex; gap:8px;">
+            <button id="btn-export-save" class="nav-icon-btn gold-btn">⬇ Tải File Save (.json)</button>
+            <button id="btn-reset-save" class="nav-icon-btn" style="background:#b71c1c;">🔄 Chơi Lại</button>
+          </div>
+        </div>
+      `;
+      document.getElementById('btn-export-save').onclick = () => g.exportSaveJson();
+      document.getElementById('btn-reset-save').onclick = () => g.resetGameData();
+    }
+  }
+}
+
+window.GameUI = GameUI;
+
+
+/**
+ * ============================================================================
+ * THUNG LŨNG SAO BĂNG (STARLIGHT VALLEY v4.0 - COZY MINIMALIST EDITION)
+ * js/main.js - Vòng lặp Game Loop, Tương tác Kéo Chuột Mượt Mà & Điều Hướng Gọn Gàng
+ * ============================================================================
+ */
+
+class StarlightFarmGame {
+  constructor() {
+    this.canvas = document.getElementById('game-canvas');
+    this.ctx = this.canvas.getContext('2d');
+    this.ctx.imageSmoothingEnabled = false;
+
+    this.world = new window.FarmWorld();
+    this.canvas.width = this.world.cols * this.world.tileSize;
+    this.canvas.height = this.world.rows * this.world.tileSize;
+
+    this.player = new window.PlayerFarmer(3.5 * this.world.tileSize, 3.5 * this.world.tileSize);
+    this.cat = new window.PetCat(2.5 * this.world.tileSize, 3.6 * this.world.tileSize);
+    this.animals = [
+      new window.FarmAnimal('chicken', 520, 140)
+    ];
+
+    this.gold = 260;
+    this.starShards = 2;
+    this.energy = 100;
+    this.maxEnergy = 100;
+    this.level = 1;
+    this.xp = 0;
+    this.xpToNext = 100;
+
+    this.storyChapter = 1;
+    this.treeLevel = 1;
+    this.completedBundles = [];
+
+    this.smartMode = true;
+    this.selectedTool = 'smart';
+    this.selectedSeed = 'radish';
+
+    this.seeds = {
+      radish: 6,
+      strawberry: 2,
+      pumpkin: 1,
+      sunflower: 1,
+      eggplant: 0,
+      starfruit: 0
+    };
+    this.devices = {
+      sprinkler: 1,
+      lantern: 0
+    };
+    this.upgrades = {};
+    this.inventory = {};
+    this.discovered = { radish: 1 };
+    this.stats = {
+      harvested: 0,
+      mutatedHarvested: 0,
+      fishCaught: 0,
+      dishesCooked: 0
+    };
+
+    this.dailyStats = {
+      goldEarned: 0,
+      harvested: 0
+    };
+
+    this.quests = [
+      { id: 'q1', npc: 'bamai', title: 'Bà Mai: Thu hoạch 5 nông sản', type: 'harvest', target: 5, rewardGold: 160, rewardStars: 1 },
+      { id: 'q2', npc: 'bactam', title: 'Bác Tâm: Cây Đột Biến / Khổng Lồ', type: 'mutated', target: 1, rewardGold: 320, rewardStars: 2 },
+      { id: 'q3', npc: 'laokien', title: 'Lão Kiên: Câu 2 Cá Chép Koi', type: 'fish', target: 2, rewardGold: 240, rewardStars: 1 },
+      { id: 'q4', npc: 'colinh', title: 'Cô Linh: Nấu 2 món ăn tại Bếp', type: 'cook', target: 2, rewardGold: 300, rewardStars: 2 }
+    ];
+
+    this.keys = {};
+    this.hoverTile = null;
+    this.isMouseDown = false;
+    this.lastDraggedTileKey = null;
+    this.fishingState = null;
+
+    this.ui = new window.GameUI(this);
+    this.loadGame();
+    this.bindEvents();
+    this.ui.updateHUD();
+
+    this.lastTime = performance.now();
+    requestAnimationFrame(t => this.loop(t));
+  }
+
+  recordDiscovery(key, qty = 1) {
+    this.discovered[key] = (this.discovered[key] || 0) + qty;
+  }
+
+  bindEvents() {
+    window.addEventListener('keydown', e => {
+      this.keys[e.code] = true;
+      if (e.code === 'Digit1') this.selectTool('smart');
+      if (e.code === 'Digit2') this.selectTool('hoe');
+      if (e.code === 'Digit3') this.selectTool('water');
+      if (e.code === 'Digit4') this.selectTool('seed');
+      if (e.code === 'Digit5') this.selectTool('scythe');
+      if (e.code === 'Digit6') this.selectTool('sprinkler');
+      if (e.code === 'Digit7') this.selectTool('lantern');
+      if (e.code === 'Digit8') this.selectTool('rod');
+      if (e.code === 'Escape') {
+        this.ui.closeModal();
+        this.ui.closeDaySummaryModal();
+      }
+      if (e.code === 'KeyQ') {
+        this.ui.openModalGroup('quests');
+      }
+      if (e.code === 'KeyE') {
+        const modal = document.getElementById('main-modal');
+        if (modal.classList.contains('open')) this.ui.closeModal();
+        else this.ui.openModalGroup('shop');
+      }
+      if (e.code === 'Space') {
+        if (this.fishingState && this.fishingState.active) {
+          e.preventDefault();
+          this.resolveFishingStrike();
+        } else {
+          const r = Math.floor(this.player.y / this.world.tileSize);
+          const c = Math.floor(this.player.x / this.world.tileSize);
+          const tile = this.world.getTile(r, c);
+          if (tile) this.interactWithTile(tile);
+        }
+      }
+    });
+
+    window.addEventListener('keyup', e => {
+      this.keys[e.code] = false;
+    });
+
+    window.addEventListener('mouseup', () => {
+      this.isMouseDown = false;
+      this.lastDraggedTileKey = null;
+    });
+
+    this.canvas.addEventListener('mousemove', e => {
+      const rect = this.canvas.getBoundingClientRect();
+      const scaleX = this.canvas.width / rect.width;
+      const scaleY = this.canvas.height / rect.height;
+      const mx = (e.clientX - rect.left) * scaleX;
+      const my = (e.clientY - rect.top) * scaleY;
+      const c = Math.floor(mx / this.world.tileSize);
+      const r = Math.floor(my / this.world.tileSize);
+      this.hoverTile = this.world.getTile(r, c);
+      this.ui.updateTileInspector(this.hoverTile);
+
+      if (this.isMouseDown && this.hoverTile) {
+        const tileKey = `${this.hoverTile.r},${this.hoverTile.c}`;
+        if (tileKey !== this.lastDraggedTileKey) {
+          this.lastDraggedTileKey = tileKey;
+          if (['grass', 'soil'].includes(this.hoverTile.type)) {
+            this.interactWithTile(this.hoverTile);
+          }
+        }
+      }
+    });
+
+    this.canvas.addEventListener('mouseleave', () => {
+      this.hoverTile = null;
+      this.ui.updateTileInspector(null);
+    });
+
+    this.canvas.addEventListener('mousedown', e => {
+      window.SFX.startBGM();
+      if (this.fishingState && this.fishingState.active) {
+        this.resolveFishingStrike();
+        return;
+      }
+
+      this.isMouseDown = true;
+
+      const rect = this.canvas.getBoundingClientRect();
+      const scaleX = this.canvas.width / rect.width;
+      const scaleY = this.canvas.height / rect.height;
+      const mx = (e.clientX - rect.left) * scaleX;
+      const my = (e.clientY - rect.top) * scaleY;
+
+      for (const anim of this.animals) {
+        if (Math.hypot(mx - anim.x, my - anim.y) <= 26) {
+          this.interactWithAnimal(anim);
+          return;
+        }
+      }
+
+      const c = Math.floor(mx / this.world.tileSize);
+      const r = Math.floor(my / this.world.tileSize);
+      const tile = this.world.getTile(r, c);
+      if (!tile) return;
+
+      this.lastDraggedTileKey = `${tile.r},${tile.c}`;
+      const tx = (c + 0.5) * this.world.tileSize;
+      const ty = (r + 0.5) * this.world.tileSize;
+      const dist = Math.hypot(this.player.x - tx, this.player.y - ty);
+
+      if (dist <= this.world.tileSize * 3.2) {
+        this.interactWithTile(tile);
+      } else {
+        this.player.moveTo(tx, ty, () => this.interactWithTile(tile));
+      }
+    });
+
+    document.getElementById('btn-smart-mode').onclick = () => {
+      this.smartMode = !this.smartMode;
+      if (this.smartMode) this.selectedTool = 'smart';
+      this.ui.updateHUD();
+    };
+
+    document.getElementById('step-guide-pill').onclick = () => {
+      const chap = window.GAME_CONFIG.STORY_CHAPTERS.find(c => c.chapter === this.storyChapter);
+      if (chap && chap.check(this)) {
+        this.completeStoryChapter();
+      } else {
+        this.ui.openModalGroup('quests', 'story');
+      }
+    };
+
+    document.getElementById('btn-menu-quests').onclick = () => this.ui.openModalGroup('quests');
+    document.getElementById('btn-menu-shop').onclick = () => this.ui.openModalGroup('shop');
+    document.getElementById('btn-menu-shrine').onclick = () => this.ui.openModalGroup('shrine');
+    document.getElementById('btn-menu-guide').onclick = () => this.ui.openModalGroup('guide');
+
+    document.getElementById('btn-sell-all').onclick = () => this.sellAllInventory();
+    document.getElementById('btn-sleep').onclick = () => this.advanceToNextDay(false);
+    document.getElementById('btn-audio').onclick = (e) => {
+      const muted = window.SFX.toggleMute();
+      e.currentTarget.textContent = muted ? '🔇' : '🔊';
+    };
+
+    document.getElementById('btn-close-modal').onclick = () => this.ui.closeModal();
+    document.getElementById('btn-close-day-summary').onclick = () => this.ui.closeDaySummaryModal();
+    document.getElementById('btn-close-dlg').onclick = () => this.ui.hideDialogue();
+    document.getElementById('btn-strike-fish').onclick = () => this.resolveFishingStrike();
+  }
+
+  selectTool(toolId) {
+    this.selectedTool = toolId;
+    this.smartMode = (toolId === 'smart');
+    this.ui.updateHUD();
+  }
+
+  useStarShopItem(itemId) {
+    const item = window.GAME_CONFIG.STAR_SHOP_ITEMS.find(x => x.id === itemId);
+    if (!item || this.starShards < item.starCost) return;
+
+    if (itemId === 'instant_grow') {
+      let grown = 0;
+      for (let r = 0; r < this.world.rows; r++) {
+        for (let c = 0; c < this.world.cols; c++) {
+          const t = this.world.tiles[r][c];
+          if (t.crop && t.crop.stage < 4) {
+            t.crop.progress = 1;
+            t.crop.stage = 4;
+            t.watered = true;
+            grown++;
+            this.world.spawnParticles((c + 0.5) * this.world.tileSize, (r + 0.5) * this.world.tileSize, '#76ff03', 8);
+          }
+        }
+      }
+      if (grown === 0) {
+        this.ui.showToast('🌱 Chưa có cây đang lớn trên cánh đồng! Hãy gieo hạt trước nhé.');
+        return;
+      }
+      this.starShards -= item.starCost;
+      this.world.checkGiantCrops();
+      window.SFX.playStar();
+      this.ui.showToast(`✨ Phép màu Tinh Linh! Đã làm chín tức thì ${grown} cây trồng!`);
+    } else if (itemId === 'star_mutate_3') {
+      const candidates = [];
+      for (let r = 0; r < this.world.rows; r++) {
+        for (let c = 0; c < this.world.cols; c++) {
+          const t = this.world.tiles[r][c];
+          if (t.crop && !t.crop.isMutated) candidates.push(t);
+        }
+      }
+      if (candidates.length === 0) {
+        this.ui.showToast('🌱 Hãy gieo cây trên đồng trước khi dùng Tinh Thể Đột Biến nhé!');
+        return;
+      }
+      this.starShards -= item.starCost;
+      candidates.slice(0, 3).forEach(t => {
+        t.crop.isMutated = true;
+        t.crop.stage = 4;
+        t.crop.progress = 1;
+        this.world.spawnParticles((t.c + 0.5) * this.world.tileSize, (t.r + 0.5) * this.world.tileSize, '#e040fb', 15);
+      });
+      window.SFX.playStar();
+      this.ui.showToast('🌈 Đã biến cây trồng thành Cây Ánh Sao (x4 giá trị)!');
+    } else if (itemId === 'summon_rain') {
+      this.starShards -= item.starCost;
+      this.world.weather = 'rainy';
+      this.energy = Math.min(this.maxEnergy, this.energy + 50);
+      for (let r = 0; r < this.world.rows; r++) {
+        for (let c = 0; c < this.world.cols; c++) {
+          if (this.world.tiles[r][c].type === 'soil') {
+            this.world.tiles[r][c].watered = true;
+          }
+        }
+      }
+      window.SFX.playWater();
+      this.ui.showToast('🌧️ Mưa Rào đã tới! Toàn bộ ô đất đã được tưới ẩm & hồi +50⚡!');
+    } else if (itemId === 'summon_meteor') {
+      this.summonMeteorShower();
+      this.ui.closeModal();
+      return;
+    }
+
+    this.ui.updateHUD();
+    this.ui.renderModalContent();
+    this.saveGame();
+  }
+
+  completeStoryChapter() {
+    const chap = window.GAME_CONFIG.STORY_CHAPTERS.find(c => c.chapter === this.storyChapter);
+    if (!chap || !chap.check(this)) return;
+
+    this.gold += chap.rewardGold;
+    this.dailyStats.goldEarned += chap.rewardGold;
+    this.starShards += chap.rewardStars;
+    this.treeLevel = Math.min(5, this.storyChapter + 1);
+    if (chap.chapter === 2) {
+      this.devices.sprinkler = (this.devices.sprinkler || 0) + 1;
+    }
+    this.storyChapter += 1;
+
+    window.SFX.playLevelUp();
+    this.world.spawnParticles(7.5 * this.world.tileSize, 1.5 * this.world.tileSize, '#ea80fc', 28);
+    this.ui.showToast(`🌟 ${chap.unlockText}`);
+
+    const nextChap = window.GAME_CONFIG.STORY_CHAPTERS.find(c => c.chapter === this.storyChapter);
+    if (nextChap) {
+      this.ui.showDialogue(nextChap.npc, nextChap.introText);
+    } else {
+      this.ui.showDialogue('lumia', 'Chúc mừng bạn! Cây Đại Thụ Ánh Sao đã thức tỉnh hoàn toàn!');
+    }
+
+    this.ui.updateHUD();
+    this.saveGame();
+  }
+
+  completeBundle(bundleId) {
+    if (this.completedBundles.includes(bundleId)) return;
+    const b = window.GAME_CONFIG.BUNDLES.find(x => x.id === bundleId);
+    if (!b) return;
+
+    for (const [k, q] of Object.entries(b.requirements)) {
+      if ((this.inventory[k] || 0) < q) return;
+    }
+    for (const [k, q] of Object.entries(b.requirements)) {
+      this.inventory[k] -= q;
+    }
+
+    this.completedBundles.push(bundleId);
+    this.gold += b.rewardGold;
+    this.dailyStats.goldEarned += b.rewardGold;
+    this.starShards += b.rewardStars;
+    if (b.rewardDevice) {
+      this.devices[b.rewardDevice] = (this.devices[b.rewardDevice] || 0) + 1;
+    }
+    if (b.rewardSeed) {
+      this.seeds[b.rewardSeed.id] = (this.seeds[b.rewardSeed.id] || 0) + b.rewardSeed.qty;
+    }
+    this.treeLevel = Math.min(5, Math.max(this.treeLevel, this.completedBundles.length + 1));
+    this.addXP(65);
+
+    window.SFX.playStar();
+    this.world.spawnParticles(7.5 * this.world.tileSize, 1.5 * this.world.tileSize, '#ffd700', 26);
+    this.ui.showToast(`🏛️ Đã hiến tế "${b.name}"! Nhận ${b.rewardText}`);
+    this.ui.updateHUD();
+    this.ui.renderModalContent();
+    this.saveGame();
+  }
+
+  interactWithAnimal(anim) {
+    window.SFX.playPet();
+    if (anim.hasProductReady) {
+      anim.hasProductReady = false;
+      const isGolden = anim.affection >= 2 && Math.random() < 0.5;
+      const prodKey = anim.cfg.produceId;
+      const qty = isGolden ? 2 : 1;
+      this.inventory[prodKey] = (this.inventory[prodKey] || 0) + qty;
+      this.recordDiscovery(prodKey, qty);
+      this.addXP(15);
+      this.world.spawnParticles(anim.x, anim.y, '#ffd700', 12);
+      this.world.spawnFloatingText(
+        anim.x,
+        anim.y - 16,
+        `+${qty} ${isGolden ? anim.cfg.goldenProduceName : anim.cfg.produceName}!`,
+        '#ffd54f'
+      );
+      this.ui.updateHUD();
+      this.saveGame();
+    } else {
+      anim.affection += 1;
+      this.world.spawnParticles(anim.x, anim.y - 10, '#ff4081', 8);
+      this.world.spawnFloatingText(anim.x, anim.y - 16, '💕 Thân thiết +1!', '#ff80ab');
+    }
+  }
+
+  interactWithTile(tile) {
+    this.player.actionAnimTimer = 0.25;
+    const px = (tile.c + 0.5) * this.world.tileSize;
+    const py = (tile.r + 0.5) * this.world.tileSize;
+
+    if (tile.type === 'sacred_tree') {
+      this.ui.openModalGroup('shrine', 'bundles');
+      return;
+    }
+    if (tile.type === 'house_zone') {
+      this.advanceToNextDay(false);
+      return;
+    }
+    if (tile.type === 'shipping_bin') {
+      this.sellAllInventory();
+      return;
+    }
+    if (tile.type === 'kitchen_oven') {
+      this.ui.openModalGroup('shrine', 'kitchen');
+      return;
+    }
+    if (tile.type === 'water' || this.selectedTool === 'rod') {
+      if (tile.type === 'water') {
+        this.startFishingMinigame();
+        return;
+      }
+    }
+
+    if (this.selectedTool === 'sprinkler' || this.selectedTool === 'lantern') {
+      const devId = this.selectedTool;
+      if ((this.devices[devId] || 0) <= 0) {
+        this.ui.showToast('⚠ Bạn chưa có thiết bị này! Hãy mua trong Cửa Hàng.');
+        return;
+      }
+      if (tile.device || tile.obstacle) {
+        this.ui.showToast('⚠ Ô đất này đang vướng vật cản!');
+        return;
+      }
+      this.devices[devId] -= 1;
+      tile.device = devId;
+      window.SFX.playPlant();
+      this.world.spawnParticles(px, py, '#4fc3f7', 10);
+      this.ui.updateHUD();
+      this.saveGame();
+      return;
+    }
+
+    if (tile.obstacle) {
+      if (!this.consumeEnergy(1.5)) return;
+      tile.obstacle = null;
+      this.addXP(5);
+      window.SFX.playHoe();
+      this.world.spawnParticles(px, py, '#a5d6a7', 10);
+      this.world.spawnFloatingText(px, py - 8, '+5 XP Dọn đất!', '#a5d6a7');
+      this.ui.updateHUD();
+      return;
+    }
+
+    if (this.smartMode || this.selectedTool === 'smart') {
+      if (tile.crop && tile.crop.stage === 4) {
+        this.harvestTile(tile, false);
+      } else if (tile.type === 'grass') {
+        this.useHoeOnTile(tile);
+      } else if (tile.type === 'soil' && !tile.crop) {
+        if ((this.seeds[this.selectedSeed] || 0) > 0) {
+          this.plantSeedOnTile(tile);
+        } else if (!tile.watered) {
+          this.waterTile(tile);
+        } else {
+          this.checkSoftlockRelief();
+          this.ui.showToast('🌱 Hết hạt giống đang chọn! Hãy chọn hạt khác ở góc trái trên hoặc mở Cửa Hàng.');
+        }
+      } else if (tile.type === 'soil' && tile.crop && !tile.watered) {
+        this.waterTile(tile);
+      }
+      return;
+    }
+
+    if (this.selectedTool === 'hoe') this.useHoeOnTile(tile);
+    else if (this.selectedTool === 'water') this.waterTile(tile);
+    else if (this.selectedTool === 'seed') this.plantSeedOnTile(tile);
+    else if (this.selectedTool === 'scythe' && tile.crop && tile.crop.stage === 4) {
+      this.harvestTile(tile, false);
+    }
+  }
+
+  useHoeOnTile(centerTile) {
+    if (!this.consumeEnergy(1.5)) return;
+    const radius = this.upgrades.hoe_2 ? 1 : 0;
+    let count = 0;
+    for (let dr = -radius; dr <= radius; dr++) {
+      for (let dc = -radius; dc <= radius; dc++) {
+        const t = this.world.getTile(centerTile.r + dr, centerTile.c + dc);
+        if (t && t.type === 'grass' && !t.obstacle) {
+          t.type = 'soil';
+          count++;
+          this.world.spawnParticles((t.c + 0.5) * this.world.tileSize, (t.r + 0.5) * this.world.tileSize, '#b57c4a', 6);
+        }
+      }
+    }
+    if (count > 0) {
+      window.SFX.playHoe();
+      this.addXP(count * 2);
+      this.ui.updateHUD();
+      this.saveGame();
+    }
+  }
+
+  plantSeedOnTile(tile) {
+    if (tile.type !== 'soil' || tile.crop) return;
+    const seedId = this.selectedSeed;
+    if ((this.seeds[seedId] || 0) <= 0) {
+      this.checkSoftlockRelief();
+      this.ui.showToast('🌱 Đã hết hạt giống loại này! Hãy ghé Cửa Hàng mua thêm.');
+      return;
+    }
+    this.seeds[seedId] -= 1;
+    tile.crop = { id: seedId, stage: 0, progress: 0, isMutated: false, isGiant: false };
+    window.SFX.playPlant();
+    const px = (tile.c + 0.5) * this.world.tileSize;
+    const py = (tile.r + 0.5) * this.world.tileSize;
+    this.world.spawnParticles(px, py, '#ffe082', 6);
+    if (this.smartMode && !tile.watered && this.energy >= 1.5) {
+      this.waterTile(tile);
+    }
+    this.ui.updateHUD();
+    this.saveGame();
+  }
+
+  waterTile(centerTile) {
+    if (!this.consumeEnergy(1.0)) return;
+    const radius = this.upgrades.watering_can_2 ? 1 : 0;
+    let wateredAny = false;
+    for (let dr = -radius; dr <= radius; dr++) {
+      for (let dc = -radius; dc <= radius; dc++) {
+        const t = this.world.getTile(centerTile.r + dr, centerTile.c + dc);
+        if (t && t.type === 'soil' && !t.watered) {
+          t.watered = true;
+          wateredAny = true;
+          this.world.spawnParticles((t.c + 0.5) * this.world.tileSize, (t.r + 0.5) * this.world.tileSize, '#4fc3f7', 7);
+        }
+      }
+    }
+    if (wateredAny) {
+      window.SFX.playWater();
+      this.addXP(2);
+      this.ui.updateHUD();
+      this.saveGame();
+    }
+  }
+
+  harvestTile(tile, byCat = false) {
+    if (!tile.crop || tile.crop.stage < 4) return;
+    const cfg = window.GAME_CONFIG.CROPS[tile.crop.id];
+    const px = (tile.c + 0.5) * this.world.tileSize;
+    const py = (tile.r + 0.5) * this.world.tileSize;
+
+    const yieldQty = tile.crop.isGiant ? 3 : 1;
+    const isMutated = tile.crop.isMutated;
+
+    this.inventory[cfg.id] = (this.inventory[cfg.id] || 0) + yieldQty;
+    this.recordDiscovery(cfg.id, yieldQty);
+    this.stats.harvested += yieldQty;
+    this.dailyStats.harvested += yieldQty;
+
+    if (isMutated || tile.crop.isGiant) {
+      this.stats.mutatedHarvested += 1;
+      const bonusGold = Math.round(cfg.sellPrice * (isMutated ? 2.5 : 1.5));
+      this.gold += bonusGold;
+      this.dailyStats.goldEarned += bonusGold;
+      this.starShards += isMutated ? 1 : 0;
+      this.world.spawnFloatingText(px, py - 24, `🌟 ĐỘT BIẾN +${bonusGold}G!`, '#e040fb');
+    }
+
+    this.addXP(cfg.xp * yieldQty);
+    window.SFX.playHarvest();
+    this.world.spawnParticles(px, py, cfg.color, 14);
+    this.world.spawnFloatingText(
+      px,
+      py - 8,
+      `${byCat ? '🐱 Mèo thu ' : ''}+${yieldQty} ${cfg.name}`,
+      '#fff59d'
+    );
+
+    if (cfg.regrow) {
+      tile.crop.stage = cfg.regrowStage || 2;
+      tile.crop.progress = 0.5;
+      tile.crop.isMutated = false;
+      tile.crop.isGiant = false;
+      tile.watered = false;
+    } else {
+      tile.crop = null;
+      tile.watered = false;
+    }
+
+    this.ui.updateHUD();
+    this.saveGame();
+  }
+
+  startFishingMinigame() {
+    if (!this.consumeEnergy(4)) return;
+    const uiBox = document.getElementById('fishing-bar-ui');
+    const sweet = document.getElementById('fish-sweet-spot');
+    const sweetLeft = 22 + Math.random() * 45;
+    const sweetWidth = 25;
+
+    sweet.style.left = `${sweetLeft}%`;
+    sweet.style.width = `${sweetWidth}%`;
+    uiBox.classList.add('active');
+
+    this.fishingState = {
+      active: true,
+      cursor: 0,
+      dir: 1,
+      speed: 92,
+      sweetMin: sweetLeft,
+      sweetMax: sweetLeft + sweetWidth
+    };
+  }
+
+  resolveFishingStrike() {
+    if (!this.fishingState || !this.fishingState.active) return;
+    const st = this.fishingState;
+    st.active = false;
+    document.getElementById('fishing-bar-ui').classList.remove('active');
+
+    if (st.cursor >= st.sweetMin && st.cursor <= st.sweetMax) {
+      window.SFX.playHarvest();
+      this.stats.fishCaught += 1;
+      const winterBonus = this.world.getCurrentSeason().id === 'winter' ? 2 : 1;
+      this.inventory.fish = (this.inventory.fish || 0) + winterBonus;
+      this.recordDiscovery('fish', winterBonus);
+      this.addXP(25);
+      if (Math.random() < 0.35) {
+        this.starShards += 1;
+        this.gold += 85;
+        this.dailyStats.goldEarned += 85;
+        this.ui.showToast(`🎣 Câu được +${winterBonus} Cá Chép Koi & Rương Kho Báu (+85G, +1 🌠 Sao)!`);
+      } else {
+        this.ui.showToast(`🐟 Cắn câu chuẩn xác! +${winterBonus} Cá Chép Koi vào Kho!`);
+      }
+    } else {
+      window.SFX.playHoe();
+      this.ui.showToast('💦 Cá vùng thoát mất rồi! Hãy canh đúng vạch xanh lá nhé.');
+    }
+    this.ui.updateHUD();
+    this.saveGame();
+  }
+
+  buySeed(cropId, qty) {
+    const cfg = window.GAME_CONFIG.CROPS[cropId];
+    const cost = cfg.seedPrice * qty;
+    if (this.gold < cost) {
+      this.ui.showToast('⚠ Không đủ Vàng! Hãy bán nông sản trước nhé.');
+      return;
+    }
+    this.gold -= cost;
+    this.seeds[cropId] = (this.seeds[cropId] || 0) + qty;
+    this.selectedSeed = cropId;
+    window.SFX.playCoin();
+    this.ui.updateHUD();
+    this.ui.renderModalContent();
+    this.saveGame();
+  }
+
+  buyAnimal(typeId) {
+    const cfg = window.GAME_CONFIG.ANIMALS[typeId];
+    if (this.gold < cfg.price) {
+      this.ui.showToast('⚠ Không đủ Vàng để nhận nuôi!');
+      return;
+    }
+    this.gold -= cfg.price;
+    const ax = 480 + Math.random() * 200;
+    const ay = 110 + Math.random() * 140;
+    this.animals.push(new window.FarmAnimal(typeId, ax, ay));
+    window.SFX.playLevelUp();
+    this.ui.showToast(`🎉 Đã đón ${cfg.icon} ${cfg.name} về nông trại!`);
+    this.ui.updateHUD();
+    this.ui.renderModalContent();
+    this.saveGame();
+  }
+
+  buyDevice(devId) {
+    const cfg = window.GAME_CONFIG.DEVICES[devId];
+    if (this.gold < cfg.price) {
+      this.ui.showToast('⚠ Không đủ Vàng!');
+      return;
+    }
+    this.gold -= cfg.price;
+    this.devices[devId] = (this.devices[devId] || 0) + 1;
+    this.selectTool(devId);
+    window.SFX.playCoin();
+    this.ui.showToast(`🛠️ Đã mua ${cfg.name}! Di chuột lên bản đồ để lắp đặt.`);
+    this.ui.updateHUD();
+    this.ui.renderModalContent();
+    this.saveGame();
+  }
+
+  buyUpgrade(upId) {
+    const up = window.GAME_CONFIG.UPGRADES.find(u => u.id === upId);
+    if (!up || this.upgrades[upId]) return;
+    if (this.gold < up.price) {
+      this.ui.showToast('⚠ Không đủ Vàng để nâng cấp!');
+      return;
+    }
+    this.gold -= up.price;
+    this.upgrades[upId] = true;
+    if (upId === 'cat_skill') this.cat.upgraded = true;
+    window.SFX.playLevelUp();
+    this.ui.showToast(`🌟 Nâng cấp thành công: ${up.name}!`);
+    this.ui.updateHUD();
+    this.ui.renderModalContent();
+    this.saveGame();
+  }
+
+  cookRecipe(recipe, eatNow) {
+    for (const [k, q] of Object.entries(recipe.ingredients)) {
+      if ((this.inventory[k] || 0) < q) return;
+    }
+    for (const [k, q] of Object.entries(recipe.ingredients)) {
+      this.inventory[k] -= q;
+    }
+    this.stats.dishesCooked += 1;
+    this.recordDiscovery(recipe.id, 1);
+    this.addXP(30);
+
+    if (eatNow) {
+      this.energy = Math.min(this.maxEnergy, this.energy + recipe.energyRestore);
+      this.player.speedBoostTimer = 45;
+      window.SFX.playLevelUp();
+      this.ui.showToast(`😋 Ăn ${recipe.icon} ${recipe.name}: Hồi +${recipe.energyRestore}⚡ & Tăng tốc!`);
+    } else {
+      const earned = Math.round(recipe.sellPrice * this.getPriceMultiplier());
+      this.gold += earned;
+      this.dailyStats.goldEarned += earned;
+      window.SFX.playCoin();
+      this.ui.showToast(`💰 Đã bán ${recipe.icon} ${recipe.name} thu về +${earned}G!`);
+    }
+    this.ui.updateHUD();
+    this.ui.renderModalContent();
+    this.saveGame();
+  }
+
+  getPriceMultiplier() {
+    let mult = 1.0 + (this.treeLevel - 1) * 0.12;
+    if (this.upgrades.greenhouse_charm) mult += 0.35;
+    if (this.storyChapter > 5) mult += 0.25;
+    return mult;
+  }
+
+  getItemLabel(key) {
+    if (window.GAME_CONFIG.CROPS[key]) return window.GAME_CONFIG.CROPS[key].name;
+    const map = { egg: 'Trứng Gà Tươi', milk: 'Sữa Tươi', honey: 'Mật Ong Rừng', fish: 'Cá Chép Koi' };
+    return map[key] || key;
+  }
+
+  getItemIcon(key) {
+    if (window.GAME_CONFIG.CROPS[key]) return window.GAME_CONFIG.CROPS[key].emoji;
+    const map = { egg: '🥚', milk: '🥛', honey: '🍯', fish: '🐟' };
+    return map[key] || '📦';
+  }
+
+  getItemSellPrice(key) {
+    let mult = this.getPriceMultiplier();
+    const season = this.world.getCurrentSeason();
+    if (season.id === 'autumn' && (key === 'pumpkin' || key === 'eggplant')) {
+      mult += 0.25;
+    }
+    if (window.GAME_CONFIG.CROPS[key]) {
+      return Math.round(window.GAME_CONFIG.CROPS[key].sellPrice * mult);
+    }
+    const base = { egg: 48, milk: 115, honey: 90, fish: 95 }[key] || 30;
+    return Math.round(base * mult);
+  }
+
+  sellInventoryItem(key) {
+    const qty = this.inventory[key] || 0;
+    if (qty <= 0) return;
+    const total = qty * this.getItemSellPrice(key);
+    this.inventory[key] = 0;
+    this.gold += total;
+    this.dailyStats.goldEarned += total;
+    window.SFX.playCoin();
+    this.ui.showToast(`💰 Đã bán ${qty} ${this.getItemLabel(key)} (+${total.toLocaleString('vi-VN')}G)!`);
+    this.ui.updateHUD();
+    this.ui.renderModalContent();
+    this.saveGame();
+  }
+
+  sellAllInventory() {
+    let total = 0;
+    Object.keys(this.inventory).forEach(k => {
+      const qty = this.inventory[k] || 0;
+      if (qty > 0) {
+        total += qty * this.getItemSellPrice(k);
+        this.inventory[k] = 0;
+      }
+    });
+    if (total === 0) {
+      this.ui.showToast('📦 Kho nông sản đang trống! Hãy thu hoạch cây chín trước nhé.');
+      return;
+    }
+    this.gold += total;
+    this.dailyStats.goldEarned += total;
+    window.SFX.playCoin();
+    this.world.spawnParticles(4.5 * this.world.tileSize, 2.5 * this.world.tileSize, '#ffd700', 22);
+    this.ui.showToast(`🚚 Đã bán toàn bộ nông sản: +${total.toLocaleString('vi-VN')} Vàng!`);
+    this.ui.updateHUD();
+    this.saveGame();
+  }
+
+  checkSoftlockRelief() {
+    const totalSeeds = Object.values(this.seeds).reduce((a, b) => a + b, 0);
+    const totalInv = Object.values(this.inventory).reduce((a, b) => a + b, 0);
+    let plantedCount = 0;
+    for (let r = 0; r < this.world.rows; r++) {
+      for (let c = 0; c < this.world.cols; c++) {
+        if (this.world.tiles[r][c].crop) plantedCount++;
+      }
+    }
+    if (this.gold < 15 && totalSeeds === 0 && totalInv === 0 && plantedCount === 0) {
+      this.seeds.radish = 4;
+      this.selectedSeed = 'radish';
+      this.ui.showDialogue('bamai', 'Bà Mai tặng cháu 4 túi hạt Củ Cải Đỏ miễn phí để tiếp tục canh tác nhé!');
+      this.ui.updateHUD();
+    }
+  }
+
+  getQuestProgress(q) {
+    if (q.type === 'harvest') return this.stats.harvested;
+    if (q.type === 'mutated') return this.stats.mutatedHarvested;
+    if (q.type === 'fish') return this.stats.fishCaught;
+    if (q.type === 'cook') return this.stats.dishesCooked;
+    return 0;
+  }
+
+  claimQuest(qId) {
+    const idx = this.quests.findIndex(q => q.id === qId);
+    if (idx === -1) return;
+    const q = this.quests[idx];
+    this.gold += q.rewardGold;
+    this.dailyStats.goldEarned += q.rewardGold;
+    this.starShards += q.rewardStars;
+    this.addXP(45);
+    window.SFX.playLevelUp();
+    this.ui.showToast(`🎁 Hoàn thành ủy thác! +${q.rewardGold}G & +${q.rewardStars} 🌠 Sao!`);
+
+    q.target = Math.round(q.target * 1.7) + 2;
+    q.rewardGold = Math.round(q.rewardGold * 1.5);
+    this.ui.updateHUD();
+    this.saveGame();
+  }
+
+  summonMeteorShower() {
+    if (this.starShards < 2) {
+      this.ui.showToast('🌠 Cần 2 Mảnh Sao Băng để triệu hồi Đêm Mưa Sao Băng!');
+      return;
+    }
+    this.starShards -= 2;
+    this.world.weather = 'meteor';
+    this.world.timeOfDay = 0.80;
+    window.SFX.playStar();
+    this.world.triggerMeteorImpact();
+    setTimeout(() => this.world.triggerMeteorImpact(), 850);
+    this.ui.showToast('🌠 ĐÊM MƯA SAO BĂNG ĐÃ BẮT ĐẦU!');
+    this.ui.updateHUD();
+  }
+
+  advanceToNextDay(autoFromClock = false) {
+    const endedDay = this.world.day;
+    const goldToday = this.dailyStats.goldEarned;
+    const harvToday = this.dailyStats.harvested;
+
+    this.world.day += 1;
+    this.world.timeOfDay = 0.26;
+    this.energy = this.maxEnergy;
+    this.dailyStats = { goldEarned: 0, harvested: 0 };
+
+    const newSeasonIdx = Math.floor((this.world.day - 1) / window.GAME_CONFIG.DAYS_PER_SEASON) % 4;
+    this.world.seasonIndex = newSeasonIdx;
+
+    const r = Math.random();
+    if (r < 0.30) {
+      this.world.weather = 'rainy';
+    } else if (r < 0.48 || this.upgrades.greenhouse_charm || this.world.getCurrentSeason().id === 'winter') {
+      this.world.weather = 'meteor';
+    } else {
+      this.world.weather = 'sunny';
+    }
+
+    for (let row = 0; row < this.world.rows; row++) {
+      for (let col = 0; col < this.world.cols; col++) {
+        const t = this.world.tiles[row][col];
+        if (t.crop && t.watered && t.crop.stage < 4) {
+          t.crop.progress = Math.min(1, t.crop.progress + 0.45);
+          t.crop.stage = Math.min(4, Math.floor(t.crop.progress * 4));
+        }
+        if (this.world.weather !== 'rainy') {
+          t.watered = false;
+        } else if (t.type === 'soil') {
+          t.watered = true;
+        }
+      }
+    }
+    this.world.checkGiantCrops();
+    this.checkSoftlockRelief();
+
+    window.SFX.playLevelUp();
+    const s = this.world.getCurrentSeason();
+    if (!autoFromClock) {
+      this.ui.showDaySummaryModal({
+        endedDay,
+        newDay: this.world.day,
+        seasonName: `${s.icon} ${s.name}`,
+        goldEarnedToday: goldToday,
+        harvestedToday: harvToday,
+        nextWeather: this.world.weather
+      });
+    } else {
+      this.ui.showToast(`🌅 Bước sang Ngày ${this.world.day}! Năng lượng đã hồi 100%!`);
+    }
+
+    this.ui.updateHUD();
+    this.saveGame();
+  }
+
+  consumeEnergy(amount) {
+    const discount = this.storyChapter >= 4 ? 0.75 : 1.0;
+    const finalCost = amount * discount;
+    if (this.energy < finalCost) {
+      this.ui.showToast('😴 Hết năng lượng! Hãy bấm "🌙 Ngủ" ở góc dưới để sang ngày mới nhé!');
+      return false;
+    }
+    this.energy -= finalCost;
+    return true;
+  }
+
+  addXP(amount) {
+    this.xp += amount;
+    if (this.xp >= this.xpToNext) {
+      this.xp -= this.xpToNext;
+      this.level += 1;
+      this.xpToNext = Math.round(this.xpToNext * 1.35);
+      this.maxEnergy += 15;
+      this.energy = this.maxEnergy;
+      this.gold += this.level * 50;
+      window.SFX.playLevelUp();
+      this.ui.showToast(`🎉 LÊN CẤP ${this.level}! Năng lượng tối đa +15 & Thưởng +${this.level * 50}G!`);
+    }
+  }
+
+  exportSaveJson() {
+    this.saveGame();
+    const raw = localStorage.getItem('starlight_valley_save_v4') || '{}';
+    const blob = new Blob([raw], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `thung_lung_sao_bang_day_${this.world.day}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    this.ui.showToast('💾 Đã tải file bản lưu (.json) về máy!');
+  }
+
+  resetGameData() {
+    localStorage.removeItem('starlight_valley_save_v4');
+    localStorage.removeItem('starlight_valley_save_v3');
+    localStorage.removeItem('starlight_valley_save_v2');
+    window.location.reload();
+  }
+
+  saveGame() {
+    try {
+      const data = {
+        gold: this.gold,
+        starShards: this.starShards,
+        energy: this.energy,
+        maxEnergy: this.maxEnergy,
+        level: this.level,
+        xp: this.xp,
+        xpToNext: this.xpToNext,
+        storyChapter: this.storyChapter,
+        treeLevel: this.treeLevel,
+        completedBundles: this.completedBundles,
+        seeds: this.seeds,
+        devices: this.devices,
+        upgrades: this.upgrades,
+        inventory: this.inventory,
+        discovered: this.discovered,
+        stats: this.stats,
+        day: this.world.day,
+        seasonIndex: this.world.seasonIndex,
+        tiles: this.world.tiles,
+        animalTypes: this.animals.map(a => a.typeId)
+      };
+      localStorage.setItem('starlight_valley_save_v4', JSON.stringify(data));
+    } catch (e) {}
+  }
+
+  loadGame() {
+    try {
+      const raw =
+        localStorage.getItem('starlight_valley_save_v4') ||
+        localStorage.getItem('starlight_valley_save_v3') ||
+        localStorage.getItem('starlight_valley_save_v2');
+      if (!raw) return false;
+      const data = JSON.parse(raw);
+      if (data && data.tiles && data.tiles.length === this.world.rows) {
+        this.gold = data.gold ?? this.gold;
+        this.starShards = data.starShards ?? this.starShards;
+        this.energy = data.energy ?? this.energy;
+        this.maxEnergy = data.maxEnergy ?? this.maxEnergy;
+        this.level = data.level ?? this.level;
+        this.xp = data.xp ?? this.xp;
+        this.xpToNext = data.xpToNext ?? this.xpToNext;
+        this.storyChapter = data.storyChapter ?? 1;
+        this.treeLevel = data.treeLevel ?? 1;
+        this.completedBundles = data.completedBundles || [];
+        this.seeds = { ...this.seeds, ...(data.seeds || {}) };
+        this.devices = { ...this.devices, ...(data.devices || {}) };
+        this.upgrades = data.upgrades || {};
+        this.inventory = data.inventory || {};
+        this.discovered = { ...this.discovered, ...(data.discovered || {}) };
+        this.stats = { ...this.stats, ...(data.stats || {}) };
+        this.world.day = data.day || 1;
+        this.world.seasonIndex = data.seasonIndex || 0;
+        this.world.tiles = data.tiles;
+        if (this.upgrades.cat_skill) this.cat.upgraded = true;
+        if (Array.isArray(data.animalTypes) && data.animalTypes.length > 0) {
+          this.animals = data.animalTypes.map(t => new window.FarmAnimal(t, 480 + Math.random() * 180, 110 + Math.random() * 140));
+        }
+        return true;
+      }
+    } catch (e) {}
+    return false;
+  }
+
+  loop(now) {
+    const dt = Math.min(0.05, (now - this.lastTime) / 1000);
+    this.lastTime = now;
+    const timeSec = now / 1000;
+
+    this.world.update(dt, this);
+    this.player.update(dt, this.keys, this.canvas.width, this.canvas.height);
+    this.cat.update(dt, this.player, this);
+    for (const anim of this.animals) {
+      anim.update(dt);
+    }
+
+    if (this.fishingState && this.fishingState.active) {
+      this.fishingState.cursor += this.fishingState.dir * this.fishingState.speed * dt;
+      if (this.fishingState.cursor >= 96) {
+        this.fishingState.cursor = 96;
+        this.fishingState.dir = -1;
+      } else if (this.fishingState.cursor <= 0) {
+        this.fishingState.cursor = 0;
+        this.fishingState.dir = 1;
+      }
+      document.getElementById('fish-cursor').style.left = `${this.fishingState.cursor}%`;
+    }
+
+    if (Math.floor(timeSec * 2) !== this.lastHudTick) {
+      this.lastHudTick = Math.floor(timeSec * 2);
+      document.getElementById('hud-clock').textContent = this.world.getFormattedClock();
+    }
+
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.world.render(this.ctx, timeSec, this.hoverTile, this.treeLevel, this);
+
+    for (const anim of this.animals) {
+      anim.render(this.ctx, timeSec);
+    }
+    this.cat.render(this.ctx, timeSec);
+    this.player.render(this.ctx);
+
+    this.world.renderWeatherAndLighting(this.ctx, this.canvas.width, this.canvas.height, timeSec);
+
+    requestAnimationFrame(t => this.loop(t));
+  }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  window.GAME = new StarlightFarmGame();
+});
+
+</script>
+</body>
+</html>
