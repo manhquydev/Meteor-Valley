@@ -989,9 +989,9 @@ window.PIXEL_ICONS = {
 
 /**
  * ============================================================================
- * THUNG LŨNG SAO BĂNG: HUYỀN THOẠI CÂY ĐẠI THỤ (STARLIGHT VALLEY v3.0 DEFINITIVE)
- * js/config.js - Cấu hình Cốt truyện 5 Chương, 4 Mùa, Cây trồng, Hiến tế Đền Thờ,
- *                Chợ Sao Băng (Star Merchant), Bách Khoa Toàn Thư & Công thức
+ * THUNG LŨNG SAO BĂNG (STARLIGHT VALLEY v6.0 - DOPAMINE & PROGRESSION EDITION)
+ * js/config.js - Cấu hình Cốt truyện, Cây Kỹ Năng Tinh Thông (Mastery Tree),
+ *                Danh Hiệu Điền Chủ (Prestige Ranks), Nâng Cấp Biệt Thự & Vật Phẩm
  * ============================================================================
  */
 
@@ -1001,6 +1001,51 @@ window.GAME_CONFIG = {
   GRID_ROWS: 11,
   DAY_DURATION_SEC: 120,
   DAYS_PER_SEASON: 5,
+
+  // DANH HIỆU ĐIỀN CHỦ TĂNG TIẾN THEO TỔNG TÀI SẢN TÍCH LŨY (PRESTIGE RANKS)
+  PRESTIGE_RANKS: [
+    { rank: 1, title: 'Nông Dân Tập Sự', icon: '🌱', minWealth: 0, bonusPrice: 0 },
+    { rank: 2, title: 'Điền Chủ Khấm Khá', icon: '🌾', minWealth: 800, bonusPrice: 0.10 },
+    { rank: 3, title: 'Phú Nông Thịnh Vượng', icon: '🏡', minWealth: 2500, bonusPrice: 0.25 },
+    { rank: 4, title: 'Bá Tước Sao Băng', icon: '👑', minWealth: 6000, bonusPrice: 0.45 },
+    { rank: 5, title: 'Đại Đế Ngân Hà', icon: '🌌', minWealth: 15000, bonusPrice: 0.80 }
+  ],
+
+  // CÂY KỸ NĂNG TINH THÔNG (MASTERY SKILL TREE - CÀNG CHƠI CÀNG MẠNH VƯỢT BẬC)
+  MASTERY_SKILLS: [
+    {
+      id: 'golden_touch',
+      name: 'Bàn Tay Hoàng Kim',
+      icon: '🍀',
+      maxLevel: 5,
+      effectPerLevel: '+8% tỉ lệ nổ Thu Hoạch Chí Mạng (x3 Sản lượng & Vàng)',
+      desc: 'Mỗi cấp tăng mạnh xác suất nổ Đại Mùa Màng (Critical x3) và tỉ lệ đào trúng Rương Kho Báu!'
+    },
+    {
+      id: 'hydro_vitality',
+      name: 'Suối Nguồn Sinh Lực',
+      icon: '⚡',
+      maxLevel: 5,
+      effectPerLevel: '+22% tốc độ lớn toàn bộ cây & -12% năng lượng tiêu hao',
+      desc: 'Truyền sinh khí vào lòng đất giúp mọi cây trồng lớn nhanh vượt bậc và giữ sức bền bỉ.'
+    },
+    {
+      id: 'fairy_drone',
+      name: 'Tinh Linh Phụ Tá Tự Động',
+      icon: '🧚',
+      maxLevel: 5,
+      effectPerLevel: 'Triệu hồi Tinh Linh bay lượn tự tưới nước & tự thu hoạch',
+      desc: 'Tinh Linh Ánh Sao bay khắp cánh đồng tự động tưới ẩm đất khô và thu hoạch cây chín giúp bạn!'
+    },
+    {
+      id: 'star_alchemy',
+      name: 'Thuật Giả Kim Vương Giả',
+      icon: '👑',
+      maxLevel: 5,
+      effectPerLevel: '+20% giá bán mọi nông sản & nhận Lãi Suất Vàng mỗi sáng',
+      desc: 'Biến nông sản thành thương phẩm thượng hạng và sinh lời lãi kép mỗi khi bước sang ngày mới!'
+    }
+  ],
 
   SEASONS: [
     {
@@ -1057,10 +1102,11 @@ window.GAME_CONFIG = {
       introText: 'Ông Nội để lại mảnh đất này cùng lời nhắn: "Hãy đánh thức Cây Đại Thụ Ánh Sao ở phía Bắc nông trại." Hãy thu hoạch những củ cải đầu mùa và tích lũy 300G nhé!',
       goalDesc: 'Thu hoạch 4 nông sản bất kỳ & tích lũy 300 Vàng',
       check: (g) => g.stats.harvested >= 4 && g.gold >= 300,
+      progressRatio: (g) => Math.min(1, (Math.min(1, g.stats.harvested / 4) + Math.min(1, g.gold / 300)) / 2),
       progressText: (g) => `Thu hoạch ${Math.min(4, g.stats.harvested)}/4 | Vàng ${Math.min(300, g.gold)}/300`,
       rewardGold: 200,
       rewardStars: 2,
-      unlockText: 'Đánh thức Rễ Cây Đại Thụ (Cấp 1) & nhận +200G, +2 🌠 Mảnh Sao!'
+      unlockText: 'Đánh thức Rễ Cây Đại Thụ (Cấp 1), nhận +200G, +2 🌠 Sao & +1 ⭐ Kỹ Năng!'
     },
     {
       chapter: 2,
@@ -1069,10 +1115,11 @@ window.GAME_CONFIG = {
       introText: 'Bà Mai mỉm cười: "Trồng 4 cây theo ô vuông 2x2 sẽ tạo Đột Biến Khổng Lồ! Hãy hoàn thành Gói Hiến Tế đầu tiên tại Đền Thờ hoặc thu hoạch đủ 12 cây nhé!"',
       goalDesc: 'Hoàn thành 1 Gói Hiến Tế Đền Thờ (hoặc thu hoạch 12 cây)',
       check: (g) => g.completedBundles.length >= 1 || g.stats.harvested >= 12,
+      progressRatio: (g) => Math.max(Math.min(1, g.completedBundles.length / 1), Math.min(1, g.stats.harvested / 12)),
       progressText: (g) => `Hiến tế ${g.completedBundles.length}/1 gói | Thu hoạch ${Math.min(12, g.stats.harvested)}/12`,
       rewardGold: 350,
       rewardStars: 3,
-      unlockText: 'Thân Cây Đại Thụ đâm chồi (Cấp 2) & tặng 1 Vòi Tưới Tự Động 3x3!'
+      unlockText: 'Thân Cây Đại Thụ đâm chồi (Cấp 2), tặng 1 Vòi Tưới 3x3 & +1 ⭐ Kỹ Năng!'
     },
     {
       chapter: 3,
@@ -1081,6 +1128,7 @@ window.GAME_CONFIG = {
       introText: 'Cô Linh Đầu Bếp nhắn nhủ: "Nông sản tươi kết hợp với trứng gà, sữa bò hay cá Koi từ Hồ Sao Băng sẽ tạo nên những món ăn tuyệt hảo trong Nhà Bếp!"',
       goalDesc: 'Nuôi ít nhất 2 Vật Nuôi & chế biến 2 món ăn trong Bếp',
       check: (g) => g.animals.length >= 2 && g.stats.dishesCooked >= 2,
+      progressRatio: (g) => (Math.min(1, g.animals.length / 2) + Math.min(1, g.stats.dishesCooked / 2)) / 2,
       progressText: (g) => `Vật nuôi ${Math.min(2, g.animals.length)}/2 | Nấu ăn ${Math.min(2, g.stats.dishesCooked)}/2`,
       rewardGold: 500,
       rewardStars: 3,
@@ -1093,6 +1141,7 @@ window.GAME_CONFIG = {
       introText: 'Bác Tâm Thợ Rèn chỉ lên bầu trời: "Khi bạn gọi Mưa Sao Băng xuống nông trại, các tinh thể sao sẽ biến cây trồng thành Cây Ánh Sao trị giá gấp 4 lần!"',
       goalDesc: 'Thu hoạch 3 cây Đột Biến (Khổng Lồ / Ánh Sao) & hoàn thành 3 Gói Hiến Tế',
       check: (g) => g.stats.mutatedHarvested >= 3 && g.completedBundles.length >= 3,
+      progressRatio: (g) => (Math.min(1, g.stats.mutatedHarvested / 3) + Math.min(1, g.completedBundles.length / 3)) / 2,
       progressText: (g) => `Đột biến ${Math.min(3, g.stats.mutatedHarvested)}/3 | Hiến tế ${Math.min(3, g.completedBundles.length)}/3`,
       rewardGold: 800,
       rewardStars: 5,
@@ -1105,6 +1154,7 @@ window.GAME_CONFIG = {
       introText: 'Tinh Linh Lumia xúc động: "Chỉ còn bước cuối cùng thôi! Hãy hoàn tất cả 4 Gói Hiến Tế tại Đền Thờ để Cây Đại Thụ thức tỉnh hoàn toàn!"',
       goalDesc: 'Hoàn thành toàn bộ 4 Gói Hiến Tế Đền Thờ & đạt Cấp độ 5',
       check: (g) => g.completedBundles.length >= 4 && g.level >= 5,
+      progressRatio: (g) => (Math.min(1, g.completedBundles.length / 4) + Math.min(1, g.level / 5)) / 2,
       progressText: (g) => `Hiến tế ${Math.min(4, g.completedBundles.length)}/4 | Cấp độ ${Math.min(5, g.level)}/5`,
       rewardGold: 2000,
       rewardStars: 10,
@@ -1164,28 +1214,28 @@ window.GAME_CONFIG = {
       name: 'Bụi Tiên Tăng Trưởng',
       icon: '✨',
       starCost: 1,
-      desc: 'Phép màu của Tinh Linh Lumia: Làm chín ngay lập tức toàn bộ cây trồng đang có trên cánh đồng!'
+      desc: 'Làm chín ngay lập tức toàn bộ cây trồng đang có trên cánh đồng!'
     },
     {
       id: 'star_mutate_3',
       name: 'Tinh Thể Đột Biến Ngân Hà',
       icon: '🌈',
       starCost: 2,
-      desc: 'Truyền năng lượng tinh tú làm tối đa 3 cây trên đồng đột biến thành Cây Ánh Sao (x4 giá trị) và chín ngay!'
+      desc: 'Biến tối đa 3 cây trên đồng thành Cây Ánh Sao (x4 giá trị) và chín ngay!'
     },
     {
-      id: 'summon_rain',
-      name: 'Bùa Gọi Mưa Rào Mùa Vụ',
-      icon: '🌧️',
+      id: 'trigger_fever',
+      name: 'Trống Hội Cơn Sốt Hoàng Kim',
+      icon: '🔥',
       starCost: 1,
-      desc: 'Gọi cơn mưa mát lành tưới ướt toàn bộ ô đất canh tác suốt cả ngày và hồi +50⚡ Năng lượng!'
+      desc: 'Kích hoạt ngay 18 giây CƠN SỐT HOÀNG KIM (Cây lớn x3 tốc độ, Thu hoạch x2 Vàng, 0 tốn sức)!'
     },
     {
       id: 'summon_meteor',
       name: 'Nghi Thức Đêm Mưa Sao Băng',
       icon: '🌠',
       starCost: 2,
-      desc: 'Chuyển sang bầu trời đêm huyền ảo và gọi mưa sao băng rơi xuống ban phước Đột Biến cho nông trại!'
+      desc: 'Gọi mưa sao băng rơi xuống ban phước Đột Biến cho nông trại!'
     }
   ],
 
@@ -1196,7 +1246,7 @@ window.GAME_CONFIG = {
       role: 'Hộ Vệ Cây Đại Thụ',
       icon: '🧚',
       color: '#80d8ff',
-      quote: 'Mỗi giọt nước và ánh sao bạn chăm bón đều giúp Cây Đại Thụ hồi sinh!'
+      quote: 'Thu hoạch liên tay để tích lũy Combo kích hoạt Cơn Sốt Hoàng Kim (x2 Vàng) nhé!'
     },
     bamai: {
       id: 'bamai',
@@ -1209,10 +1259,10 @@ window.GAME_CONFIG = {
     bactam: {
       id: 'bactam',
       name: 'Bác Tâm',
-      role: 'Thợ Rèn & Cơ Khí',
+      role: 'Thợ Rèn & Kiến Trúc Sư',
       icon: '🧔',
       color: '#ff8a65',
-      quote: 'Nâng cấp Bình Tưới Bạc và Cuốc Vàng sẽ giúp cháu làm một phát 9 ô đất (3x3) cực nhàn!'
+      quote: 'Nâng cấp công cụ 3x3 và nâng cấp Nhà Chính lên Biệt Thự Hoàng Kim để nhận lộc mỗi sáng nhé!'
     },
     colinh: {
       id: 'colinh',
@@ -1240,12 +1290,12 @@ window.GAME_CONFIG = {
       pixelRow: 0,
       seedPrice: 15,
       sellPrice: 38,
-      growTime: 15,
-      xp: 10,
+      growTime: 14,
+      xp: 12,
       regrow: false,
       color: '#eb4034',
       lightColor: '#ff8a80',
-      desc: 'Lớn cực nhanh (15s)! Cây khởi đầu lý tưởng để xoay vòng vốn.'
+      desc: 'Lớn cực nhanh (14s)! Cây khởi đầu lý tưởng để xoay vòng vốn.'
     },
     strawberry: {
       id: 'strawberry',
@@ -1253,9 +1303,9 @@ window.GAME_CONFIG = {
       emoji: '🍓',
       pixelRow: 1,
       seedPrice: 45,
-      sellPrice: 44,
-      growTime: 24,
-      xp: 16,
+      sellPrice: 46,
+      growTime: 22,
+      xp: 18,
       regrow: true,
       regrowStage: 2,
       color: '#f0325a',
@@ -1268,9 +1318,9 @@ window.GAME_CONFIG = {
       emoji: '🎃',
       pixelRow: 2,
       seedPrice: 60,
-      sellPrice: 145,
-      growTime: 32,
-      xp: 26,
+      sellPrice: 150,
+      growTime: 30,
+      xp: 28,
       regrow: false,
       color: '#f59b19',
       lightColor: '#ffd54f',
@@ -1282,9 +1332,9 @@ window.GAME_CONFIG = {
       emoji: '🌻',
       pixelRow: 3,
       seedPrice: 50,
-      sellPrice: 115,
-      growTime: 22,
-      xp: 20,
+      sellPrice: 120,
+      growTime: 20,
+      xp: 22,
       regrow: false,
       auraBoost: 0.30,
       color: '#ffd700',
@@ -1297,9 +1347,9 @@ window.GAME_CONFIG = {
       emoji: '🍆',
       pixelRow: 4,
       seedPrice: 80,
-      sellPrice: 185,
-      growTime: 34,
-      xp: 32,
+      sellPrice: 190,
+      growTime: 32,
+      xp: 35,
       regrow: true,
       regrowStage: 2,
       nightBoost: 2.2,
@@ -1313,9 +1363,9 @@ window.GAME_CONFIG = {
       emoji: '🌟',
       pixelRow: 5,
       seedPrice: 150,
-      sellPrice: 390,
-      growTime: 42,
-      xp: 60,
+      sellPrice: 400,
+      growTime: 40,
+      xp: 65,
       regrow: false,
       color: '#50e6ff',
       lightColor: '#ffff8d',
@@ -1335,7 +1385,7 @@ window.GAME_CONFIG = {
       produceIcon: '🥚',
       produceValue: 48,
       produceInterval: 20,
-      desc: 'Chạy lon ton quanh đồng cỏ. Click vuốt ve mỗi ngày để nhận Trứng Hoàng Kim!'
+      desc: 'Chạy lon ton quanh đồng cỏ. Chạm vuốt ve mỗi ngày để nhận Trứng Hoàng Kim!'
     },
     cow: {
       id: 'cow',
@@ -1435,7 +1485,7 @@ window.GAME_CONFIG = {
       id: 'watering_can_2',
       name: 'Bình Tưới Bạc (Tưới 3x3)',
       icon: '🚿',
-      price: 260,
+      price: 240,
       type: 'tool',
       desc: 'Một lần tưới làm ướt cả vùng 9 ô đất (3x3) xung quanh!'
     },
@@ -1443,7 +1493,7 @@ window.GAME_CONFIG = {
       id: 'hoe_2',
       name: 'Cuốc Chim Hoàng Kim (Cuốc 3x3)',
       icon: '⛏️',
-      price: 320,
+      price: 300,
       type: 'tool',
       desc: 'Một nhát cuốc xới tung 9 ô đất (3x3) cùng lúc, tiết kiệm thể lực!'
     },
@@ -1451,9 +1501,17 @@ window.GAME_CONFIG = {
       id: 'cat_skill',
       name: 'Vòng Cổ Chuông Vàng Cho Mèo',
       icon: '🐱',
-      price: 220,
+      price: 200,
       type: 'pet',
       desc: 'Mèo cưng chạy nhanh gấp đôi và tự động thu hoạch cây chín quanh bạn!'
+    },
+    {
+      id: 'house_tier_2',
+      name: 'Biệt Thự Hoàng Kim (Nâng Cấp Nhà)',
+      icon: '🏰',
+      price: 650,
+      type: 'house',
+      desc: 'Nâng cấp Nhà Chính thành Biệt Thự Mái Vàng, tặng +150G và +1 🌠 Sao mỗi sáng thức dậy!'
     },
     {
       id: 'greenhouse_charm',
@@ -1469,9 +1527,9 @@ window.GAME_CONFIG = {
 
 /**
  * ============================================================================
- * THUNG LŨNG SAO BĂNG (STARLIGHT VALLEY: PIXEL FARM)
- * js/audio.js - Bộ tổng hợp âm thanh Chiptune 8-Bit & Hiệu ứng âm thanh (Web Audio API)
- * Không cần file MP3 ngoài, hoạt động 100% offline!
+ * THUNG LŨNG SAO BĂNG (STARLIGHT VALLEY v6.0 - DOPAMINE & PROGRESSION EDITION)
+ * js/audio.js - Bộ tổng hợp âm thanh 8-Bit Chiptune + Âm thanh Combo Tăng Pitch
+ *               (Ascending Pitch Dopamine Escalation)
  * ============================================================================
  */
 
@@ -1483,25 +1541,27 @@ class SoundSystem {
     this.bgmTimer = null;
     this.noteIndex = 0;
 
-    // Giai điệu Pentatonic êm dịu phong cách Harvest Moon / Stardew Valley
     this.melody = [
-      { f: 523.25, d: 0.35 }, // C5
-      { f: 659.25, d: 0.35 }, // E5
-      { f: 783.99, d: 0.50 }, // G5
-      { f: 659.25, d: 0.35 }, // E5
-      { f: 587.33, d: 0.35 }, // D5
-      { f: 523.25, d: 0.50 }, // C5
-      { f: 440.00, d: 0.35 }, // A4
-      { f: 392.00, d: 0.65 }, // G4
-      { f: 440.00, d: 0.35 }, // A4
-      { f: 523.25, d: 0.35 }, // C5
-      { f: 587.33, d: 0.45 }, // D5
-      { f: 659.25, d: 0.45 }, // E5
-      { f: 783.99, d: 0.35 }, // G5
-      { f: 880.00, d: 0.55 }, // A5
-      { f: 783.99, d: 0.70 }, // G5
-      { f: 0,      d: 0.35 }  // Rest
+      { f: 523.25, d: 0.35 },
+      { f: 659.25, d: 0.35 },
+      { f: 783.99, d: 0.50 },
+      { f: 659.25, d: 0.35 },
+      { f: 587.33, d: 0.35 },
+      { f: 523.25, d: 0.50 },
+      { f: 440.00, d: 0.35 },
+      { f: 392.00, d: 0.65 },
+      { f: 440.00, d: 0.35 },
+      { f: 523.25, d: 0.35 },
+      { f: 587.33, d: 0.45 },
+      { f: 659.25, d: 0.45 },
+      { f: 783.99, d: 0.35 },
+      { f: 880.00, d: 0.55 },
+      { f: 783.99, d: 0.70 },
+      { f: 0,      d: 0.35 }
     ];
+
+    // Thang âm Pentatonic tăng dần theo chuỗi Combo (tạo hưng phấn thính giác)
+    this.comboScale = [523.25, 587.33, 659.25, 783.99, 880.00, 1046.50, 1174.66, 1318.51, 1567.98];
   }
 
   init() {
@@ -1565,10 +1625,33 @@ class SoundSystem {
     setTimeout(() => this.playTone(620, 0.09, 'sine', 0.08, 340), 50);
   }
 
+  // Âm thanh thu hoạch tăng dần cao độ theo chuỗi Combo (Ascending Pitch Dopamine)
+  playHarvestCombo(comboCount = 1, isCritical = false) {
+    const idx = Math.min(this.comboScale.length - 1, Math.max(0, comboCount - 1));
+    const baseFreq = this.comboScale[idx];
+    this.playTone(baseFreq, 0.10, 'triangle', 0.16, baseFreq * 1.25);
+    setTimeout(() => this.playTone(baseFreq * 1.25, 0.14, 'triangle', 0.16, baseFreq * 1.5), 60);
+    if (isCritical) {
+      setTimeout(() => this.playTone(baseFreq * 2.0, 0.22, 'sine', 0.18), 110);
+    }
+  }
+
   playHarvest() {
-    this.playTone(523.25, 0.09, 'triangle', 0.15, 659.25);
-    setTimeout(() => this.playTone(659.25, 0.11, 'triangle', 0.15, 783.99), 65);
-    setTimeout(() => this.playTone(1046.5, 0.16, 'triangle', 0.16), 130);
+    this.playHarvestCombo(1, false);
+  }
+
+  playFeverTrigger() {
+    const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98];
+    notes.forEach((n, idx) => {
+      setTimeout(() => this.playTone(n, 0.20, 'triangle', 0.16), idx * 60);
+    });
+  }
+
+  playChestOpen() {
+    const notes = [587.33, 739.99, 880.00, 1174.66];
+    notes.forEach((n, idx) => {
+      setTimeout(() => this.playTone(n, 0.18, 'square', 0.12), idx * 70);
+    });
   }
 
   playCoin() {
@@ -1605,7 +1688,6 @@ class SoundSystem {
       this.noteIndex++;
       if (item.f > 0) {
         this.playTone(item.f, item.d * 0.9, 'sine', 0.035);
-        // Bass note nhẹ nhàng
         if (this.noteIndex % 4 === 1) {
           this.playTone(item.f / 2, item.d * 1.4, 'triangle', 0.025);
         }
@@ -1629,8 +1711,8 @@ window.SFX = new SoundSystem();
 
 /**
  * ============================================================================
- * THUNG LŨNG SAO BĂNG: HUYỀN THOẠI CÂY ĐẠI THỤ (STARLIGHT VALLEY v3.0 DEFINITIVE)
- * js/sprites.js - Bộ dựng đồ họa Pixel Art 16x16 sắc nét + Bảng hiệu Pixel không lỗi font
+ * THUNG LŨNG SAO BĂNG (STARLIGHT VALLEY v6.0 - DOPAMINE & PROGRESSION EDITION)
+ * js/sprites.js - Bộ dựng đồ họa Pixel Art 16x16 + Rương Kho Báu + Biệt Thự Tiến Hóa
  * ============================================================================
  */
 
@@ -1692,17 +1774,66 @@ class PixelSpriteRenderer {
     this.cache.chicken = this.makeChickenSprite();
     this.cache.cow = this.makeCowSprite();
     this.cache.bee = this.makeBeeSprite();
+    this.cache.fairy = this.makeFairySprite();
 
     this.cache.sprinkler = this.makeSprinklerSprite();
     this.cache.lantern = this.makeLanternSprite();
+    this.cache.chest = this.makeChestSprite();
     this.cache.weed = this.makeWeedSprite();
     this.cache.rock = this.makeRockSprite();
     this.cache.stump = this.makeStumpSprite();
 
-    // Sản phẩm vật nuôi dạng Pixel Art 16x16 để hiển thị trên bong bóng không cần emoji
     this.cache.prod_egg = this.makeEggSprite();
     this.cache.prod_milk = this.makeMilkSprite();
     this.cache.prod_honey = this.makeHoneySprite();
+  }
+
+  makeChestSprite() {
+    const { c, ctx } = this.createPixelCanvas(16, 16);
+    const grid = [
+      "................",
+      "................",
+      "................",
+      "....KKKKKKKK....",
+      "...KYYYYYYYYK...",
+      "..KYMMMMMMMMYK..",
+      "..KYMMMMMMMMYK..",
+      "..KYYYYKKYYYYK..",
+      "..KYMMMKKMMMYK..",
+      "..KYMMMMMMMMYK..",
+      "..KYMMMMMMMMYK..",
+      "...KKKKKKKKKK...",
+      "................",
+      "................",
+      "................",
+      "................"
+    ];
+    this.drawAsciiMatrix(ctx, grid, { K: '#2c1a0e', Y: '#ffd700', M: '#c62828' });
+    return c;
+  }
+
+  makeFairySprite() {
+    const { c, ctx } = this.createPixelCanvas(16, 16);
+    const grid = [
+      "................",
+      "................",
+      "....WW....WW....",
+      "...WWWW..WWWW...",
+      "...WWWWYYYYWW...",
+      "....WWYYYYYYW...",
+      ".....YYYYYYYY...",
+      "......YYYYYY....",
+      ".......CCCC.....",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................"
+    ];
+    this.drawAsciiMatrix(ctx, grid, { W: 'rgba(224, 247, 250, 0.85)', Y: '#ffeb3b', C: '#80d8ff' });
+    return c;
   }
 
   makeEggSprite() {
@@ -2173,7 +2304,6 @@ class PixelSpriteRenderer {
       ctx.fillStyle = isMutated ? '#84ffff' : cropCfg.lightColor;
       ctx.fillRect(cx - 8 * scale, cy - 7 * scale, 6 * scale, 6 * scale);
 
-      // Ngôi sao Pixel nảy lên báo hiệu thu hoạch
       const bounce = Math.sin(time * 5.5) * 3;
       ctx.fillStyle = '#181425';
       ctx.fillRect(cx - 5, py + 1 + bounce, 10, 10);
@@ -2181,7 +2311,6 @@ class PixelSpriteRenderer {
       ctx.fillRect(cx - 3, py + 3 + bounce, 6, 6);
     }
 
-    // Thanh tiến trình mini mượt mà dưới chân cây đang lớn
     if (stage < 4 && progress > 0) {
       const barW = size - 12;
       const bx = px + 6;
@@ -2194,28 +2323,30 @@ class PixelSpriteRenderer {
     ctx.restore();
   }
 
-  drawFarmhouse(ctx, x, y, tileSize, isNight) {
+  drawFarmhouse(ctx, x, y, tileSize, isNight, isGoldenMansion = false) {
     const w = tileSize * 3;
     const h = tileSize * 2.2;
     ctx.save();
     ctx.fillStyle = 'rgba(0,0,0,0.28)';
     ctx.fillRect(x + 6, y + h - 8, w - 8, 12);
 
-    ctx.fillStyle = '#d7a15c';
+    // Tường nhà (Nâng cấp lên Biệt Thự Hoàng Kim sẽ có tường cẩm thạch kem & cột vàng)
+    ctx.fillStyle = isGoldenMansion ? '#fff8e1' : '#d7a15c';
     ctx.fillRect(x + 8, y + tileSize * 0.85, w - 16, tileSize * 1.25);
-    ctx.fillStyle = '#b07838';
+    ctx.fillStyle = isGoldenMansion ? '#ffe082' : '#b07838';
     for (let ry = y + tileSize; ry < y + tileSize * 2.0; ry += 8) {
       ctx.fillRect(x + 8, ry, w - 16, 2);
     }
 
-    ctx.fillStyle = '#8e2424';
+    // Mái ngói (Đỏ mộc mạc hoặc Hoàng Kim Lưu Ly)
+    ctx.fillStyle = isGoldenMansion ? '#f57f17' : '#8e2424';
     ctx.fillRect(x, y + tileSize * 0.5, w, tileSize * 0.42);
-    ctx.fillStyle = '#b73232';
+    ctx.fillStyle = isGoldenMansion ? '#ffb300' : '#b73232';
     ctx.fillRect(x + 6, y + tileSize * 0.22, w - 12, tileSize * 0.32);
-    ctx.fillStyle = '#d44646';
+    ctx.fillStyle = isGoldenMansion ? '#ffd54f' : '#d44646';
     ctx.fillRect(x + 16, y, w - 32, tileSize * 0.26);
 
-    ctx.fillStyle = '#5d3a1a';
+    ctx.fillStyle = isGoldenMansion ? '#6a1b9a' : '#5d3a1a';
     ctx.fillRect(x + 22, y + tileSize * 1.25, 24, tileSize * 0.85);
     ctx.fillStyle = '#ffd54f';
     ctx.fillRect(x + 40, y + tileSize * 1.65, 4, 4);
@@ -2225,7 +2356,8 @@ class PixelSpriteRenderer {
     ctx.fillStyle = isNight ? '#ffeb3b' : '#81d4fa';
     ctx.fillRect(x + w - 52, y + tileSize * 1.2 + 4, 24, 18);
 
-    this.drawPixelBadgeLabel(ctx, x + w / 2, y + tileSize * 0.65, 'NHÀ CHÍNH (NGỦ)', 'rgba(74, 44, 24, 0.9)', '#ffd54f', '#fff8e7');
+    const label = isGoldenMansion ? 'BIỆT THỰ HOÀNG KIM' : 'NHÀ CHÍNH (NGỦ)';
+    this.drawPixelBadgeLabel(ctx, x + w / 2, y + tileSize * 0.65, label, 'rgba(74, 44, 24, 0.9)', '#ffd54f', '#fff8e7');
     ctx.restore();
   }
 
@@ -2288,22 +2420,18 @@ window.SPRITES = new PixelSpriteRenderer();
 
 /**
  * ============================================================================
- * THUNG LŨNG SAO BĂNG (STARLIGHT VALLEY v5.0 - MOBILE PORTRAIT & ADAPTIVE)
- * js/world.js - Hệ thống Bản đồ Kép Tự Động Thích Ứng:
- *   • Màn hình Dọc (Mobile Portrait): 11 cột × 14 hàng (528×672, tỷ lệ dọc 11:14)
- *   • Màn hình Ngang (Desktop Landscape): 16 cột × 11 hàng (768×528, tỷ lệ ngang 16:11)
- *   • Toàn bộ công trình & Hồ Sao Băng nằm gọn trong vùng 10×10 nên hiển thị
- *     100% trọn vẹn ở cả hai chế độ màn hình!
+ * THUNG LŨNG SAO BĂNG (STARLIGHT VALLEY v6.0 - DOPAMINE & PROGRESSION EDITION)
+ * js/world.js - Hệ thống Bản đồ Kép, Cơn Sốt Hoàng Kim (Fever Mode),
+ *               Rương Kho Báu Bất Ngờ & Tăng Tốc Theo Kỹ Năng Tinh Thông
  * ============================================================================
  */
 
 class FarmWorld {
   constructor() {
-    this.tileSize = window.GAME_CONFIG.TILE_SIZE; // 48px
+    this.tileSize = window.GAME_CONFIG.TILE_SIZE;
     this.maxCols = 16;
     this.maxRows = 14;
 
-    // Số cột/hàng hiển thị thực tế tùy theo màn hình Dọc hay Ngang
     this.isPortrait = window.innerHeight > window.innerWidth;
     this.cols = this.isPortrait ? 11 : 16;
     this.rows = this.isPortrait ? 14 : 11;
@@ -2340,38 +2468,23 @@ class FarmWorld {
         let type = 'grass';
         let obstacle = null;
 
-        // 1. Nhà Chính (cột 1..3, hàng 1..2)
         if (r >= 1 && r <= 2 && c >= 1 && c <= 3) {
           type = 'house_zone';
-        }
-        // 2. Thùng Bán Đồ & Nhà Bếp (hàng 2, cột 4..5)
-        else if (r === 2 && c === 4) {
+        } else if (r === 2 && c === 4) {
           type = 'shipping_bin';
         } else if (r === 2 && c === 5) {
           type = 'kitchen_oven';
-        }
-        // 3. Đền Thờ Cây Đại Thụ (cột 7..8, hàng 1..2)
-        else if (r >= 1 && r <= 2 && c >= 7 && c <= 8) {
+        } else if (r >= 1 && r <= 2 && c >= 7 && c <= 8) {
           type = 'sacred_tree';
-        }
-        // 4. Đường Đá Kết Nối (hàng 3, cột 1..9)
-        else if ((r === 3 && c >= 1 && c <= 9) || (c === 5 && r >= 3 && r <= 4)) {
+        } else if ((r === 3 && c >= 1 && c <= 9) || (c === 5 && r >= 3 && r <= 4)) {
           type = 'path';
-        }
-        // 5. Hồ Sao Băng (hàng 8..10, cột 6..9) - Nằm gọn trong khung 11x14 lẫn 16x11!
-        else if (r >= 8 && r <= 10 && c >= 6 && c <= 9) {
+        } else if (r >= 8 && r <= 10 && c >= 6 && c <= 9) {
           type = (r === 9 && c === 6) ? 'bridge' : 'water';
-        }
-        // 6. Vườn Canh Tác Mẫu đã cày sẵn (hàng 4..6, cột 1..3)
-        else if (r >= 4 && r <= 6 && c >= 1 && c <= 3) {
+        } else if (r >= 4 && r <= 6 && c >= 1 && c <= 3) {
           type = 'soil';
-        }
-        // 7. Vườn Mở Rộng Phía Nam cho Màn Hình Dọc (hàng 11..12, cột 1..4)
-        else if (r >= 11 && r <= 12 && c >= 1 && c <= 4) {
+        } else if (r >= 11 && r <= 12 && c >= 1 && c <= 4) {
           type = 'soil';
-        }
-        // 8. Vật cản tự nhiên (cỏ dại, đá cuội, gốc cây)
-        else if (((c >= 4 && c <= 9 && r >= 5 && r <= 7) || (r >= 11 && c >= 6)) && Math.random() < 0.16) {
+        } else if (((c >= 4 && c <= 9 && r >= 5 && r <= 7) || (r >= 11 && c >= 6)) && Math.random() < 0.16) {
           const rand = Math.random();
           obstacle = rand < 0.5 ? 'weed' : (rand < 0.8 ? 'rock' : 'stump');
         }
@@ -2390,17 +2503,21 @@ class FarmWorld {
       this.tiles.push(row);
     }
 
-    // Trồng sẵn 2 cây Củ Cải Đỏ chín & 1 cây Dâu Tây ở vườn mẫu
+    // Trồng sẵn 2 cây Củ Cải Đỏ chín & 1 cây Dâu Tây + Đặt sẵn 1 Rương Kho Báu khởi đầu ở (5, 4)!
     const t1 = this.getTile(4, 1);
     const t2 = this.getTile(4, 2);
     const t3 = this.getTile(4, 3);
+    const chestTile = this.getTile(5, 4);
     if (t1 && t2 && t3) {
       t1.watered = true;
       t1.crop = { id: 'radish', stage: 4, progress: 1, isMutated: false, isGiant: false };
       t2.watered = true;
       t2.crop = { id: 'radish', stage: 4, progress: 1, isMutated: false, isGiant: false };
       t3.watered = true;
-      t3.crop = { id: 'strawberry', stage: 3, progress: 0.8, isMutated: false, isGiant: false };
+      t3.crop = { id: 'strawberry', stage: 3, progress: 0.85, isMutated: false, isGiant: false };
+    }
+    if (chestTile) {
+      chestTile.obstacle = 'chest';
     }
   }
 
@@ -2451,6 +2568,26 @@ class FarmWorld {
 
   spawnFloatingText(x, y, text, color = '#fff8e7') {
     this.floatingTexts.push({ x, y, text, color, life: 1.3 });
+  }
+
+  spawnSurpriseChest() {
+    const emptyGrass = [];
+    for (let r = 4; r < this.rows - 1; r++) {
+      for (let c = 1; c < this.cols - 1; c++) {
+        const t = this.tiles[r][c];
+        if (t.type === 'grass' && !t.obstacle && !t.device) {
+          emptyGrass.push(t);
+        }
+      }
+    }
+    if (emptyGrass.length > 0) {
+      const chosen = emptyGrass[Math.floor(Math.random() * emptyGrass.length)];
+      chosen.obstacle = 'chest';
+      const px = (chosen.c + 0.5) * this.tileSize;
+      const py = (chosen.r + 0.5) * this.tileSize;
+      this.spawnParticles(px, py, '#ffd700', 16);
+      this.spawnFloatingText(px, py - 10, '🎁 RƯƠNG BÁU XUẤT HIỆN!', '#ffd700');
+    }
   }
 
   triggerMeteorImpact() {
@@ -2545,7 +2682,7 @@ class FarmWorld {
       }
     }
 
-    this.updateCropsAndDevices(dt);
+    this.updateCropsAndDevices(dt, game);
 
     for (let i = this.particles.length - 1; i >= 0; i--) {
       const p = this.particles[i];
@@ -2572,12 +2709,14 @@ class FarmWorld {
     }
   }
 
-  updateCropsAndDevices(dt) {
+  updateCropsAndDevices(dt, game) {
     this.sprinklerTimer = (this.sprinklerTimer || 0) + dt;
     const triggerSprinklers = this.sprinklerTimer >= 3.5;
     if (triggerSprinklers) this.sprinklerTimer = 0;
 
     const season = this.getCurrentSeason();
+    const hydroBonus = game ? (game.mastery.hydro_vitality || 0) * 0.22 : 0;
+    const feverMult = (game && game.feverTimer > 0) ? 3.0 : 1.0;
 
     for (let r = 0; r < this.maxRows; r++) {
       for (let c = 0; c < this.maxCols; c++) {
@@ -2606,7 +2745,7 @@ class FarmWorld {
 
         if (tile.crop && tile.watered && tile.crop.stage < 4) {
           const cfg = window.GAME_CONFIG.CROPS[tile.crop.id];
-          let speedMultiplier = 1.0;
+          let speedMultiplier = (1.0 + hydroBonus) * feverMult;
 
           if (season.boostCrops.includes(tile.crop.id)) {
             speedMultiplier += 0.25;
@@ -2684,7 +2823,16 @@ class FarmWorld {
 
         if (tile.obstacle) {
           const obsImg = window.SPRITES.cache[tile.obstacle];
-          if (obsImg) ctx.drawImage(obsImg, px + 4, py + 4, ts - 8, ts - 8);
+          if (obsImg) {
+            const bounce = tile.obstacle === 'chest' ? Math.sin(time * 6) * 3 : 0;
+            if (tile.obstacle === 'chest') {
+              ctx.fillStyle = 'rgba(255, 215, 0, 0.28)';
+              ctx.beginPath();
+              ctx.arc(px + ts / 2, py + ts / 2, ts * 0.42, 0, Math.PI * 2);
+              ctx.fill();
+            }
+            ctx.drawImage(obsImg, px + 4, py + 4 + bounce, ts - 8, ts - 8);
+          }
         }
 
         if (tile.device) {
@@ -2727,11 +2875,9 @@ class FarmWorld {
       }
     }
 
-    // Vẽ Nhà Chính & Đền Thờ Cây Đại Thụ
-    window.SPRITES.drawFarmhouse(ctx, 1 * ts, 0.5 * ts, ts, this.isNight());
+    const isMansion = !!(game && game.upgrades && game.upgrades.house_tier_2);
+    window.SPRITES.drawFarmhouse(ctx, 1 * ts, 0.5 * ts, ts, this.isNight(), isMansion);
     window.SPRITES.drawSacredStarTree(ctx, 7 * ts, 0.6 * ts, ts, treeLevel, time);
-
-    // Nhãn Hồ Sao Băng tại cột 8, hàng 7.75 (luôn nằm gọn trong cả màn hình Dọc 11x14 lẫn Ngang 16x11)
     window.SPRITES.drawPixelBadgeLabel(ctx, 8.0 * ts, 7.75 * ts, 'HỒ SAO BĂNG (CÂU CÁ)', 'rgba(16, 42, 67, 0.9)', '#4fc3f7', '#80d8ff');
 
     if (hoverTile && game) {
@@ -2774,7 +2920,7 @@ class FarmWorld {
     }
   }
 
-  renderWeatherAndLighting(ctx, width, height, time) {
+  renderWeatherAndLighting(ctx, width, height, time, game = null) {
     if (this.weather === 'rainy') {
       ctx.save();
       ctx.strokeStyle = 'rgba(144, 202, 249, 0.55)';
@@ -2803,6 +2949,16 @@ class FarmWorld {
     if (overlayColor) {
       ctx.fillStyle = overlayColor;
       ctx.fillRect(0, 0, width, height);
+    }
+
+    // Hiệu ứng Viền Hào Quang Hoàng Kim rực rỡ khi kích hoạt FEVER MODE!
+    if (game && game.feverTimer > 0) {
+      ctx.save();
+      const pulse = 0.4 + 0.3 * Math.sin(time * 10);
+      ctx.strokeStyle = `rgba(255, 215, 0, ${pulse})`;
+      ctx.lineWidth = 10;
+      ctx.strokeRect(5, 5, width - 10, height - 10);
+      ctx.restore();
     }
 
     if (this.isNight()) {
@@ -2851,8 +3007,8 @@ window.FarmWorld = FarmWorld;
 
 /**
  * ============================================================================
- * THUNG LŨNG SAO BĂNG (STARLIGHT VALLEY v5.0 - MOBILE PORTRAIT & ADAPTIVE)
- * js/entities.js - Nhân vật Nông dân, Mèo cưng AI & Đàn vật nuôi thích ứng Dọc/Ngang
+ * THUNG LŨNG SAO BĂNG (STARLIGHT VALLEY v6.0 - DOPAMINE & PROGRESSION EDITION)
+ * js/entities.js - Nhân vật Nông dân, Mèo cưng AI, Vật nuôi & Tinh Linh Tự Động (Fairy Drone)
  * ============================================================================
  */
 
@@ -2995,6 +3151,63 @@ class PetCat {
   }
 }
 
+// TINH LINH PHỤ TÁ TỰ ĐỘNG (FAIRY HELPER DRONE - MỞ KHÓA TỪ CÂY KỸ NĂNG TINH THÔNG)
+class FairyHelper {
+  constructor(index = 0) {
+    this.index = index;
+    this.x = 180 + index * 60;
+    this.y = 220 + index * 40;
+    this.targetX = this.x;
+    this.targetY = this.y;
+    this.workTimer = 0;
+  }
+
+  update(dt, game, skillLevel) {
+    this.workTimer += dt;
+    const interval = Math.max(1.2, 3.8 - skillLevel * 0.5);
+
+    if (this.workTimer >= interval) {
+      this.workTimer = 0;
+      // Tìm ô cây chín hoặc ô đất khô cần tưới trên nông trại
+      for (let r = 0; r < game.world.rows; r++) {
+        for (let c = 0; c < game.world.cols; c++) {
+          const t = game.world.tiles[r][c];
+          if (t.crop && t.crop.stage === 4) {
+            this.targetX = (c + 0.5) * game.world.tileSize;
+            this.targetY = (r + 0.5) * game.world.tileSize;
+            game.harvestTile(t, true);
+            return;
+          }
+          if (t.crop && !t.watered) {
+            this.targetX = (c + 0.5) * game.world.tileSize;
+            this.targetY = (r + 0.5) * game.world.tileSize;
+            t.watered = true;
+            game.world.spawnParticles(this.targetX, this.targetY, '#80d8ff', 6);
+            return;
+          }
+        }
+      }
+      // Nếu không có việc, bay lượn quanh Cây Đại Thụ hoặc người chơi
+      this.targetX = game.player.x + Math.cos(performance.now() * 0.002 + this.index * 2) * 70;
+      this.targetY = game.player.y + Math.sin(performance.now() * 0.002 + this.index * 2) * 50;
+    }
+
+    this.x += (this.targetX - this.x) * Math.min(1, dt * 4.5);
+    this.y += (this.targetY - this.y) * Math.min(1, dt * 4.5);
+  }
+
+  render(ctx, time) {
+    const floatY = Math.sin(time * 6 + this.index) * 5;
+    ctx.save();
+    ctx.fillStyle = 'rgba(128, 216, 255, 0.32)';
+    ctx.beginPath();
+    ctx.arc(this.x, this.y + floatY, 14, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.drawImage(window.SPRITES.cache.fairy, this.x - 16, this.y - 16 + floatY, 32, 32);
+    ctx.restore();
+  }
+}
+
 class FarmAnimal {
   constructor(typeId, x, y) {
     this.typeId = typeId;
@@ -3022,7 +3235,6 @@ class FarmAnimal {
       }
     }
 
-    // Phạm vi đồng cỏ cột 6..9, hàng 4..6 (luôn hiển thị trọn vẹn cả ở màn hình Dọc 11x14 lẫn Ngang 16x11)
     this.x = Math.max(290, Math.min(475, this.x + this.vx * dt));
     this.y = Math.max(185, Math.min(325, this.y + this.vy * dt));
 
@@ -3072,13 +3284,17 @@ class FarmAnimal {
 
 window.PlayerFarmer = PlayerFarmer;
 window.PetCat = PetCat;
+window.FairyHelper = FairyHelper;
 window.FarmAnimal = FarmAnimal;
 
 
 /**
  * ============================================================================
- * THUNG LŨNG SAO BĂNG (STARLIGHT VALLEY v5.0 - MOBILE PORTRAIT & ADAPTIVE)
- * js/ui.js - Quản lý Giao diện Thích Ứng Màn Hình Dọc Mobile & Màn Hình Ngang PC
+ * THUNG LŨNG SAO BĂNG (STARLIGHT VALLEY v6.0 - DOPAMINE & PROGRESSION EDITION)
+ * js/ui.js - Quản lý Giao diện Tâm Lý Học Hành Vi:
+ *   • Cây Kỹ Năng Tinh Thông (Mastery Tree - Lũy tiến sức mạnh)
+ *   • Danh Hiệu Điền Chủ (Prestige Ranks) & Tiến trình Sắp Chạm Đích (Goal-Gradient)
+ *   • Hiển thị Cơn Sốt Hoàng Kim (Fever Mode) & Nông Sản Đang Sốt Giá
  * ============================================================================
  */
 
@@ -3090,8 +3306,9 @@ class GameUI {
 
     this.MODAL_GROUPS = {
       quests: {
-        title: '📜 Sổ Nhiệm Vụ & Hành Trình Đại Thụ',
+        title: '📜 Hành Trình, Ủy Thác & Cây Kỹ Năng Tinh Thông',
         tabs: [
+          { id: 'mastery', label: '⭐ Kỹ Năng Tinh Thông' },
           { id: 'story', label: '🌟 Cốt Truyện (5 Chương)' },
           { id: 'commissions', label: '🤝 Ủy Thác Dân Làng' }
         ]
@@ -3101,7 +3318,7 @@ class GameUI {
         tabs: [
           { id: 'seeds', label: '🌱 Hạt Giống' },
           { id: 'animals', label: '🐔 Vật Nuôi & Máy' },
-          { id: 'upgrades', label: '⚒️ Nâng Cấp' },
+          { id: 'upgrades', label: '⚒️ Nâng Cấp & Biệt Thự' },
           { id: 'starshop', label: '🌠 Phép Sao Băng' }
         ]
       },
@@ -3158,6 +3375,7 @@ class GameUI {
   updateHUD() {
     const g = this.game;
     const season = g.world.getCurrentSeason();
+    const rankObj = g.getCurrentPrestigeRank();
 
     document.getElementById('hud-gold').textContent = g.gold.toLocaleString('vi-VN');
     document.getElementById('hud-stars').textContent = g.starShards;
@@ -3171,7 +3389,7 @@ class GameUI {
     const energyPct = Math.max(0, Math.min(100, (g.energy / g.maxEnergy) * 100));
     document.getElementById('energy-bar').style.width = `${energyPct}%`;
     document.getElementById('energy-text').textContent = `${Math.floor(g.energy)}/${g.maxEnergy}`;
-    document.getElementById('level-text').textContent = `Lv.${g.level}`;
+    document.getElementById('level-text').textContent = `${rankObj.icon} Lv.${g.level}`;
 
     const smartBtn = document.getElementById('btn-smart-mode');
     if (smartBtn) {
@@ -3181,7 +3399,7 @@ class GameUI {
 
     const smartTopBtn = document.getElementById('btn-smart-top');
     if (smartTopBtn) {
-      smartTopBtn.className = g.smartMode ? 'nav-icon-btn active-mode' : 'nav-icon-btn';
+      smartTopBtn.className = g.smartMode ? 'nav-icon-btn active-mode mobile-only-btn' : 'nav-icon-btn mobile-only-btn';
       smartTopBtn.textContent = g.smartMode ? '✨ 1-Chạm' : '🛠️ Thủ Công';
     }
 
@@ -3202,20 +3420,41 @@ class GameUI {
     const pill = document.getElementById('step-guide-pill');
     if (!pill) return;
 
+    // Ưu tiên 1: Nếu đang trong CƠN SỐT HOÀNG KIM (Fever Mode), hiển thị thanh đếm ngược rực lửa!
+    if (g.feverTimer > 0) {
+      pill.style.borderColor = '#ffea00';
+      pill.style.background = 'linear-gradient(90deg, rgba(183,28,28,0.95), rgba(245,127,23,0.95))';
+      pill.textContent = `🔥 CƠN SỐT HOÀNG KIM (${Math.ceil(g.feverTimer)}s): Cây lớn x3 tốc độ • Thu hoạch x2 Vàng • 0 tốn sức!`;
+      return;
+    }
+
+    pill.style.borderColor = 'var(--gold)';
+    pill.style.background = 'rgba(24, 16, 38, 0.92)';
+
+    // Ưu tiên 2: Nếu có Điểm Kỹ Năng Tinh Thông chưa cộng
+    if (g.skillPoints > 0) {
+      pill.textContent = `⭐ Bạn có ${g.skillPoints} Điểm Tinh Thông mới! Chạm vào đây để nâng cấp Kỹ Năng Nông Trại!`;
+      return;
+    }
+
+    // Ưu tiên 3: Onboarding 2 bước đầu tiên hoặc Mục tiêu gần hoàn thành nhất (Goal-Gradient / Zeigarnik)
     if (g.stats.harvested < 2) {
-      pill.textContent = '👆 Bước 1/3: Chạm vào 2 cây Củ Cải Đỏ đang chín để thu hoạch!';
-    } else if (g.stats.harvested === 2 && Object.values(g.seeds).reduce((a, b) => a + b, 0) >= 9) {
-      pill.textContent = '🌱 Bước 2/3: Chạm hoặc giữ vuốt qua các ô đất trống để gieo hạt & tưới nước!';
+      pill.textContent = '👆 Bước 1/3: Chạm vào 2 cây Củ Cải Đỏ chín & 🎁 Rương Báu trên đồng!';
+    } else if (g.stats.harvested === 2 && Object.values(g.seeds).reduce((a, b) => a + b, 0) >= 8) {
+      pill.textContent = '🌱 Bước 2/3: Giữ & vuốt qua các ô đất trống để gieo hạt liên hoàn (tích Combo x8 nổ Fever)!';
     } else {
       const chap = window.GAME_CONFIG.STORY_CHAPTERS.find(c => c.chapter === g.storyChapter);
       if (chap) {
         if (chap.check(g)) {
-          pill.textContent = `🎁 Chương ${chap.chapter} đã hoàn thành! Chạm vào đây để nhận thưởng!`;
+          pill.textContent = `🎁 Chương ${chap.chapter} đã hoàn thành! Chạm vào đây để nhận +${chap.rewardGold}G & +1 ⭐ Kỹ Năng!`;
         } else {
-          pill.textContent = `🎯 Chương ${chap.chapter}: ${chap.goalDesc} (${chap.progressText(g)})`;
+          const pct = Math.round(chap.progressRatio(g) * 100);
+          const hotCrop = window.GAME_CONFIG.CROPS[g.hotCropId];
+          pill.textContent = `🎯 Chương ${chap.chapter} (${pct}%): ${chap.progressText(g)} • 📈 Sốt giá: ${hotCrop.emoji}${hotCrop.name} (x1.6G)`;
         }
       } else {
-        pill.textContent = `🏆 Cây Đại Thụ Cấp 5/5 — Thung Lũng Sao Băng Phồn Thịnh!`;
+        const rankObj = g.getCurrentPrestigeRank();
+        pill.textContent = `${rankObj.icon} ${rankObj.title} — Cây Đại Thụ Cấp 5/5 (Mọi nông sản +${Math.round((g.getPriceMultiplier() - 1) * 100)}% giá!)`;
       }
     }
   }
@@ -3225,7 +3464,7 @@ class GameUI {
     const chap = window.GAME_CONFIG.STORY_CHAPTERS.find(c => c.chapter === g.storyChapter);
     const chapReady = chap && chap.check(g);
     const questReady = g.quests.some(q => g.getQuestProgress(q) >= q.target);
-    const showQ = !!(chapReady || questReady);
+    const showQ = !!(chapReady || questReady || g.skillPoints > 0);
 
     ['dot-quests', 'dot-quests-mob'].forEach(id => {
       const el = document.getElementById(id);
@@ -3250,9 +3489,10 @@ class GameUI {
 
     Object.values(window.GAME_CONFIG.CROPS).forEach(crop => {
       const count = g.seeds[crop.id] || 0;
+      const isHot = g.hotCropId === crop.id;
       const pill = document.createElement('div');
       pill.className = 'seed-pill' + (g.selectedSeed === crop.id ? ' active' : '');
-      pill.title = `${crop.name} (Đang có: ${count} hạt | Lớn: ${crop.growTime}s)`;
+      pill.title = `${crop.name}${isHot ? ' [🔥 ĐANG SỐT GIÁ x1.6!]' : ''} (Có: ${count} hạt)`;
       pill.onclick = () => {
         g.selectedSeed = crop.id;
         this.updateHUD();
@@ -3298,13 +3538,23 @@ class GameUI {
   updateTileInspector(tile) {
     const pill = document.getElementById('hover-micro-pill');
     if (!pill) return;
+
+    // Nếu đang có chuỗi Combo >= 2, hiển thị thanh Combo đầy phấn khích!
+    if (this.game.comboCount >= 2 && !tile) {
+      pill.textContent = `🔥 CHUỖI COMBO x${this.game.comboCount}/8 — Đạt x8 để nổ Cơn Sốt Hoàng Kim!`;
+      pill.classList.add('visible');
+      return;
+    }
+
     if (!tile) {
       pill.classList.remove('visible');
       return;
     }
 
     let text = '';
-    if (tile.type === 'sacred_tree') {
+    if (tile.obstacle === 'chest') {
+      text = `🎁 Rương Kho Báu Cổ Xưa — Chạm để mở quà bất ngờ!`;
+    } else if (tile.type === 'sacred_tree') {
       text = `🏛️ Đền Thờ Đại Thụ Cấp ${this.game.treeLevel}/5 — Chạm để Hiến Tế`;
     } else if (tile.type === 'water') {
       text = `🎣 Hồ Sao Băng — Chạm để thả câu Cá Chép Koi`;
@@ -3313,7 +3563,7 @@ class GameUI {
     } else if (tile.type === 'kitchen_oven') {
       text = `🍳 Nhà Bếp — Chạm để nấu món ăn (giá trị x2.5)`;
     } else if (tile.type === 'house_zone') {
-      text = `🏡 Nhà Chính — Chạm để ngủ qua đêm & hồi 100%⚡`;
+      text = `🏡 ${this.game.upgrades.house_tier_2 ? 'Biệt Thự Hoàng Kim' : 'Nhà Chính'} — Chạm để ngủ qua đêm & nhận lãi vàng`;
     } else if (tile.crop) {
       const cCfg = window.GAME_CONFIG.CROPS[tile.crop.id];
       const pct = Math.min(100, Math.floor(tile.crop.progress * 100));
@@ -3383,6 +3633,8 @@ class GameUI {
       meteor: '🌠 Đêm Mưa Sao Băng'
     };
 
+    const rankObj = this.game.getCurrentPrestigeRank();
+
     content.innerHTML = `
       <div style="text-align:center; margin-bottom:10px; font-weight:800; color:#4a2c18;">
         Khép lại Ngày ${summaryData.endedDay} → Bước sang Ngày ${summaryData.newDay} (${summaryData.seasonName})
@@ -3393,12 +3645,12 @@ class GameUI {
           <div class="shop-title" style="font-size:15px; color:#b26a00;">+${summaryData.goldEarnedToday.toLocaleString('vi-VN')}G</div>
         </div>
         <div class="shop-card">
-          <div class="shop-meta">🧺 Đã thu hoạch</div>
-          <div class="shop-title" style="font-size:15px; color:#2e7d32;">${summaryData.harvestedToday} nông sản</div>
+          <div class="shop-meta">👑 Danh hiệu & Lãi kép</div>
+          <div class="shop-title" style="font-size:13px; color:#6a1b9a;">${rankObj.icon} ${rankObj.title} (+${summaryData.passiveGold}G)</div>
         </div>
         <div class="shop-card">
-          <div class="shop-meta">🌳 Cấp Đại Thụ</div>
-          <div class="shop-title">Cấp ${this.game.treeLevel}/5 (+${Math.round((this.game.getPriceMultiplier() - 1) * 100)}% giá)</div>
+          <div class="shop-meta">📈 Nông sản sốt giá hôm nay</div>
+          <div class="shop-title" style="color:#d84315;">🔥 ${summaryData.hotCropName} (x1.6G)</div>
         </div>
         <div class="shop-card">
           <div class="shop-meta">🌤️ Thời tiết hôm nay</div>
@@ -3419,11 +3671,80 @@ class GameUI {
     const body = document.getElementById('modal-body-content');
     body.innerHTML = '';
 
+    // TAB 0: CÂY KỸ NĂNG TINH THÔNG & DANH HIỆU ĐIỀN CHỦ (MASTERY & PRESTIGE)
+    if (this.activeModalTab === 'mastery') {
+      const rankObj = g.getCurrentPrestigeRank();
+      const nextRank = g.getNextPrestigeRank();
+      const buyPtCost = 220 + g.totalMasterySpent * 140;
+
+      const topBox = document.createElement('div');
+      topBox.className = 'banner-box';
+      topBox.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <div>
+            <div style="font-weight:900; font-size:14px; color:#4a148c;">
+              ${rankObj.icon} Danh Hiệu: ${rankObj.title} (Giá bán nông sản +${Math.round((g.getPriceMultiplier() - 1) * 100)}%)
+            </div>
+            <div style="font-size:11.5px; color:#5c3b20; margin-top:2px;">
+              ${nextRank
+                ? `Tích lũy tài sản đạt <b>${nextRank.minWealth.toLocaleString('vi-VN')}G</b> để thăng hạng <b>${nextRank.icon} ${nextRank.title}</b> (Hiện tại: ${g.totalWealthEarned.toLocaleString('vi-VN')}G)`
+                : `🌌 Bạn đã đạt danh hiệu Tối Thượng của Thung Lũng Sao Băng!`}
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="background:#4a148c; color:#ffd54f; padding:5px 10px; border-radius:6px; font-weight:800; font-size:12px;">
+              ⭐ Điểm Tinh Thông: ${g.skillPoints}
+            </span>
+            <button id="btn-buy-skill-pt" class="nav-icon-btn gold-btn" ${g.gold < buyPtCost ? 'disabled' : ''}>
+              +1 ⭐ (${buyPtCost}G)
+            </button>
+          </div>
+        </div>
+      `;
+      topBox.querySelector('#btn-buy-skill-pt').onclick = () => g.buyMasteryPoint(buyPtCost);
+      body.appendChild(topBox);
+
+      window.GAME_CONFIG.MASTERY_SKILLS.forEach(sk => {
+        const curLvl = g.mastery[sk.id] || 0;
+        const isMax = curLvl >= sk.maxLevel;
+        const canUp = !isMax && g.skillPoints > 0;
+        const pct = Math.round((curLvl / sk.maxLevel) * 100);
+
+        const card = document.createElement('div');
+        card.className = 'shop-card';
+        card.innerHTML = `
+          <div>
+            <div class="shop-card-top">
+              <div class="shop-icon">${sk.icon}</div>
+              <div style="flex:1;">
+                <div class="shop-title">${sk.name} (Cấp ${curLvl}/${sk.maxLevel})</div>
+                <div class="shop-meta">${sk.effectPerLevel}</div>
+              </div>
+            </div>
+            <div class="bar-track" style="height:7px; margin:6px 0;">
+              <div class="bar-fill-energy" style="width:${pct}%;"></div>
+            </div>
+            <div class="shop-desc">${sk.desc}</div>
+          </div>
+          <button class="nav-icon-btn ${canUp ? 'purple-btn' : ''}" ${!canUp ? 'disabled' : ''}>
+            ${isMax ? '✔ Đã Đạt Tối Đa' : '⭐ Nâng Cấp (1 Điểm Tinh Thông)'}
+          </button>
+        `;
+        if (canUp) {
+          card.querySelector('button').onclick = () => g.upgradeMasterySkill(sk.id);
+        }
+        body.appendChild(card);
+      });
+      return;
+    }
+
+    // 1. TAB STORY (5 CHƯƠNG KÈM THANH TIẾN TRÌNH GOAL-GRADIENT)
     if (this.activeModalTab === 'story') {
       window.GAME_CONFIG.STORY_CHAPTERS.forEach(chap => {
         const isCurrent = chap.chapter === g.storyChapter;
         const isDone = chap.chapter < g.storyChapter;
         const canClaim = isCurrent && chap.check(g);
+        const pct = isDone ? 100 : (isCurrent ? Math.round(chap.progressRatio(g) * 100) : 0);
         const npc = window.GAME_CONFIG.NPCS[chap.npc] || window.GAME_CONFIG.NPCS.lumia;
 
         const card = document.createElement('div');
@@ -3432,20 +3753,23 @@ class GameUI {
         if (isCurrent) card.style.borderColor = '#6a1b9a';
         card.innerHTML = `
           <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
-            <div class="shop-card-top">
+            <div class="shop-card-top" style="flex:1;">
               <div class="shop-icon">${npc.icon}</div>
-              <div>
+              <div style="flex:1;">
                 <div class="shop-title">${chap.title}</div>
                 <div class="shop-desc">${chap.goalDesc}</div>
+                <div class="bar-track" style="height:7px; margin-top:4px; max-width:280px;">
+                  <div class="bar-fill-energy" style="width:${pct}%;"></div>
+                </div>
                 <div class="shop-meta" style="margin-top:2px;">
-                  ${isDone ? '✔ Đã hoàn thành' : (isCurrent ? `Tiến độ: ${chap.progressText(g)}` : '🔒 Mở khóa sau chương trước')}
+                  ${isDone ? '✔ Đã hoàn thành' : (isCurrent ? `Tiến độ (${pct}%): ${chap.progressText(g)}` : '🔒 Mở khóa sau chương trước')}
                 </div>
               </div>
             </div>
             <div>
               ${canClaim
-                ? `<button class="nav-icon-btn gold-btn">🎁 Nhận Thưởng (+${chap.rewardGold}G)</button>`
-                : `<span style="font-size:11.5px; font-weight:800; color:#6a1b9a;">💰+${chap.rewardGold}G | 🌠+${chap.rewardStars}</span>`}
+                ? `<button class="nav-icon-btn gold-btn">🎁 Nhận Thưởng (+${chap.rewardGold}G & +1⭐)</button>`
+                : `<span style="font-size:11.5px; font-weight:800; color:#6a1b9a;">💰+${chap.rewardGold}G | 🌠+${chap.rewardStars} | ⭐+1</span>`}
             </div>
           </div>
         `;
@@ -3460,25 +3784,32 @@ class GameUI {
       return;
     }
 
+    // 2. TAB COMMISSIONS
     if (this.activeModalTab === 'commissions') {
       g.quests.forEach(q => {
         const npc = window.GAME_CONFIG.NPCS[q.npc] || window.GAME_CONFIG.NPCS.bamai;
         const current = Math.min(q.target, g.getQuestProgress(q));
         const isDone = current >= q.target;
+        const pct = Math.round((current / q.target) * 100);
 
         const card = document.createElement('div');
         card.className = 'shop-card';
         card.innerHTML = `
-          <div class="shop-card-top">
-            <div class="shop-icon">${npc.icon}</div>
-            <div>
-              <div class="shop-title">${q.title}</div>
-              <div class="shop-meta">Tiến độ: ${current}/${q.target}</div>
-              <div class="shop-desc">Thưởng: 💰${q.rewardGold}G + 🌠${q.rewardStars} Sao</div>
+          <div>
+            <div class="shop-card-top">
+              <div class="shop-icon">${npc.icon}</div>
+              <div style="flex:1;">
+                <div class="shop-title">${q.title}</div>
+                <div class="shop-meta">Tiến độ: ${current}/${q.target} (${pct}%)</div>
+                <div class="bar-track" style="height:6px; margin-top:3px;">
+                  <div class="bar-fill-energy" style="width:${pct}%;"></div>
+                </div>
+              </div>
             </div>
+            <div class="shop-desc" style="margin-top:5px;">Thưởng: 💰${q.rewardGold}G + 🌠${q.rewardStars} Sao</div>
           </div>
           <button class="nav-icon-btn ${isDone ? 'gold-btn' : ''}" ${!isDone ? 'disabled' : ''}>
-            ${isDone ? '🎁 Nhận Phần Thưởng' : `Đang thực hiện (${current}/${q.target})`}
+            ${isDone ? '🎁 Nhận Phần Thưởng' : `Còn thiếu ${q.target - current} nữa!`}
           </button>
         `;
         if (isDone) {
@@ -3492,9 +3823,10 @@ class GameUI {
       return;
     }
 
+    // 3. TAB SEEDS (HIỂN THỊ NÔNG SẢN ĐANG SỐT GIÁ!)
     if (this.activeModalTab === 'seeds') {
       const shortHints = {
-        radish: 'Lớn siêu tốc 15s',
+        radish: 'Lớn siêu tốc 14s',
         strawberry: 'Tự ra quả nhiều lần',
         pumpkin: 'Trồng 2x2 tạo quả Khổng Lồ',
         sunflower: 'Tăng +30% tốc độ 8 ô cạnh',
@@ -3503,14 +3835,18 @@ class GameUI {
       };
       Object.values(window.GAME_CONFIG.CROPS).forEach(crop => {
         const owned = g.seeds[crop.id] || 0;
+        const isHot = g.hotCropId === crop.id;
+        const effPrice = g.getItemSellPrice(crop.id);
+
         const card = document.createElement('div');
         card.className = 'shop-card';
+        if (isHot) card.style.borderColor = '#d84315';
         card.innerHTML = `
           <div class="shop-card-top">
             <div class="shop-icon">${this.pixelIconHtml(crop.id, crop.emoji, 26)}</div>
             <div>
-              <div class="shop-title">${crop.name}</div>
-              <div class="shop-meta">⏱ ${crop.growTime}s • 💰 Bán ${crop.sellPrice}G</div>
+              <div class="shop-title">${crop.name} ${isHot ? '<span style="color:#d84315;font-size:11px;">🔥 SỐT GIÁ x1.6</span>' : ''}</div>
+              <div class="shop-meta">⏱ ${crop.growTime}s • 💰 Bán ${effPrice}G</div>
               <div class="shop-desc">${shortHints[crop.id] || ''}</div>
             </div>
           </div>
@@ -3530,6 +3866,7 @@ class GameUI {
       return;
     }
 
+    // 4. TAB ANIMALS & DEVICES
     if (this.activeModalTab === 'animals') {
       Object.values(window.GAME_CONFIG.ANIMALS).forEach(anim => {
         const count = g.animals.filter(a => a.typeId === anim.id).length;
@@ -3575,6 +3912,7 @@ class GameUI {
       return;
     }
 
+    // 5. TAB UPGRADES
     if (this.activeModalTab === 'upgrades') {
       window.GAME_CONFIG.UPGRADES.forEach(up => {
         const isOwned = !!g.upgrades[up.id];
@@ -3600,6 +3938,7 @@ class GameUI {
       return;
     }
 
+    // 6. TAB STAR SHOP
     if (this.activeModalTab === 'starshop') {
       window.GAME_CONFIG.STAR_SHOP_ITEMS.forEach(item => {
         const canBuy = g.starShards >= item.starCost;
@@ -3625,6 +3964,7 @@ class GameUI {
       return;
     }
 
+    // 7. TAB BUNDLES
     if (this.activeModalTab === 'bundles') {
       window.GAME_CONFIG.BUNDLES.forEach(b => {
         const isDone = g.completedBundles.includes(b.id);
@@ -3663,6 +4003,7 @@ class GameUI {
       return;
     }
 
+    // 8. TAB KITCHEN
     if (this.activeModalTab === 'kitchen') {
       window.GAME_CONFIG.RECIPES.forEach(rec => {
         const ingText = Object.entries(rec.ingredients)
@@ -3678,13 +4019,13 @@ class GameUI {
               <div class="shop-icon">${rec.icon}</div>
               <div>
                 <div class="shop-title">${rec.name}</div>
-                <div class="shop-meta">💰 Bán ${rec.sellPrice}G | ⚡ Hồi ${rec.energyRestore}</div>
+                <div class="shop-meta">💰 Bán ${Math.round(rec.sellPrice * g.getPriceMultiplier())}G | ⚡ Hồi ${rec.energyRestore}</div>
               </div>
             </div>
             <div style="font-size:11px; font-weight:700; color:#6b3b06; margin-top:6px;">Cần: ${ingText}</div>
           </div>
           <div style="display:flex; gap:6px;">
-            <button class="nav-icon-btn gold-btn" data-act="sell" ${!canCook ? 'disabled' : ''}>Bán (+${rec.sellPrice}G)</button>
+            <button class="nav-icon-btn gold-btn" data-act="sell" ${!canCook ? 'disabled' : ''}>Bán (+${Math.round(rec.sellPrice * g.getPriceMultiplier())}G)</button>
             <button class="nav-icon-btn" data-act="eat" ${!canCook ? 'disabled' : ''}>Ăn (⚡+${rec.energyRestore})</button>
           </div>
         `;
@@ -3695,6 +4036,7 @@ class GameUI {
       return;
     }
 
+    // 9. TAB INVENTORY
     if (this.activeModalTab === 'inventory') {
       const entries = Object.entries(g.inventory).filter(([, qty]) => qty > 0);
       if (entries.length === 0) {
@@ -3722,13 +4064,14 @@ class GameUI {
 
       entries.forEach(([key, qty]) => {
         const unitPrice = g.getItemSellPrice(key);
+        const isHot = g.hotCropId === key;
         const card = document.createElement('div');
         card.className = 'shop-card';
         card.innerHTML = `
           <div class="shop-card-top">
             <div class="shop-icon">${this.pixelIconHtml(key, g.getItemIcon(key), 26)}</div>
             <div>
-              <div class="shop-title">${g.getItemLabel(key)}</div>
+              <div class="shop-title">${g.getItemLabel(key)} ${isHot ? '<span style="color:#d84315;font-size:10.5px;">🔥x1.6</span>' : ''}</div>
               <div class="shop-meta">Số lượng: ${qty} • Giá: ${unitPrice}G</div>
             </div>
           </div>
@@ -3740,6 +4083,7 @@ class GameUI {
       return;
     }
 
+    // 10. TAB ALMANAC
     if (this.activeModalTab === 'almanac') {
       const allKeys = [
         ...Object.keys(window.GAME_CONFIG.CROPS),
@@ -3786,23 +4130,24 @@ class GameUI {
       return;
     }
 
+    // 11. TAB RULES
     if (this.activeModalTab === 'rules') {
       body.innerHTML = `
         <div class="shop-card">
-          <div class="shop-title">✨ 1. Chạm & Vuốt Liên Hoàn</div>
-          <div class="shop-desc">Chỉ cần <b>Chạm hoặc Giữ & Vuốt ngón tay</b> trên ruộng để tự động Cuốc → Gieo → Tưới → Thu hoạch!</div>
+          <div class="shop-title">🔥 1. Chuỗi Combo & Cơn Sốt Hoàng Kim</div>
+          <div class="shop-desc">Thao tác liên tiếp đạt <b>Combo x8</b> sẽ kích hoạt <b>Cơn Sốt Hoàng Kim (15s)</b>: Cây lớn x3 tốc độ, Thu hoạch x2 Vàng & không tốn sức!</div>
         </div>
         <div class="shop-card">
-          <div class="shop-title">🎃 2. Cây Khổng Lồ 2×2 (×3 Sản Lượng)</div>
-          <div class="shop-desc">Trồng 4 cây cùng loại tạo thành ô vuông <b>2×2</b> liền kề nhau để hợp nhất thành Cây Khổng Lồ!</div>
+          <div class="shop-title">⭐ 2. Cây Kỹ Năng Tinh Thông & Tinh Linh</div>
+          <div class="shop-desc">Mỗi khi lên Cấp bạn nhận <b>⭐ Điểm Tinh Thông</b> để triệu hồi <b>Tinh Linh Tự Thu Hoạch</b>, tăng nổ Chí Mạng x3 & nhận lãi kép!</div>
         </div>
         <div class="shop-card">
-          <div class="shop-title">🌠 3. Cây Ánh Sao (×4 Giá Trị)</div>
-          <div class="shop-desc">Đặt <b>Đèn Đom Đóm</b> gần cây hoặc dùng <b>Mảnh Sao Băng</b> trong Chợ Phép Thuật để đột biến cây!</div>
+          <div class="shop-title">🎃 3. Đột Biến Khổng Lồ (2×2) & Ánh Sao</div>
+          <div class="shop-desc">Trồng 4 cây cùng loại theo ô vuông <b>2×2</b> tạo Cây Khổng Lồ (x3); dùng Đèn Đom Đóm / Sao Băng tạo Cây Ánh Sao (x4)!</div>
         </div>
         <div class="shop-card">
-          <div class="shop-title">🏛️ 4. Đánh Thức Cây Đại Thụ</div>
-          <div class="shop-desc">Nộp nông sản tại <b>Đền Thờ</b> và hoàn thành <b>5 Chương Nhiệm Vụ</b> để tăng vĩnh viễn giá bán!</div>
+          <div class="shop-title">👑 4. Thăng Hạng Điền Chủ & Biệt Thự</div>
+          <div class="shop-desc">Tích lũy tài sản để thăng hạng từ <b>Nông Dân Tập Sự</b> lên <b>Đại Đế Ngân Hà (+80% giá bán)</b> và xây <b>Biệt Thự Hoàng Kim</b>!</div>
         </div>
         <div class="banner-box" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
           <span style="font-weight:800; font-size:12.5px;">💾 Quản lý dữ liệu lưu tự động</span>
@@ -3823,9 +4168,12 @@ window.GameUI = GameUI;
 
 /**
  * ============================================================================
- * THUNG LŨNG SAO BĂNG (STARLIGHT VALLEY v5.0 - MOBILE PORTRAIT & ADAPTIVE)
- * js/main.js - Hệ thống Thích Ứng Màn Hình Dọc/Ngang, Cảm Ứng Đa Điểm (Touch),
- *              Camera Zoom 1.35x Bám Theo Nhân Vật & Vòng Lặp Chính
+ * THUNG LŨNG SAO BĂNG (STARLIGHT VALLEY v6.0 - DOPAMINE & PROGRESSION EDITION)
+ * js/main.js - Hệ thống Vòng Lặp Dopamine & Lũy Tiến Sức Mạnh:
+ *   • Chuỗi Combo Tăng Pitch & Cơn Sốt Hoàng Kim (Fever Mode x2 Vàng, x3 Tốc độ)
+ *   • Nổ Thu Hoạch Chí Mạng (Critical Harvest x3) & Rương Kho Báu Bất Ngờ
+ *   • Cây Kỹ Năng Tinh Thông (Mastery Tree) & Tinh Linh Bay Tự Thu Hoạch (Fairy Drones)
+ *   • Danh Hiệu Điền Chủ (Prestige Ranks) & Nông Sản Sốt Giá Theo Ngày (Market Surge)
  * ============================================================================
  */
 
@@ -3845,16 +4193,35 @@ class StarlightFarmGame {
     this.animals = [
       new window.FarmAnimal('chicken', 360, 220)
     ];
+    this.fairies = [];
 
     this.syncCanvasOrientation();
 
     this.gold = 260;
+    this.totalWealthEarned = 260;
     this.starShards = 2;
     this.energy = 100;
     this.maxEnergy = 100;
     this.level = 1;
     this.xp = 0;
-    this.xpToNext = 100;
+    this.xpToNext = 80;
+
+    // Hệ thống Kỹ năng Tinh Thông (Mastery Tree)
+    this.skillPoints = 1; // Tặng sẵn 1 Điểm Tinh Thông khởi đầu để người chơi trải nghiệm ngay!
+    this.totalMasterySpent = 0;
+    this.mastery = {
+      golden_touch: 0,
+      hydro_vitality: 0,
+      fairy_drone: 0,
+      star_alchemy: 0
+    };
+
+    // Hệ thống Combo & Fever Mode & Market Surge
+    this.comboCount = 0;
+    this.comboTimer = 0;
+    this.feverTimer = 0;
+    this.hotCropId = 'radish';
+    this.chestSpawnTimer = 0;
 
     this.storyChapter = 1;
     this.treeLevel = 1;
@@ -3906,11 +4273,101 @@ class StarlightFarmGame {
 
     this.ui = new window.GameUI(this);
     this.loadGame();
+    this.syncFairyDrones();
     this.bindEvents();
     this.ui.updateHUD();
 
     this.lastTime = performance.now();
     requestAnimationFrame(t => this.loop(t));
+  }
+
+  getCurrentPrestigeRank() {
+    const ranks = window.GAME_CONFIG.PRESTIGE_RANKS;
+    let current = ranks[0];
+    for (const r of ranks) {
+      if (this.totalWealthEarned >= r.minWealth) current = r;
+    }
+    return current;
+  }
+
+  getNextPrestigeRank() {
+    const ranks = window.GAME_CONFIG.PRESTIGE_RANKS;
+    for (const r of ranks) {
+      if (this.totalWealthEarned < r.minWealth) return r;
+    }
+    return null;
+  }
+
+  earnGold(amount) {
+    const prevRank = this.getCurrentPrestigeRank().rank;
+    this.gold += amount;
+    this.totalWealthEarned += amount;
+    this.dailyStats.goldEarned += amount;
+    const newRankObj = this.getCurrentPrestigeRank();
+    if (newRankObj.rank > prevRank) {
+      window.SFX.playLevelUp();
+      this.ui.showToast(`👑 THĂNG HẠNG DANH HIỆU: ${newRankObj.icon} ${newRankObj.title} (+${Math.round(newRankObj.bonusPrice * 100)}% giá bán)!`);
+    }
+  }
+
+  registerComboAction(px, py) {
+    this.comboCount += 1;
+    this.comboTimer = 3.2;
+
+    if (this.comboCount >= 3 && this.feverTimer <= 0) {
+      this.world.spawnFloatingText(px, py - 22, `🔥 COMBO x${this.comboCount}!`, '#ffea00');
+    }
+
+    if (this.comboCount >= 8 && this.feverTimer <= 0) {
+      this.triggerFeverMode(15);
+    }
+  }
+
+  triggerFeverMode(durationSec = 15) {
+    this.feverTimer = durationSec;
+    this.comboCount = 0;
+    window.SFX.playFeverTrigger();
+    this.world.spawnParticles(this.player.x, this.player.y, '#ffd700', 28);
+    this.ui.showToast(`🔥 CƠN SỐT HOÀNG KIM KÍCH HOẠT (${durationSec}s): Cây lớn x3 tốc độ, Thu hoạch x2 Vàng & 0 tốn sức!`);
+    this.ui.updateHUD();
+  }
+
+  syncFairyDrones() {
+    const lvl = this.mastery.fairy_drone || 0;
+    const targetCount = lvl >= 5 ? 3 : (lvl >= 3 ? 2 : (lvl >= 1 ? 1 : 0));
+    while (this.fairies.length < targetCount) {
+      this.fairies.push(new window.FairyHelper(this.fairies.length));
+    }
+  }
+
+  upgradeMasterySkill(skillId) {
+    const cfg = window.GAME_CONFIG.MASTERY_SKILLS.find(s => s.id === skillId);
+    if (!cfg || this.skillPoints <= 0) return;
+    const cur = this.mastery[skillId] || 0;
+    if (cur >= cfg.maxLevel) return;
+
+    this.skillPoints -= 1;
+    this.totalMasterySpent += 1;
+    this.mastery[skillId] = cur + 1;
+    this.syncFairyDrones();
+
+    window.SFX.playLevelUp();
+    this.ui.showToast(`⭐ Đã nâng cấp "${cfg.name}" lên Cấp ${this.mastery[skillId]}!`);
+    this.ui.updateHUD();
+    this.ui.renderModalContent();
+    this.saveGame();
+  }
+
+  buyMasteryPoint(cost) {
+    if (this.gold < cost) return;
+    this.gold -= cost;
+    this.skillPoints += 1;
+    this.totalMasterySpent += 1;
+    window.SFX.playStar();
+    this.ui.showToast('⭐ Đã đổi +1 Điểm Tinh Thông!');
+    this.ui.updateHUD();
+    this.ui.renderModalContent();
+    this.saveGame();
   }
 
   syncCanvasOrientation() {
@@ -3929,7 +4386,6 @@ class StarlightFarmGame {
     const canvasX = (clientX - rect.left) * scaleX;
     const canvasY = (clientY - rect.top) * scaleY;
 
-    // Quy đổi qua Camera Zoom nếu đang bật phóng to
     const worldX = (canvasX - this.canvas.width / 2) / this.cameraZoom + this.camX;
     const worldY = (canvasY - this.canvas.height / 2) / this.cameraZoom + this.camY;
     return { wx: worldX, wy: worldY };
@@ -4043,7 +4499,6 @@ class StarlightFarmGame {
       this.lastDraggedTileKey = null;
     };
 
-    // Mouse Events
     this.canvas.addEventListener('mousedown', e => handlePointerStart(e.clientX, e.clientY));
     this.canvas.addEventListener('mousemove', e => handlePointerMove(e.clientX, e.clientY));
     window.addEventListener('mouseup', handlePointerEnd);
@@ -4052,7 +4507,6 @@ class StarlightFarmGame {
       this.ui.updateTileInspector(null);
     });
 
-    // Touch Events cho Mobile Màn Hình Dọc (chạm & vuốt mượt mà không bị cuộn trang)
     this.canvas.addEventListener('touchstart', e => {
       e.preventDefault();
       if (e.touches.length > 0) {
@@ -4069,7 +4523,6 @@ class StarlightFarmGame {
 
     window.addEventListener('touchend', handlePointerEnd);
 
-    // Toggle 1-Chạm
     const toggleSmart = () => {
       this.smartMode = !this.smartMode;
       if (this.smartMode) this.selectedTool = 'smart';
@@ -4078,7 +4531,6 @@ class StarlightFarmGame {
     document.getElementById('btn-smart-mode').onclick = toggleSmart;
     document.getElementById('btn-smart-top').onclick = toggleSmart;
 
-    // Toggle Camera Zoom 1x / 1.35x
     document.getElementById('btn-zoom').onclick = () => {
       this.cameraZoom = this.cameraZoom > 1.0 ? 1.0 : 1.35;
       this.ui.updateHUD();
@@ -4088,12 +4540,13 @@ class StarlightFarmGame {
       const chap = window.GAME_CONFIG.STORY_CHAPTERS.find(c => c.chapter === this.storyChapter);
       if (chap && chap.check(this)) {
         this.completeStoryChapter();
+      } else if (this.skillPoints > 0) {
+        this.ui.openModalGroup('quests', 'mastery');
       } else {
         this.ui.openModalGroup('quests', 'story');
       }
     };
 
-    // Desktop & Mobile Navigation Buttons
     document.getElementById('btn-menu-quests').onclick = () => this.ui.openModalGroup('quests');
     document.getElementById('btn-menu-shop').onclick = () => this.ui.openModalGroup('shop');
     document.getElementById('btn-menu-shrine').onclick = () => this.ui.openModalGroup('shrine');
@@ -4122,6 +4575,31 @@ class StarlightFarmGame {
     this.selectedTool = toolId;
     this.smartMode = (toolId === 'smart');
     this.ui.updateHUD();
+  }
+
+  openTreasureChest(tile) {
+    const px = (tile.c + 0.5) * this.world.tileSize;
+    const py = (tile.r + 0.5) * this.world.tileSize;
+    tile.obstacle = null;
+    window.SFX.playChestOpen();
+    this.world.spawnParticles(px, py, '#ffd700', 26);
+
+    const roll = Math.random();
+    if (roll < 0.45) {
+      const bonusGold = 90 + this.level * 35;
+      this.earnGold(bonusGold);
+      this.world.spawnFloatingText(px, py - 12, `🎁 RƯƠNG BÁU: +${bonusGold} VÀNG!`, '#ffd700');
+    } else if (roll < 0.80) {
+      this.seeds.pumpkin = (this.seeds.pumpkin || 0) + 2;
+      this.seeds.sunflower = (this.seeds.sunflower || 0) + 2;
+      this.world.spawnFloatingText(px, py - 12, '🎁 RƯƠNG BÁU: +4 HẠT GIỐNG QUÝ!', '#76ff03');
+    } else {
+      this.starShards += 2;
+      this.world.spawnFloatingText(px, py - 12, '🎁 ĐẠI CÁT: +2 🌠 MẢNH SAO BĂNG!', '#ea80fc');
+    }
+    this.addXP(30);
+    this.ui.updateHUD();
+    this.saveGame();
   }
 
   useStarShopItem(itemId) {
@@ -4171,19 +4649,11 @@ class StarlightFarmGame {
       });
       window.SFX.playStar();
       this.ui.showToast('🌈 Đã biến cây trồng thành Cây Ánh Sao (x4 giá trị)!');
-    } else if (itemId === 'summon_rain') {
+    } else if (itemId === 'trigger_fever') {
       this.starShards -= item.starCost;
-      this.world.weather = 'rainy';
-      this.energy = Math.min(this.maxEnergy, this.energy + 50);
-      for (let r = 0; r < this.world.rows; r++) {
-        for (let c = 0; c < this.world.cols; c++) {
-          if (this.world.tiles[r][c].type === 'soil') {
-            this.world.tiles[r][c].watered = true;
-          }
-        }
-      }
-      window.SFX.playWater();
-      this.ui.showToast('🌧️ Mưa Rào đã tới! Toàn bộ ô đất đã được tưới ẩm & hồi +50⚡!');
+      this.triggerFeverMode(18);
+      this.ui.closeModal();
+      return;
     } else if (itemId === 'summon_meteor') {
       this.summonMeteorShower();
       this.ui.closeModal();
@@ -4199,9 +4669,9 @@ class StarlightFarmGame {
     const chap = window.GAME_CONFIG.STORY_CHAPTERS.find(c => c.chapter === this.storyChapter);
     if (!chap || !chap.check(this)) return;
 
-    this.gold += chap.rewardGold;
-    this.dailyStats.goldEarned += chap.rewardGold;
+    this.earnGold(chap.rewardGold);
     this.starShards += chap.rewardStars;
+    this.skillPoints += 1;
     this.treeLevel = Math.min(5, this.storyChapter + 1);
     if (chap.chapter === 2) {
       this.devices.sprinkler = (this.devices.sprinkler || 0) + 1;
@@ -4236,9 +4706,9 @@ class StarlightFarmGame {
     }
 
     this.completedBundles.push(bundleId);
-    this.gold += b.rewardGold;
-    this.dailyStats.goldEarned += b.rewardGold;
+    this.earnGold(b.rewardGold);
     this.starShards += b.rewardStars;
+    this.skillPoints += 1;
     if (b.rewardDevice) {
       this.devices[b.rewardDevice] = (this.devices[b.rewardDevice] || 0) + 1;
     }
@@ -4250,7 +4720,7 @@ class StarlightFarmGame {
 
     window.SFX.playStar();
     this.world.spawnParticles(7.5 * this.world.tileSize, 1.5 * this.world.tileSize, '#ffd700', 26);
-    this.ui.showToast(`🏛️ Đã hiến tế "${b.name}"! Nhận ${b.rewardText}`);
+    this.ui.showToast(`🏛️ Đã hiến tế "${b.name}"! Nhận ${b.rewardText} & +1 ⭐ Kỹ Năng!`);
     this.ui.updateHUD();
     this.ui.renderModalContent();
     this.saveGame();
@@ -4286,6 +4756,12 @@ class StarlightFarmGame {
     this.player.actionAnimTimer = 0.25;
     const px = (tile.c + 0.5) * this.world.tileSize;
     const py = (tile.r + 0.5) * this.world.tileSize;
+
+    // Mở Rương Kho Báu Bất Ngờ
+    if (tile.obstacle === 'chest') {
+      this.openTreasureChest(tile);
+      return;
+    }
 
     if (tile.type === 'sacred_tree') {
       this.ui.openModalGroup('shrine', 'bundles');
@@ -4332,10 +4808,18 @@ class StarlightFarmGame {
     if (tile.obstacle) {
       if (!this.consumeEnergy(1.5)) return;
       tile.obstacle = null;
-      this.addXP(5);
+      this.addXP(6);
       window.SFX.playHoe();
+      this.registerComboAction(px, py);
       this.world.spawnParticles(px, py, '#a5d6a7', 10);
-      this.world.spawnFloatingText(px, py - 8, '+5 XP Dọn đất!', '#a5d6a7');
+      // Xác suất đào trúng Rương Kho Báu khi dọn cỏ/đá!
+      const chestChance = 0.14 + (this.mastery.golden_touch || 0) * 0.04;
+      if (Math.random() < chestChance) {
+        tile.obstacle = 'chest';
+        this.world.spawnFloatingText(px, py - 10, '🎁 ĐÀO TRÚNG RƯƠNG BÁU!', '#ffd700');
+      } else {
+        this.world.spawnFloatingText(px, py - 8, '+6 XP Dọn đất!', '#a5d6a7');
+      }
       this.ui.updateHUD();
       return;
     }
@@ -4384,6 +4868,7 @@ class StarlightFarmGame {
     }
     if (count > 0) {
       window.SFX.playHoe();
+      this.registerComboAction((centerTile.c + 0.5) * this.world.tileSize, (centerTile.r + 0.5) * this.world.tileSize);
       this.addXP(count * 2);
       this.ui.updateHUD();
       this.saveGame();
@@ -4403,6 +4888,7 @@ class StarlightFarmGame {
     window.SFX.playPlant();
     const px = (tile.c + 0.5) * this.world.tileSize;
     const py = (tile.r + 0.5) * this.world.tileSize;
+    this.registerComboAction(px, py);
     this.world.spawnParticles(px, py, '#ffe082', 6);
     if (this.smartMode && !tile.watered && this.energy >= 1.5) {
       this.waterTile(tile);
@@ -4433,13 +4919,17 @@ class StarlightFarmGame {
     }
   }
 
-  harvestTile(tile, byCat = false) {
+  harvestTile(tile, byHelper = false) {
     if (!tile.crop || tile.crop.stage < 4) return;
     const cfg = window.GAME_CONFIG.CROPS[tile.crop.id];
     const px = (tile.c + 0.5) * this.world.tileSize;
     const py = (tile.r + 0.5) * this.world.tileSize;
 
-    const yieldQty = tile.crop.isGiant ? 3 : 1;
+    // Kiểm tra Nổ Thu Hoạch Chí Mạng (Variable Ratio Critical Jackpot!)
+    const critChance = 0.14 + (this.mastery.golden_touch || 0) * 0.08 + (this.feverTimer > 0 ? 0.35 : 0);
+    const isCritical = Math.random() < critChance;
+
+    let yieldQty = (tile.crop.isGiant ? 3 : 1) * (isCritical ? 2 : 1);
     const isMutated = tile.crop.isMutated;
 
     this.inventory[cfg.id] = (this.inventory[cfg.id] || 0) + yieldQty;
@@ -4447,22 +4937,38 @@ class StarlightFarmGame {
     this.stats.harvested += yieldQty;
     this.dailyStats.harvested += yieldQty;
 
+    if (!byHelper) {
+      this.registerComboAction(px, py);
+    }
+
+    // Thưởng Vàng trực tiếp khi nổ Chí Mạng, Fever Mode hoặc Cây Đột Biến!
+    let directBonusGold = 0;
     if (isMutated || tile.crop.isGiant) {
       this.stats.mutatedHarvested += 1;
-      const bonusGold = Math.round(cfg.sellPrice * (isMutated ? 2.5 : 1.5));
-      this.gold += bonusGold;
-      this.dailyStats.goldEarned += bonusGold;
+      directBonusGold += Math.round(cfg.sellPrice * (isMutated ? 2.5 : 1.5));
       this.starShards += isMutated ? 1 : 0;
-      this.world.spawnFloatingText(px, py - 24, `🌟 ĐỘT BIẾN +${bonusGold}G!`, '#e040fb');
+    }
+    if (isCritical || this.feverTimer > 0) {
+      directBonusGold += Math.round(cfg.sellPrice * (this.feverTimer > 0 ? 1.5 : 1.0));
+    }
+
+    if (directBonusGold > 0) {
+      this.earnGold(directBonusGold);
+      this.world.spawnFloatingText(
+        px,
+        py - 24,
+        `${isCritical ? '💥 CHÍ MẠNG x2! ' : '🌟 ĐỘT BIẾN '} +${directBonusGold}G!`,
+        isCritical ? '#ffea00' : '#e040fb'
+      );
     }
 
     this.addXP(cfg.xp * yieldQty);
-    window.SFX.playHarvest();
-    this.world.spawnParticles(px, py, cfg.color, 14);
+    window.SFX.playHarvestCombo(this.comboCount, isCritical);
+    this.world.spawnParticles(px, py, isCritical ? '#ffd700' : cfg.color, isCritical ? 22 : 14);
     this.world.spawnFloatingText(
       px,
       py - 8,
-      `${byCat ? '🐱 Mèo thu ' : ''}+${yieldQty} ${cfg.name}`,
+      `${byHelper ? '🧚 Tự thu ' : ''}+${yieldQty} ${cfg.name}`,
       '#fff59d'
     );
 
@@ -4509,17 +5015,16 @@ class StarlightFarmGame {
     document.getElementById('fishing-bar-ui').classList.remove('active');
 
     if (st.cursor >= st.sweetMin && st.cursor <= st.sweetMax) {
-      window.SFX.playHarvest();
+      window.SFX.playHarvestCombo(4, true);
       this.stats.fishCaught += 1;
       const winterBonus = this.world.getCurrentSeason().id === 'winter' ? 2 : 1;
       this.inventory.fish = (this.inventory.fish || 0) + winterBonus;
       this.recordDiscovery('fish', winterBonus);
       this.addXP(25);
-      if (Math.random() < 0.35) {
+      if (Math.random() < 0.45) {
         this.starShards += 1;
-        this.gold += 85;
-        this.dailyStats.goldEarned += 85;
-        this.ui.showToast(`🎣 Câu được +${winterBonus} Cá Chép Koi & Rương Kho Báu (+85G, +1 🌠 Sao)!`);
+        this.earnGold(95);
+        this.ui.showToast(`🎣 Câu được +${winterBonus} Cá Chép Koi & Rương Kho Báu (+95G, +1 🌠 Sao)!`);
       } else {
         this.ui.showToast(`🐟 Cắn câu chuẩn xác! +${winterBonus} Cá Chép Koi vào Kho!`);
       }
@@ -4615,8 +5120,7 @@ class StarlightFarmGame {
       this.ui.showToast(`😋 Ăn ${recipe.icon} ${recipe.name}: Hồi +${recipe.energyRestore}⚡ & Tăng tốc!`);
     } else {
       const earned = Math.round(recipe.sellPrice * this.getPriceMultiplier());
-      this.gold += earned;
-      this.dailyStats.goldEarned += earned;
+      this.earnGold(earned);
       window.SFX.playCoin();
       this.ui.showToast(`💰 Đã bán ${recipe.icon} ${recipe.name} thu về +${earned}G!`);
     }
@@ -4626,7 +5130,9 @@ class StarlightFarmGame {
   }
 
   getPriceMultiplier() {
-    let mult = 1.0 + (this.treeLevel - 1) * 0.12;
+    const rankBonus = this.getCurrentPrestigeRank().bonusPrice || 0;
+    const alchemyBonus = (this.mastery.star_alchemy || 0) * 0.20;
+    let mult = 1.0 + (this.treeLevel - 1) * 0.12 + rankBonus + alchemyBonus;
     if (this.upgrades.greenhouse_charm) mult += 0.35;
     if (this.storyChapter > 5) mult += 0.25;
     return mult;
@@ -4650,6 +5156,9 @@ class StarlightFarmGame {
     if (season.id === 'autumn' && (key === 'pumpkin' || key === 'eggplant')) {
       mult += 0.25;
     }
+    if (key === this.hotCropId) {
+      mult *= 1.6;
+    }
     if (window.GAME_CONFIG.CROPS[key]) {
       return Math.round(window.GAME_CONFIG.CROPS[key].sellPrice * mult);
     }
@@ -4662,8 +5171,7 @@ class StarlightFarmGame {
     if (qty <= 0) return;
     const total = qty * this.getItemSellPrice(key);
     this.inventory[key] = 0;
-    this.gold += total;
-    this.dailyStats.goldEarned += total;
+    this.earnGold(total);
     window.SFX.playCoin();
     this.ui.showToast(`💰 Đã bán ${qty} ${this.getItemLabel(key)} (+${total.toLocaleString('vi-VN')}G)!`);
     this.ui.updateHUD();
@@ -4684,8 +5192,7 @@ class StarlightFarmGame {
       this.ui.showToast('📦 Kho nông sản đang trống! Hãy thu hoạch cây chín trước nhé.');
       return;
     }
-    this.gold += total;
-    this.dailyStats.goldEarned += total;
+    this.earnGold(total);
     window.SFX.playCoin();
     this.world.spawnParticles(4.5 * this.world.tileSize, 2.5 * this.world.tileSize, '#ffd700', 22);
     this.ui.showToast(`🚚 Đã bán toàn bộ nông sản: +${total.toLocaleString('vi-VN')} Vàng!`);
@@ -4722,8 +5229,7 @@ class StarlightFarmGame {
     const idx = this.quests.findIndex(q => q.id === qId);
     if (idx === -1) return;
     const q = this.quests[idx];
-    this.gold += q.rewardGold;
-    this.dailyStats.goldEarned += q.rewardGold;
+    this.earnGold(q.rewardGold);
     this.starShards += q.rewardStars;
     this.addXP(45);
     window.SFX.playLevelUp();
@@ -4755,10 +5261,26 @@ class StarlightFarmGame {
     const goldToday = this.dailyStats.goldEarned;
     const harvToday = this.dailyStats.harvested;
 
+    // Lãi kép từ Kỹ năng Thuật Giả Kim & Biệt Thự Hoàng Kim
+    let passiveGold = (this.mastery.star_alchemy || 0) * 60 + (this.upgrades.house_tier_2 ? 150 : 0);
+    if (passiveGold > 0) {
+      this.earnGold(passiveGold);
+    }
+    if (this.upgrades.house_tier_2) {
+      this.starShards += 1;
+    }
+
     this.world.day += 1;
     this.world.timeOfDay = 0.26;
     this.energy = this.maxEnergy;
     this.dailyStats = { goldEarned: 0, harvested: 0 };
+
+    // Chọn ngẫu nhiên Nông Sản Sốt Giá của ngày mới
+    const cropIds = Object.keys(window.GAME_CONFIG.CROPS);
+    this.hotCropId = cropIds[Math.floor(Math.random() * cropIds.length)];
+
+    // Xuất hiện 1 Rương Kho Báu mới trên đồng mỗi sáng!
+    this.world.spawnSurpriseChest();
 
     const newSeasonIdx = Math.floor((this.world.day - 1) / window.GAME_CONFIG.DAYS_PER_SEASON) % 4;
     this.world.seasonIndex = newSeasonIdx;
@@ -4791,6 +5313,7 @@ class StarlightFarmGame {
 
     window.SFX.playLevelUp();
     const s = this.world.getCurrentSeason();
+    const hotCropName = window.GAME_CONFIG.CROPS[this.hotCropId].name;
     if (!autoFromClock) {
       this.ui.showDaySummaryModal({
         endedDay,
@@ -4798,10 +5321,12 @@ class StarlightFarmGame {
         seasonName: `${s.icon} ${s.name}`,
         goldEarnedToday: goldToday,
         harvestedToday: harvToday,
+        passiveGold,
+        hotCropName,
         nextWeather: this.world.weather
       });
     } else {
-      this.ui.showToast(`🌅 Bước sang Ngày ${this.world.day}! Năng lượng đã hồi 100%!`);
+      this.ui.showToast(`🌅 Bước sang Ngày ${this.world.day}! Sốt giá hôm nay: ${hotCropName} (x1.6G)!`);
     }
 
     this.ui.updateHUD();
@@ -4809,8 +5334,10 @@ class StarlightFarmGame {
   }
 
   consumeEnergy(amount) {
-    const discount = this.storyChapter >= 4 ? 0.75 : 1.0;
-    const finalCost = amount * discount;
+    if (this.feverTimer > 0) return true; // Cơn Sốt Hoàng Kim không tốn năng lượng!
+    const hydroSave = Math.max(0.4, 1.0 - (this.mastery.hydro_vitality || 0) * 0.12);
+    const chapSave = this.storyChapter >= 4 ? 0.75 : 1.0;
+    const finalCost = amount * hydroSave * chapSave;
     if (this.energy < finalCost) {
       this.ui.showToast('😴 Hết năng lượng! Hãy bấm "🌙 Ngủ" ở thanh dưới để sang ngày mới nhé!');
       return false;
@@ -4824,18 +5351,19 @@ class StarlightFarmGame {
     if (this.xp >= this.xpToNext) {
       this.xp -= this.xpToNext;
       this.level += 1;
-      this.xpToNext = Math.round(this.xpToNext * 1.35);
+      this.xpToNext = Math.round(this.xpToNext * 1.32);
       this.maxEnergy += 15;
       this.energy = this.maxEnergy;
-      this.gold += this.level * 50;
+      this.skillPoints += 1;
+      this.earnGold(this.level * 50);
       window.SFX.playLevelUp();
-      this.ui.showToast(`🎉 LÊN CẤP ${this.level}! Năng lượng tối đa +15 & Thưởng +${this.level * 50}G!`);
+      this.ui.showToast(`🎉 LÊN CẤP ${this.level}! Nhận +1 ⭐ Điểm Tinh Thông, +15⚡ & +${this.level * 50}G!`);
     }
   }
 
   exportSaveJson() {
     this.saveGame();
-    const raw = localStorage.getItem('starlight_valley_save_v5') || '{}';
+    const raw = localStorage.getItem('starlight_valley_save_v6') || '{}';
     const blob = new Blob([raw], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -4847,10 +5375,9 @@ class StarlightFarmGame {
   }
 
   resetGameData() {
+    localStorage.removeItem('starlight_valley_save_v6');
     localStorage.removeItem('starlight_valley_save_v5');
     localStorage.removeItem('starlight_valley_save_v4');
-    localStorage.removeItem('starlight_valley_save_v3');
-    localStorage.removeItem('starlight_valley_save_v2');
     window.location.reload();
   }
 
@@ -4858,12 +5385,17 @@ class StarlightFarmGame {
     try {
       const data = {
         gold: this.gold,
+        totalWealthEarned: this.totalWealthEarned,
         starShards: this.starShards,
         energy: this.energy,
         maxEnergy: this.maxEnergy,
         level: this.level,
         xp: this.xp,
         xpToNext: this.xpToNext,
+        skillPoints: this.skillPoints,
+        totalMasterySpent: this.totalMasterySpent,
+        mastery: this.mastery,
+        hotCropId: this.hotCropId,
         storyChapter: this.storyChapter,
         treeLevel: this.treeLevel,
         completedBundles: this.completedBundles,
@@ -4878,23 +5410,28 @@ class StarlightFarmGame {
         tiles: this.world.tiles,
         animalTypes: this.animals.map(a => a.typeId)
       };
-      localStorage.setItem('starlight_valley_save_v5', JSON.stringify(data));
+      localStorage.setItem('starlight_valley_save_v6', JSON.stringify(data));
     } catch (e) {}
   }
 
   loadGame() {
     try {
-      const raw = localStorage.getItem('starlight_valley_save_v5');
+      const raw = localStorage.getItem('starlight_valley_save_v6') || localStorage.getItem('starlight_valley_save_v5');
       if (!raw) return false;
       const data = JSON.parse(raw);
       if (data && data.tiles && data.tiles.length === this.world.maxRows) {
         this.gold = data.gold ?? this.gold;
+        this.totalWealthEarned = data.totalWealthEarned ?? this.gold;
         this.starShards = data.starShards ?? this.starShards;
         this.energy = data.energy ?? this.energy;
         this.maxEnergy = data.maxEnergy ?? this.maxEnergy;
         this.level = data.level ?? this.level;
         this.xp = data.xp ?? this.xp;
         this.xpToNext = data.xpToNext ?? this.xpToNext;
+        this.skillPoints = data.skillPoints ?? this.skillPoints;
+        this.totalMasterySpent = data.totalMasterySpent ?? 0;
+        this.mastery = { ...this.mastery, ...(data.mastery || {}) };
+        this.hotCropId = data.hotCropId || 'radish';
         this.storyChapter = data.storyChapter ?? 1;
         this.treeLevel = data.treeLevel ?? 1;
         this.completedBundles = data.completedBundles || [];
@@ -4922,14 +5459,37 @@ class StarlightFarmGame {
     this.lastTime = now;
     const timeSec = now / 1000;
 
+    // Cập nhật bộ đếm Combo & Fever Mode & Rương Kho Báu định kỳ
+    if (this.comboTimer > 0) {
+      this.comboTimer -= dt;
+      if (this.comboTimer <= 0) {
+        this.comboCount = 0;
+      }
+    }
+    if (this.feverTimer > 0) {
+      this.feverTimer -= dt;
+      if (this.feverTimer <= 0) {
+        this.feverTimer = 0;
+        this.ui.updateHUD();
+      }
+    }
+
+    this.chestSpawnTimer += dt;
+    if (this.chestSpawnTimer >= 45) {
+      this.chestSpawnTimer = 0;
+      this.world.spawnSurpriseChest();
+    }
+
     this.world.update(dt, this);
     this.player.update(dt, this.keys, this.canvas.width, this.canvas.height);
     this.cat.update(dt, this.player, this);
+    for (const f of this.fairies) {
+      f.update(dt, this, this.mastery.fairy_drone || 1);
+    }
     for (const anim of this.animals) {
       anim.update(dt);
     }
 
-    // Cập nhật vị trí Camera êm ái
     if (this.cameraZoom > 1.0) {
       const halfW = (this.canvas.width / 2) / this.cameraZoom;
       const halfH = (this.canvas.height / 2) / this.cameraZoom;
@@ -4957,6 +5517,9 @@ class StarlightFarmGame {
     if (Math.floor(timeSec * 2) !== this.lastHudTick) {
       this.lastHudTick = Math.floor(timeSec * 2);
       document.getElementById('hud-clock').textContent = this.world.getFormattedClock();
+      if (this.feverTimer > 0) {
+        this.ui.updateStepGuidePill();
+      }
     }
 
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -4974,8 +5537,11 @@ class StarlightFarmGame {
     }
     this.cat.render(this.ctx, timeSec);
     this.player.render(this.ctx);
+    for (const f of this.fairies) {
+      f.render(this.ctx, timeSec);
+    }
 
-    this.world.renderWeatherAndLighting(this.ctx, this.canvas.width, this.canvas.height, timeSec);
+    this.world.renderWeatherAndLighting(this.ctx, this.canvas.width, this.canvas.height, timeSec, this);
     this.ctx.restore();
 
     requestAnimationFrame(t => this.loop(t));
