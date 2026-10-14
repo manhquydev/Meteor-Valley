@@ -2,12 +2,12 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Thung Lũng Sao Băng (Starlight Valley - Cozy Pixel Farm)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Thung Lũng Sao Băng (v5.0 Mobile Portrait & PC Adaptive Edition)</title>
   <style>
 /* ==========================================================================
-   THUNG LŨNG SAO BĂNG (STARLIGHT VALLEY v4.0 - COZY MINIMALIST EDITION)
-   Canvas-First Architecture & Progressive Disclosure (Zero Info Overload)
+   THUNG LŨNG SAO BĂNG (STARLIGHT VALLEY v5.0 - MOBILE PORTRAIT & ADAPTIVE)
+   Tối ưu toàn diện cho cả Mobile Màn Hình Dọc (Portrait) & PC Màn Hình Ngang
    ========================================================================== */
 
 :root {
@@ -15,7 +15,7 @@
   --wood-dark: #3e2413;
   --wood-mid: #6e4223;
   --wood-light: #ab6f40;
-  --hud-glass: rgba(24, 18, 36, 0.9);
+  --hud-glass: rgba(24, 18, 36, 0.92);
   --parchment: #f8efd8;
   --parchment-card: #fffdf7;
   --gold: #ffd54f;
@@ -32,63 +32,71 @@
   padding: 0;
   user-select: none;
   -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
-::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.15); }
 ::-webkit-scrollbar-thumb { background: #8c5830; border-radius: 3px; }
 
 html, body {
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   background: radial-gradient(circle at center, #251d38 0%, #110d1b 100%);
   color: var(--text-light);
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   font-size: 13px;
+  touch-action: manipulation;
 }
 
 /* ==========================================================================
-   CLEAN 3-ROW COZY LAYOUT: TOP BAR (52px) | CANVAS STAGE (1fr) | BOTTOM DOCK (62px)
+   MAIN STAGE GRID (STRICT minmax(0, 1fr) COLUMN SO NOTHING EVER OVERFLOWS)
    ========================================================================== */
 #game-stage {
   position: relative;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   display: grid;
-  grid-template-rows: 54px minmax(0, 1fr) 64px;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
   align-items: center;
   justify-items: center;
-  padding: 4px 16px 6px;
+  padding: max(4px, env(safe-area-inset-top)) 10px max(6px, env(safe-area-inset-bottom));
+  gap: 4px;
   overflow: hidden;
 }
 
-/* 1. TOP BAR: FLEX ROW WITH ZERO OVERLAP */
+/* 1. TOP BAR */
 #top-bar {
   width: 100%;
-  max-width: 1180px;
+  max-width: 1200px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 6px;
   z-index: 20;
+  min-width: 0;
 }
 
 .hud-cluster {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  min-width: 0;
 }
 
 .hud-widget {
   background: var(--hud-glass);
   border: 2px solid var(--wood-light);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.45);
   border-radius: 8px;
-  padding: 5px 10px;
+  padding: 4px 8px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   white-space: nowrap;
 }
 
@@ -97,8 +105,8 @@ html, body {
   border: 2px solid var(--gold);
   color: var(--gold);
   font-weight: 800;
-  font-size: 11.5px;
-  padding: 2px 7px;
+  font-size: 11px;
+  padding: 2px 6px;
   border-radius: 5px;
   white-space: nowrap;
 }
@@ -107,13 +115,14 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  width: 115px;
+  width: 96px;
 }
 
 .energy-top-row {
   display: flex;
   justify-content: space-between;
-  font-size: 10.5px;
+  gap: 4px;
+  font-size: 10px;
   font-weight: 700;
 }
 
@@ -132,30 +141,25 @@ html, body {
   transition: width 0.2s ease-out;
 }
 
-/* COMPACT SEED STRIP */
+/* SEED STRIP */
 #seed-strip {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
 }
 
 .seed-pill {
   position: relative;
-  width: 32px;
-  height: 30px;
+  width: 30px;
+  height: 28px;
   background: rgba(255, 255, 255, 0.06);
   border: 2px solid rgba(255, 255, 255, 0.16);
-  border-radius: 6px;
+  border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: transform 0.12s, border-color 0.12s, background 0.12s;
-}
-
-.seed-pill:hover {
-  transform: translateY(-2px);
-  border-color: var(--wood-light);
 }
 
 .seed-pill.active {
@@ -167,8 +171,8 @@ html, body {
 .seed-pill-count {
   position: absolute;
   bottom: -2px;
-  right: 2px;
-  font-size: 9.5px;
+  right: 1px;
+  font-size: 9px;
   font-weight: 800;
   color: var(--gold);
   text-shadow: 1px 1px 0 #000, -1px -1px 0 #000;
@@ -176,47 +180,44 @@ html, body {
 
 .clock-pill {
   font-weight: 700;
-  font-size: 12px;
+  font-size: 11.5px;
   color: var(--text-light);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 .wallet-pill {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 7px;
   font-weight: 800;
-  font-size: 12.5px;
+  font-size: 11.5px;
 }
 
 .gold-text { color: var(--gold); }
 .star-text { color: #ea80fc; }
 
+/* BUTTONS */
 .nav-icon-btn {
   position: relative;
   background: var(--wood-mid);
   color: var(--text-light);
   border: 2px solid var(--wood-dark);
-  box-shadow: inset 0 2px 0 var(--wood-light), 0 3px 0 #1a0f07;
-  padding: 6px 11px;
+  box-shadow: inset 0 2px 0 var(--wood-light), 0 2px 0 #1a0f07;
+  padding: 5px 8px;
   border-radius: 6px;
   font-family: inherit;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  justify-content: center;
+  gap: 4px;
   white-space: nowrap;
   flex-shrink: 0;
   transition: transform 0.1s, filter 0.1s;
-}
-
-.nav-icon-btn:hover:not(:disabled) {
-  filter: brightness(1.12);
-  transform: translateY(-1px);
 }
 
 .nav-icon-btn:active:not(:disabled) {
@@ -231,19 +232,23 @@ html, body {
 .nav-icon-btn.gold-btn {
   background: #d98218;
   border-color: #5c3304;
-  box-shadow: inset 0 2px 0 #ffba52, 0 3px 0 #2e1901;
+  box-shadow: inset 0 2px 0 #ffba52, 0 2px 0 #2e1901;
 }
 
 .nav-icon-btn.active-mode {
   background: #2e7d32;
   border-color: #1b5e20;
-  box-shadow: inset 0 2px 0 #66bb6a, 0 3px 0 #0d3310;
+  box-shadow: inset 0 2px 0 #66bb6a, 0 2px 0 #0d3310;
 }
 
 .nav-icon-btn.purple-btn {
   background: #6a1b9a;
   border-color: #38006b;
-  box-shadow: inset 0 2px 0 #ab47bc, 0 3px 0 #1f003b;
+  box-shadow: inset 0 2px 0 #ab47bc, 0 2px 0 #1f003b;
+}
+
+.mobile-only-btn {
+  display: none;
 }
 
 .notif-dot {
@@ -270,7 +275,7 @@ html, body {
   justify-content: center;
   min-width: 0;
   min-height: 0;
-  padding: 4px;
+  overflow: hidden;
 }
 
 canvas#game-canvas {
@@ -278,67 +283,81 @@ canvas#game-canvas {
   max-height: 100%;
   width: auto;
   height: auto;
-  aspect-ratio: 16 / 11;
   object-fit: contain;
   image-rendering: -moz-crisp-edges;
   image-rendering: -webkit-crisp-edges;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
-  border: 4px solid var(--wood-light);
-  box-shadow: 0 0 0 4px var(--wood-dark), 0 14px 40px rgba(0, 0, 0, 0.85);
+  border: 3px solid var(--wood-light);
+  box-shadow: 0 0 0 3px var(--wood-dark), 0 10px 30px rgba(0, 0, 0, 0.85);
   border-radius: 8px;
   cursor: crosshair;
   background-color: #4f9128;
+  touch-action: none;
 }
 
 /* SUBTLE 1-LINE STEP PILL AT BOTTOM OF CANVAS */
 #step-guide-pill {
   position: absolute;
-  bottom: 12px;
+  bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(24, 16, 38, 0.9);
+  max-width: 94%;
+  background: rgba(24, 16, 38, 0.92);
   border: 1.5px solid var(--gold);
   color: #fff9c4;
-  padding: 5px 14px;
-  border-radius: 18px;
-  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 16px;
+  font-size: 11.5px;
   font-weight: 700;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+  text-align: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.65);
   z-index: 19;
-  white-space: nowrap;
   cursor: pointer;
 }
 
 /* SUBTLE HOVER MICRO-PILL */
 #hover-micro-pill {
   position: absolute;
-  top: 12px;
+  top: 10px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(20, 14, 32, 0.88);
+  max-width: 92%;
+  background: rgba(20, 14, 32, 0.9);
   border: 1px solid rgba(255, 213, 79, 0.55);
   color: var(--text-light);
   padding: 4px 12px;
   border-radius: 14px;
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 600;
+  text-align: center;
   pointer-events: none;
   z-index: 18;
   opacity: 0;
   transition: opacity 0.15s;
-  white-space: nowrap;
 }
 
 #hover-micro-pill.visible { opacity: 1; }
 
-/* 3. BOTTOM HOTBAR ROW */
+/* 3. BOTTOM DOCK (HOTBAR + MOBILE THUMB NAV) */
 #hud-bottom {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  z-index: 20;
+  min-width: 0;
+}
+
+.bottom-primary-row {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  z-index: 20;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
 }
 
 #hotbar-slots {
@@ -347,7 +366,7 @@ canvas#game-canvas {
   gap: 5px;
   background: var(--hud-glass);
   border: 2px solid var(--wood-light);
-  padding: 4px 8px;
+  padding: 4px 7px;
   border-radius: 10px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
 }
@@ -365,11 +384,6 @@ canvas#game-canvas {
   justify-content: center;
   cursor: pointer;
   transition: transform 0.1s, border-color 0.1s;
-}
-
-.hotbar-slot:hover {
-  border-color: var(--wood-light);
-  transform: translateY(-2px);
 }
 
 .hotbar-slot.selected {
@@ -404,6 +418,13 @@ canvas#game-canvas {
   margin-top: 1px;
 }
 
+#mobile-thumb-nav {
+  display: none;
+  width: 100%;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 4px;
+}
+
 /* ==========================================================================
    RPG DIALOGUE BAR, FISHING POPUP & TOASTS
    ========================================================================== */
@@ -412,43 +433,43 @@ canvas#game-canvas {
   bottom: 46px;
   left: 50%;
   transform: translateX(-50%);
-  width: min(90%, 560px);
+  width: min(94%, 560px);
   background: rgba(24, 16, 38, 0.96);
   border: 3px solid var(--gold);
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.85);
   border-radius: 8px;
-  padding: 10px 14px;
+  padding: 10px 12px;
   display: none;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   z-index: 25;
 }
 
 #rpg-dialogue.active { display: flex; }
 
 .npc-avatar-box {
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   background: #32254a;
   border: 2px solid var(--wood-light);
   border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: 22px;
   flex-shrink: 0;
 }
 
 .dialogue-content { flex: 1; min-width: 0; }
-.dialogue-speaker { font-weight: 800; color: var(--gold); font-size: 12.5px; }
-.dialogue-text { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+.dialogue-speaker { font-weight: 800; color: var(--gold); font-size: 12px; }
+.dialogue-text { font-size: 11.5px; color: var(--text-light); margin-top: 2px; }
 
 #fishing-bar-ui {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 300px;
+  width: min(90%, 300px);
   background: rgba(20, 14, 34, 0.96);
   border: 3px solid var(--gold);
   border-radius: 8px;
@@ -492,9 +513,10 @@ canvas#game-canvas {
 
 #toast-container {
   position: absolute;
-  top: 14px;
+  top: 12px;
   left: 50%;
   transform: translateX(-50%);
+  width: 92%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -507,15 +529,16 @@ canvas#game-canvas {
   background: rgba(24, 16, 38, 0.94);
   color: var(--text-light);
   border: 2px solid var(--gold);
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 18px;
+  font-size: 11.5px;
   font-weight: 700;
+  text-align: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
 }
 
 /* ==========================================================================
-   CLEAN, SCANNABLE POPUP MODALS (CONCISE CARDS, NO TEXT WALLS)
+   MODALS (CENTERED ON DESKTOP, BOTTOM-SHEET ON MOBILE PORTRAIT)
    ========================================================================== */
 .modal-overlay {
   position: fixed;
@@ -526,7 +549,7 @@ canvas#game-canvas {
   align-items: center;
   justify-content: center;
   z-index: 60;
-  padding: 16px;
+  padding: 14px;
 }
 
 .modal-overlay.open { display: flex; }
@@ -535,6 +558,7 @@ canvas#game-canvas {
   width: 100%;
   max-width: 740px;
   max-height: 82vh;
+  max-height: 82dvh;
   background: var(--parchment);
   color: var(--text-dark);
   border: 4px solid var(--wood-dark);
@@ -548,7 +572,7 @@ canvas#game-canvas {
 .modal-header {
   background: var(--wood-dark);
   color: var(--gold);
-  padding: 10px 16px;
+  padding: 10px 14px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -556,29 +580,31 @@ canvas#game-canvas {
   flex-shrink: 0;
 }
 
-.modal-header h2 { font-size: 15.5px; }
+.modal-header h2 { font-size: 15px; }
 
 .modal-tabs {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: auto;
   background: #dec596;
   border-bottom: 3px solid var(--wood-dark);
-  padding: 6px 12px 0;
-  gap: 6px;
+  padding: 6px 10px 0;
+  gap: 5px;
   flex-shrink: 0;
 }
 
 .tab-btn {
-  padding: 7px 13px;
+  padding: 6px 11px;
   background: #c4a772;
   border: 2px solid var(--wood-dark);
   border-bottom: none;
   font-family: inherit;
   font-weight: 800;
-  font-size: 12px;
+  font-size: 11.5px;
   color: var(--text-dark);
   cursor: pointer;
   border-radius: 6px 6px 0 0;
+  white-space: nowrap;
 }
 
 .tab-btn.active {
@@ -586,71 +612,201 @@ canvas#game-canvas {
 }
 
 .modal-body {
-  padding: 14px;
+  padding: 12px;
   overflow-y: auto;
   flex: 1;
   min-height: 0;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-  gap: 10px;
+  gap: 9px;
 }
 
 .shop-card {
   background: var(--parchment-card);
   border: 2px solid #9e6b40;
   border-radius: 8px;
-  padding: 10px 12px;
+  padding: 9px 11px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 8px;
+  gap: 7px;
 }
 
 .shop-card-top {
   display: flex;
-  gap: 10px;
+  gap: 9px;
   align-items: center;
 }
 
 .shop-icon {
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   background: #f0dfc0;
   border: 2px solid #9e6b40;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
+  font-size: 20px;
   flex-shrink: 0;
 }
 
-.shop-title { font-weight: 800; font-size: 13.5px; color: #3b200d; }
+.shop-title { font-weight: 800; font-size: 13px; color: #3b200d; }
 .shop-meta { font-size: 11px; color: #2e6b22; font-weight: 700; }
-.shop-desc { font-size: 11.5px; color: #5c3b20; }
+.shop-desc { font-size: 11px; color: #5c3b20; }
 
 .banner-box {
   grid-column: 1 / -1;
   background: var(--parchment-card);
   border: 2px solid #9e6b40;
   border-radius: 8px;
-  padding: 12px 14px;
+  padding: 10px 12px;
+}
+
+/* ==========================================================================
+   MOBILE PORTRAIT SPECIALIZED ARCHITECTURE (≤ 820px OR PORTRAIT ORIENTATION)
+   ========================================================================== */
+@media (max-width: 820px), (orientation: portrait) {
+  #game-stage {
+    padding: max(3px, env(safe-area-inset-top)) 5px max(5px, env(safe-area-inset-bottom));
+    gap: 3px;
+  }
+
+  #top-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 3px;
+  }
+
+  .hud-cluster {
+    width: 100%;
+    justify-content: space-between;
+    gap: 3px;
+  }
+
+  .hud-widget {
+    padding: 3px 5px;
+    gap: 4px;
+    border-radius: 6px;
+  }
+
+  .level-badge {
+    font-size: 10px;
+    padding: 1px 4px;
+  }
+
+  .energy-compact {
+    width: 62px;
+  }
+
+  .energy-top-row {
+    font-size: 9px;
+  }
+
+  .clock-pill, .wallet-pill {
+    font-size: 10.5px;
+    gap: 4px;
+  }
+
+  .desktop-only-btn {
+    display: none !important;
+  }
+
+  .mobile-only-btn {
+    display: inline-flex !important;
+  }
+
+  #seed-widget {
+    flex: 1;
+    justify-content: space-between;
+    min-width: 0;
+  }
+
+  .seed-pill {
+    width: 28px;
+    height: 26px;
+  }
+
+  /* Ensure Portrait 11x14 Canvas fits 100% of mobile width & height without cropping */
+  canvas#game-canvas {
+    width: 100%;
+    height: auto;
+    max-height: 100%;
+  }
+
+  .bottom-primary-row .desktop-action-btn {
+    display: none !important;
+  }
+
+  /* 8 equal columns for Hotbar so all 8 tools fit 100% inside 390px width */
+  #hotbar-slots {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    width: 100%;
+    padding: 3px 4px;
+    gap: 3px;
+  }
+
+  .hotbar-slot {
+    width: 100%;
+    height: 42px;
+  }
+
+  .slot-key {
+    display: none;
+  }
+
+  .slot-label {
+    font-size: 7.5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  #mobile-thumb-nav {
+    display: grid;
+  }
+
+  #mobile-thumb-nav .nav-icon-btn {
+    padding: 6px 2px;
+    font-size: 10px;
+    border-radius: 6px;
+    min-height: 34px;
+    width: 100%;
+  }
+
+  .modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .modal-window {
+    max-width: 100%;
+    max-height: 82dvh;
+    border-radius: 14px 14px 0 0;
+    border-bottom: none;
+  }
+
+  .modal-body {
+    grid-template-columns: 1fr;
+    padding: 10px;
+  }
 }
 
 </style>
 </head>
 <body>
-  <!-- FULL-SCREEN COZY GAME STAGE (90%+ CANVAS, ZERO SIDEBAR CLUTTER) -->
   <div id="game-stage">
 
-    <!-- 1. TOP BAR: PLAYER STATUS + SEED STRIP ON LEFT, CLOCK + MENUS ON RIGHT -->
+    <!-- 1. TOP BAR: ADAPTS TO 1 ROW ON PC / 2 COMPACT ROWS ON MOBILE PORTRAIT -->
     <header id="top-bar">
+      <!-- Cluster 1: Status, Clock & Wallet -->
       <div class="hud-cluster">
         <div class="hud-widget">
           <span id="level-text" class="level-badge">Lv.1</span>
           <div class="energy-compact">
             <div class="energy-top-row">
-              <span>⚡ Năng lượng</span>
+              <span>⚡</span>
               <span id="energy-text">100/100</span>
             </div>
             <div class="bar-track">
@@ -659,64 +815,70 @@ canvas#game-canvas {
           </div>
         </div>
 
-        <div class="hud-widget" title="Chọn nhanh hạt giống để gieo">
-          <span style="font-size:11px; font-weight:800; color:#cbbdd9;">Hạt:</span>
-          <div id="seed-strip"></div>
-        </div>
-      </div>
-
-      <div class="hud-cluster">
         <div class="hud-widget clock-pill">
           <span id="hud-season">🌸 Xuân</span>
           <span>•</span>
-          <span id="hud-day">Ngày 1</span>
-          <span>•</span>
-          <span id="hud-clock">06:30</span>
+          <span id="hud-day">N.1</span>
+          <span id="hud-clock" class="desktop-only-btn">06:30</span>
           <span id="hud-weather">☀️</span>
         </div>
 
         <div class="hud-widget wallet-pill">
-          <span title="Vàng">💰 <span id="hud-gold" class="gold-text">260</span></span>
-          <span title="Mảnh Sao Băng">🌠 <span id="hud-stars" class="star-text">2</span></span>
+          <span title="Vàng">💰<span id="hud-gold" class="gold-text">260</span></span>
+          <span title="Mảnh Sao Băng">🌠<span id="hud-stars" class="star-text">2</span></span>
         </div>
 
-        <button id="btn-menu-quests" class="nav-icon-btn">
+        <button id="btn-zoom" class="nav-icon-btn" title="Phóng to Camera bám theo nhân vật (1x / 1.35x)">🔍 1x</button>
+        <button id="btn-audio" class="nav-icon-btn" title="Bật/Tắt Âm thanh">🔊</button>
+      </div>
+
+      <!-- Cluster 2: Seed Strip + Menu Buttons -->
+      <div class="hud-cluster">
+        <div id="seed-widget" class="hud-widget" title="Chạm để đổi hạt giống">
+          <span style="font-size:10px; font-weight:800; color:#cbbdd9;">Hạt:</span>
+          <div id="seed-strip"></div>
+        </div>
+
+        <button id="btn-smart-top" class="nav-icon-btn active-mode mobile-only-btn" title="Chế độ 1-Chạm thông minh">
+          ✨ 1-Chạm
+        </button>
+
+        <button id="btn-menu-quests" class="nav-icon-btn desktop-only-btn">
           📜 Nhiệm Vụ
           <span id="dot-quests" class="notif-dot"></span>
         </button>
-        <button id="btn-menu-shop" class="nav-icon-btn gold-btn">
+        <button id="btn-menu-shop" class="nav-icon-btn gold-btn desktop-only-btn">
           🏪 Cửa Hàng
         </button>
-        <button id="btn-menu-shrine" class="nav-icon-btn purple-btn">
+        <button id="btn-menu-shrine" class="nav-icon-btn purple-btn desktop-only-btn">
           🏛️ Đền & Bếp
           <span id="dot-shrine" class="notif-dot"></span>
         </button>
-        <button id="btn-menu-guide" class="nav-icon-btn">
+        <button id="btn-menu-guide" class="nav-icon-btn desktop-only-btn">
           📖 Cẩm Nang
         </button>
-        <button id="btn-audio" class="nav-icon-btn" title="Bật/Tắt Âm thanh">🔊</button>
       </div>
     </header>
 
-    <!-- 2. CENTER CANVAS VIEWPORT -->
+    <!-- 2. CENTER CANVAS VIEWPORT (11x14 PORTRAIT ON MOBILE / 16x11 LANDSCAPE ON PC) -->
     <main id="canvas-viewport">
       <div id="toast-container"></div>
 
-      <!-- SUBTLE 1-LINE HOVER MICRO-TOOLTIP -->
+      <!-- SUBTLE 1-LINE HOVER/TOUCH MICRO-TOOLTIP -->
       <div id="hover-micro-pill"></div>
 
       <!-- FISHING MINIGAME POPUP -->
       <div id="fishing-bar-ui">
         <h3 style="color:#ffd54f; font-size:15px;">🎣 CÁ CHÉP KOI CẮN CÂU!</h3>
-        <p style="font-size:11.5px; margin-top:4px;">Bấm <b>SPACE</b> khi vạch sáng đi vào vùng xanh!</p>
+        <p style="font-size:11.5px; margin-top:4px;">Chạm nút bên dưới hoặc bấm <b>SPACE</b> khi vạch sáng vào vùng xanh!</p>
         <div class="fish-track">
           <div id="fish-sweet-spot" class="fish-sweet-spot"></div>
           <div id="fish-cursor" class="fish-cursor"></div>
         </div>
-        <button id="btn-strike-fish" class="nav-icon-btn gold-btn">⚡ KÉO CẦN NGAY! (Space)</button>
+        <button id="btn-strike-fish" class="nav-icon-btn gold-btn" style="width:100%; padding:9px;">⚡ KÉO CẦN NGAY!</button>
       </div>
 
-      <!-- RPG DIALOGUE BAR (ONLY SHOWN ON STORY MILESTONES) -->
+      <!-- RPG DIALOGUE BAR -->
       <div id="rpg-dialogue">
         <div id="dlg-avatar" class="npc-avatar-box">🧚</div>
         <div class="dialogue-content">
@@ -730,35 +892,58 @@ canvas#game-canvas {
       <canvas id="game-canvas"></canvas>
 
       <!-- 1-LINE CONTEXTUAL STEP GUIDE PILL -->
-      <div id="step-guide-pill" title="Click để xem chi tiết nhiệm vụ">
-        👆 Bước 1/3: Click vào 2 cây Củ Cải Đỏ đang chín trên cánh đồng để thu hoạch!
+      <div id="step-guide-pill" title="Chạm để mở Sổ Nhiệm Vụ">
+        👆 Bước 1/3: Chạm vào 2 cây Củ Cải Đỏ đang chín để thu hoạch!
       </div>
     </main>
 
-    <!-- 3. BOTTOM-CENTER: COMPACT TOOL HOTBAR -->
+    <!-- 3. BOTTOM DOCK: TOOL HOTBAR + MOBILE THUMB NAVIGATION BAR -->
     <footer id="hud-bottom">
-      <button id="btn-smart-mode" class="nav-icon-btn active-mode" title="Tự động Cuốc, Gieo, Tưới & Thu hoạch chỉ bằng 1 Click hoặc Kéo chuột">
-        ✨ 1-Chạm: BẬT
-      </button>
+      <div class="bottom-primary-row">
+        <button id="btn-smart-mode" class="nav-icon-btn active-mode desktop-action-btn" title="Tự động Cuốc, Gieo, Tưới & Thu hoạch">
+          ✨ 1-Chạm: BẬT
+        </button>
 
-      <div id="hotbar-slots"></div>
+        <div id="hotbar-slots"></div>
 
-      <button id="btn-sell-all" class="nav-icon-btn gold-btn" title="Bán nhanh toàn bộ nông sản trong kho">
-        🚚 Bán Kho
-      </button>
-      <button id="btn-sleep" class="nav-icon-btn" title="Ngủ qua đêm để hồi 100% Năng lượng">
-        🌙 Ngủ
-      </button>
+        <button id="btn-sell-all" class="nav-icon-btn gold-btn desktop-action-btn" title="Bán nhanh toàn bộ nông sản trong kho">
+          🚚 Bán Kho
+        </button>
+        <button id="btn-sleep" class="nav-icon-btn desktop-action-btn" title="Ngủ qua đêm để hồi 100% Năng lượng">
+          🌙 Ngủ
+        </button>
+      </div>
+
+      <!-- MOBILE THUMB-ZONE 5-TAB NAVIGATION BAR -->
+      <nav id="mobile-thumb-nav">
+        <button id="mob-btn-quests" class="nav-icon-btn">
+          📜 Nhiệm Vụ
+          <span id="dot-quests-mob" class="notif-dot"></span>
+        </button>
+        <button id="mob-btn-shop" class="nav-icon-btn gold-btn">
+          🏪 Cửa Hàng
+        </button>
+        <button id="mob-btn-shrine" class="nav-icon-btn purple-btn">
+          🏛️ Đền/Bếp
+          <span id="dot-shrine-mob" class="notif-dot"></span>
+        </button>
+        <button id="mob-btn-guide" class="nav-icon-btn">
+          📖 Sổ Tay
+        </button>
+        <button id="mob-btn-sleep" class="nav-icon-btn">
+          🌙 Ngủ
+        </button>
+      </nav>
     </footer>
 
   </div>
 
-  <!-- FOCUSED POPUP MODAL (DYNAMICALLY FILTERS TABS BY CATEGORY) -->
+  <!-- FOCUSED POPUP / BOTTOM-SHEET MODAL -->
   <div id="main-modal" class="modal-overlay">
     <div class="modal-window">
       <div class="modal-header">
         <h2 id="modal-title-text">🏪 Cửa Hàng Nông Trại</h2>
-        <button id="btn-close-modal" class="nav-icon-btn">✖ Đóng (ESC)</button>
+        <button id="btn-close-modal" class="nav-icon-btn">✖ Đóng</button>
       </div>
       <div id="modal-tabs-bar" class="modal-tabs"></div>
       <div id="modal-body-content" class="modal-body"></div>
@@ -773,7 +958,7 @@ canvas#game-canvas {
       </div>
       <div id="day-summary-body" style="padding: 16px;"></div>
       <div style="padding: 0 16px 16px; text-align: center;">
-        <button id="btn-close-day-summary" class="nav-icon-btn gold-btn" style="padding: 8px 22px; font-size: 13px;">🌅 Bắt Đầu Ngày Mới!</button>
+        <button id="btn-close-day-summary" class="nav-icon-btn gold-btn" style="padding: 9px 24px; font-size: 13px;">🌅 Bắt Đầu Ngày Mới!</button>
       </div>
     </div>
   </div>
@@ -2103,16 +2288,25 @@ window.SPRITES = new PixelSpriteRenderer();
 
 /**
  * ============================================================================
- * THUNG LŨNG SAO BĂNG: HUYỀN THOẠI CÂY ĐẠI THỤ (STARLIGHT VALLEY v3.0 DEFINITIVE)
- * js/world.js - Quản lý Bản đồ 16x11, Khung lưới 3x3 AoE Preview, 4 Mùa & Thời tiết
+ * THUNG LŨNG SAO BĂNG (STARLIGHT VALLEY v5.0 - MOBILE PORTRAIT & ADAPTIVE)
+ * js/world.js - Hệ thống Bản đồ Kép Tự Động Thích Ứng:
+ *   • Màn hình Dọc (Mobile Portrait): 11 cột × 14 hàng (528×672, tỷ lệ dọc 11:14)
+ *   • Màn hình Ngang (Desktop Landscape): 16 cột × 11 hàng (768×528, tỷ lệ ngang 16:11)
+ *   • Toàn bộ công trình & Hồ Sao Băng nằm gọn trong vùng 10×10 nên hiển thị
+ *     100% trọn vẹn ở cả hai chế độ màn hình!
  * ============================================================================
  */
 
 class FarmWorld {
   constructor() {
-    this.cols = window.GAME_CONFIG.GRID_COLS;
-    this.rows = window.GAME_CONFIG.GRID_ROWS;
-    this.tileSize = window.GAME_CONFIG.TILE_SIZE;
+    this.tileSize = window.GAME_CONFIG.TILE_SIZE; // 48px
+    this.maxCols = 16;
+    this.maxRows = 14;
+
+    // Số cột/hàng hiển thị thực tế tùy theo màn hình Dọc hay Ngang
+    this.isPortrait = window.innerHeight > window.innerWidth;
+    this.cols = this.isPortrait ? 11 : 16;
+    this.rows = this.isPortrait ? 14 : 11;
 
     this.day = 1;
     this.seasonIndex = 0;
@@ -2128,33 +2322,56 @@ class FarmWorld {
     this.initFireflies();
   }
 
+  updateOrientationMode(isPortrait) {
+    this.isPortrait = isPortrait;
+    this.cols = isPortrait ? 11 : 16;
+    this.rows = isPortrait ? 14 : 11;
+  }
+
   getCurrentSeason() {
     return window.GAME_CONFIG.SEASONS[this.seasonIndex % window.GAME_CONFIG.SEASONS.length];
   }
 
   initGrid() {
     this.tiles = [];
-    for (let r = 0; r < this.rows; r++) {
+    for (let r = 0; r < this.maxRows; r++) {
       const row = [];
-      for (let c = 0; c < this.cols; c++) {
+      for (let c = 0; c < this.maxCols; c++) {
         let type = 'grass';
         let obstacle = null;
 
+        // 1. Nhà Chính (cột 1..3, hàng 1..2)
         if (r >= 1 && r <= 2 && c >= 1 && c <= 3) {
           type = 'house_zone';
-        } else if (r === 2 && c === 4) {
+        }
+        // 2. Thùng Bán Đồ & Nhà Bếp (hàng 2, cột 4..5)
+        else if (r === 2 && c === 4) {
           type = 'shipping_bin';
         } else if (r === 2 && c === 5) {
           type = 'kitchen_oven';
-        } else if (r >= 1 && r <= 2 && c >= 7 && c <= 8) {
+        }
+        // 3. Đền Thờ Cây Đại Thụ (cột 7..8, hàng 1..2)
+        else if (r >= 1 && r <= 2 && c >= 7 && c <= 8) {
           type = 'sacred_tree';
-        } else if ((r === 3 && c >= 1 && c <= 9) || (c === 5 && r >= 3 && r <= 4)) {
+        }
+        // 4. Đường Đá Kết Nối (hàng 3, cột 1..9)
+        else if ((r === 3 && c >= 1 && c <= 9) || (c === 5 && r >= 3 && r <= 4)) {
           type = 'path';
-        } else if (r >= 7 && r <= 9 && c >= 11 && c <= 14) {
-          type = (r === 8 && c === 11) ? 'bridge' : 'water';
-        } else if (r >= 4 && r <= 6 && c >= 2 && c <= 4) {
+        }
+        // 5. Hồ Sao Băng (hàng 8..10, cột 6..9) - Nằm gọn trong khung 11x14 lẫn 16x11!
+        else if (r >= 8 && r <= 10 && c >= 6 && c <= 9) {
+          type = (r === 9 && c === 6) ? 'bridge' : 'water';
+        }
+        // 6. Vườn Canh Tác Mẫu đã cày sẵn (hàng 4..6, cột 1..3)
+        else if (r >= 4 && r <= 6 && c >= 1 && c <= 3) {
           type = 'soil';
-        } else if (c >= 6 && r >= 4 && r <= 9 && Math.random() < 0.14) {
+        }
+        // 7. Vườn Mở Rộng Phía Nam cho Màn Hình Dọc (hàng 11..12, cột 1..4)
+        else if (r >= 11 && r <= 12 && c >= 1 && c <= 4) {
+          type = 'soil';
+        }
+        // 8. Vật cản tự nhiên (cỏ dại, đá cuội, gốc cây)
+        else if (((c >= 4 && c <= 9 && r >= 5 && r <= 7) || (r >= 11 && c >= 6)) && Math.random() < 0.16) {
           const rand = Math.random();
           obstacle = rand < 0.5 ? 'weed' : (rand < 0.8 ? 'rock' : 'stump');
         }
@@ -2173,9 +2390,10 @@ class FarmWorld {
       this.tiles.push(row);
     }
 
-    const t1 = this.getTile(4, 2);
-    const t2 = this.getTile(4, 3);
-    const t3 = this.getTile(4, 4);
+    // Trồng sẵn 2 cây Củ Cải Đỏ chín & 1 cây Dâu Tây ở vườn mẫu
+    const t1 = this.getTile(4, 1);
+    const t2 = this.getTile(4, 2);
+    const t3 = this.getTile(4, 3);
     if (t1 && t2 && t3) {
       t1.watered = true;
       t1.crop = { id: 'radish', stage: 4, progress: 1, isMutated: false, isGiant: false };
@@ -2245,14 +2463,14 @@ class FarmWorld {
     }
     const targetTile = plantedTiles.length > 0
       ? plantedTiles[Math.floor(Math.random() * plantedTiles.length)]
-      : this.getTile(5, 4);
+      : this.getTile(5, 2);
 
     const tx = (targetTile.c + 0.5) * this.tileSize;
     const ty = (targetTile.r + 0.5) * this.tileSize;
 
     this.shootingStars.push({
-      x: tx - 220,
-      y: ty - 220,
+      x: tx - 200,
+      y: ty - 200,
       tx,
       ty,
       progress: 0,
@@ -2361,22 +2579,26 @@ class FarmWorld {
 
     const season = this.getCurrentSeason();
 
-    for (let r = 0; r < this.rows; r++) {
-      for (let c = 0; c < this.cols; c++) {
+    for (let r = 0; r < this.maxRows; r++) {
+      for (let c = 0; c < this.maxCols; c++) {
         const tile = this.tiles[r][c];
 
         if (tile.device === 'sprinkler' && triggerSprinklers) {
           for (let dr = -1; dr <= 1; dr++) {
             for (let dc = -1; dc <= 1; dc++) {
-              const nb = this.getTile(r + dr, c + dc);
-              if (nb && nb.type === 'soil' && !nb.watered) {
-                nb.watered = true;
-                this.spawnParticles(
-                  (nb.c + 0.5) * this.tileSize,
-                  (nb.r + 0.5) * this.tileSize,
-                  '#4fc3f7',
-                  4
-                );
+              const nr = r + dr;
+              const nc = c + dc;
+              if (nr >= 0 && nr < this.maxRows && nc >= 0 && nc < this.maxCols) {
+                const nb = this.tiles[nr][nc];
+                if (nb && nb.type === 'soil' && !nb.watered) {
+                  nb.watered = true;
+                  this.spawnParticles(
+                    (nb.c + 0.5) * this.tileSize,
+                    (nb.r + 0.5) * this.tileSize,
+                    '#4fc3f7',
+                    4
+                  );
+                }
               }
             }
           }
@@ -2393,8 +2615,10 @@ class FarmWorld {
           let hasLanternNearby = false;
           for (let dr = -1; dr <= 1; dr++) {
             for (let dc = -1; dc <= 1; dc++) {
-              const nb = this.getTile(r + dr, c + dc);
-              if (!nb) continue;
+              const nr = r + dr;
+              const nc = c + dc;
+              if (nr < 0 || nr >= this.maxRows || nc < 0 || nc >= this.maxCols) continue;
+              const nb = this.tiles[nr][nc];
               if (nb.crop && nb.crop.id === 'sunflower') speedMultiplier += 0.30;
               if (nb.device === 'lantern') {
                 hasLanternNearby = true;
@@ -2507,10 +2731,9 @@ class FarmWorld {
     window.SPRITES.drawFarmhouse(ctx, 1 * ts, 0.5 * ts, ts, this.isNight());
     window.SPRITES.drawSacredStarTree(ctx, 7 * ts, 0.6 * ts, ts, treeLevel, time);
 
-    // Nhãn Hồ Sao Băng bằng Pixel Badge sắc nét
-    window.SPRITES.drawPixelBadgeLabel(ctx, 12.5 * ts, 6.65 * ts, 'HỒ SAO BĂNG (CÂU CÁ)', 'rgba(16, 42, 67, 0.9)', '#4fc3f7', '#80d8ff');
+    // Nhãn Hồ Sao Băng tại cột 8, hàng 7.75 (luôn nằm gọn trong cả màn hình Dọc 11x14 lẫn Ngang 16x11)
+    window.SPRITES.drawPixelBadgeLabel(ctx, 8.0 * ts, 7.75 * ts, 'HỒ SAO BĂNG (CÂU CÁ)', 'rgba(16, 42, 67, 0.9)', '#4fc3f7', '#80d8ff');
 
-    // Khung 3x3 AoE Preview khi cầm công cụ diện rộng hoặc trỏ vào thiết bị 3x3
     if (hoverTile && game) {
       const show3x3 =
         game.selectedTool === 'sprinkler' ||
@@ -2628,8 +2851,8 @@ window.FarmWorld = FarmWorld;
 
 /**
  * ============================================================================
- * THUNG LŨNG SAO BĂNG: HUYỀN THOẠI CÂY ĐẠI THỤ (STARLIGHT VALLEY v3.0 DEFINITIVE)
- * js/entities.js - Nhân vật Nông dân, Mèo cưng AI & Đàn vật nuôi với Bong bóng Pixel
+ * THUNG LŨNG SAO BĂNG (STARLIGHT VALLEY v5.0 - MOBILE PORTRAIT & ADAPTIVE)
+ * js/entities.js - Nhân vật Nông dân, Mèo cưng AI & Đàn vật nuôi thích ứng Dọc/Ngang
  * ============================================================================
  */
 
@@ -2778,8 +3001,8 @@ class FarmAnimal {
     this.cfg = window.GAME_CONFIG.ANIMALS[typeId];
     this.x = x;
     this.y = y;
-    this.vx = (Math.random() - 0.5) * 26;
-    this.vy = (Math.random() - 0.5) * 26;
+    this.vx = (Math.random() - 0.5) * 24;
+    this.vy = (Math.random() - 0.5) * 24;
     this.changeDirTimer = 2 + Math.random() * 3;
     this.produceTimer = this.cfg.produceInterval * 0.5;
     this.hasProductReady = false;
@@ -2794,13 +3017,14 @@ class FarmAnimal {
         this.vx = 0;
         this.vy = 0;
       } else {
-        this.vx = (Math.random() - 0.5) * 30;
-        this.vy = (Math.random() - 0.5) * 30;
+        this.vx = (Math.random() - 0.5) * 28;
+        this.vy = (Math.random() - 0.5) * 28;
       }
     }
 
-    this.x = Math.max(460, Math.min(710, this.x + this.vx * dt));
-    this.y = Math.max(70, Math.min(280, this.y + this.vy * dt));
+    // Phạm vi đồng cỏ cột 6..9, hàng 4..6 (luôn hiển thị trọn vẹn cả ở màn hình Dọc 11x14 lẫn Ngang 16x11)
+    this.x = Math.max(290, Math.min(475, this.x + this.vx * dt));
+    this.y = Math.max(185, Math.min(325, this.y + this.vy * dt));
 
     if (!this.hasProductReady) {
       this.produceTimer += dt;
@@ -2827,7 +3051,6 @@ class FarmAnimal {
       ctx.drawImage(sprite, this.x - 20, this.y - 20 - bob, 40, 40);
     }
 
-    // Bong bóng sản phẩm vẽ bằng Pixel Art 100% sắc nét
     if (this.hasProductReady) {
       const floatY = Math.sin(time * 5) * 3;
       const bx = this.x - 13;
@@ -2854,9 +3077,8 @@ window.FarmAnimal = FarmAnimal;
 
 /**
  * ============================================================================
- * THUNG LŨNG SAO BĂNG (STARLIGHT VALLEY v4.0 - COZY MINIMALIST EDITION)
- * js/ui.js - Progressive Disclosure UI: Màn hình chính thoáng đãng 92% Canvas,
- *            Hướng dẫn 1 dòng theo ngữ cảnh, và Cửa sổ chia theo nhóm gọn gàng
+ * THUNG LŨNG SAO BĂNG (STARLIGHT VALLEY v5.0 - MOBILE PORTRAIT & ADAPTIVE)
+ * js/ui.js - Quản lý Giao diện Thích Ứng Màn Hình Dọc Mobile & Màn Hình Ngang PC
  * ============================================================================
  */
 
@@ -2870,7 +3092,7 @@ class GameUI {
       quests: {
         title: '📜 Sổ Nhiệm Vụ & Hành Trình Đại Thụ',
         tabs: [
-          { id: 'story', label: '🌟 Cốt Truyện Chính (5 Chương)' },
+          { id: 'story', label: '🌟 Cốt Truyện (5 Chương)' },
           { id: 'commissions', label: '🤝 Ủy Thác Dân Làng' }
         ]
       },
@@ -2895,7 +3117,7 @@ class GameUI {
         title: '📖 Cẩm Nang & Bách Khoa Sưu Tầm',
         tabs: [
           { id: 'almanac', label: '📚 Bách Khoa (15 Món)' },
-          { id: 'rules', label: '🎮 Mẹo Chơi Tóm Tắt & Sao Lưu' }
+          { id: 'rules', label: '🎮 Mẹo Chơi & Sao Lưu' }
         ]
       }
     };
@@ -2940,7 +3162,7 @@ class GameUI {
     document.getElementById('hud-gold').textContent = g.gold.toLocaleString('vi-VN');
     document.getElementById('hud-stars').textContent = g.starShards;
     document.getElementById('hud-season').textContent = `${season.icon} ${season.name.replace('Mùa ', '')}`;
-    document.getElementById('hud-day').textContent = `Ngày ${g.world.day}`;
+    document.getElementById('hud-day').textContent = `N.${g.world.day}`;
     document.getElementById('hud-clock').textContent = g.world.getFormattedClock();
 
     const weatherIcons = { sunny: '☀️', rainy: '🌧️', meteor: '🌠' };
@@ -2953,8 +3175,20 @@ class GameUI {
 
     const smartBtn = document.getElementById('btn-smart-mode');
     if (smartBtn) {
-      smartBtn.className = g.smartMode ? 'nav-icon-btn active-mode' : 'nav-icon-btn';
+      smartBtn.className = g.smartMode ? 'nav-icon-btn active-mode desktop-action-btn' : 'nav-icon-btn desktop-action-btn';
       smartBtn.textContent = g.smartMode ? '✨ 1-Chạm: BẬT' : '🛠️ 1-Chạm: TẮT';
+    }
+
+    const smartTopBtn = document.getElementById('btn-smart-top');
+    if (smartTopBtn) {
+      smartTopBtn.className = g.smartMode ? 'nav-icon-btn active-mode' : 'nav-icon-btn';
+      smartTopBtn.textContent = g.smartMode ? '✨ 1-Chạm' : '🛠️ Thủ Công';
+    }
+
+    const zoomBtn = document.getElementById('btn-zoom');
+    if (zoomBtn) {
+      zoomBtn.textContent = g.cameraZoom > 1 ? '🔍 1.35x' : '🔍 1x';
+      zoomBtn.classList.toggle('active-mode', g.cameraZoom > 1);
     }
 
     this.updateStepGuidePill();
@@ -2969,14 +3203,14 @@ class GameUI {
     if (!pill) return;
 
     if (g.stats.harvested < 2) {
-      pill.textContent = '👆 Bước 1/3: Click vào 2 cây Củ Cải Đỏ đang chín trên cánh đồng để thu hoạch!';
+      pill.textContent = '👆 Bước 1/3: Chạm vào 2 cây Củ Cải Đỏ đang chín để thu hoạch!';
     } else if (g.stats.harvested === 2 && Object.values(g.seeds).reduce((a, b) => a + b, 0) >= 9) {
-      pill.textContent = '🌱 Bước 2/3: Giữ & kéo chuột trái qua các ô đất trống để gieo hạt và tưới nước!';
+      pill.textContent = '🌱 Bước 2/3: Chạm hoặc giữ vuốt qua các ô đất trống để gieo hạt & tưới nước!';
     } else {
       const chap = window.GAME_CONFIG.STORY_CHAPTERS.find(c => c.chapter === g.storyChapter);
       if (chap) {
         if (chap.check(g)) {
-          pill.textContent = `🎁 Chương ${chap.chapter} đã hoàn thành! Click vào đây để nhận thưởng!`;
+          pill.textContent = `🎁 Chương ${chap.chapter} đã hoàn thành! Chạm vào đây để nhận thưởng!`;
         } else {
           pill.textContent = `🎯 Chương ${chap.chapter}: ${chap.goalDesc} (${chap.progressText(g)})`;
         }
@@ -2991,15 +3225,21 @@ class GameUI {
     const chap = window.GAME_CONFIG.STORY_CHAPTERS.find(c => c.chapter === g.storyChapter);
     const chapReady = chap && chap.check(g);
     const questReady = g.quests.some(q => g.getQuestProgress(q) >= q.target);
-    const dotQuests = document.getElementById('dot-quests');
-    if (dotQuests) dotQuests.classList.toggle('show', !!(chapReady || questReady));
+    const showQ = !!(chapReady || questReady);
+
+    ['dot-quests', 'dot-quests-mob'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('show', showQ);
+    });
 
     const bundleReady = window.GAME_CONFIG.BUNDLES.some(b =>
       !g.completedBundles.includes(b.id) &&
       Object.entries(b.requirements).every(([k, q]) => (g.inventory[k] || 0) >= q)
     );
-    const dotShrine = document.getElementById('dot-shrine');
-    if (dotShrine) dotShrine.classList.toggle('show', !!bundleReady);
+    ['dot-shrine', 'dot-shrine-mob'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('show', !!bundleReady);
+    });
   }
 
   renderSeedStrip() {
@@ -3018,7 +3258,7 @@ class GameUI {
         this.updateHUD();
       };
       pill.innerHTML = `
-        ${this.pixelIconHtml(crop.id, crop.emoji, 20)}
+        ${this.pixelIconHtml(crop.id, crop.emoji, 18)}
         <span class="seed-pill-count">${count}</span>
       `;
       strip.appendChild(pill);
@@ -3047,7 +3287,7 @@ class GameUI {
       slot.onclick = () => g.selectTool(t.id);
       slot.innerHTML = `
         <span class="slot-key">${t.key}</span>
-        <span>${this.pixelIconHtml(t.iconKey, t.emoji, 20)}</span>
+        <span>${this.pixelIconHtml(t.iconKey, t.emoji, 19)}</span>
         <span class="slot-label">${t.label}</span>
         ${t.count !== '' ? `<span class="slot-count">${t.count}</span>` : ''}
       `;
@@ -3065,23 +3305,23 @@ class GameUI {
 
     let text = '';
     if (tile.type === 'sacred_tree') {
-      text = `🏛️ Đền Thờ Đại Thụ Cấp ${this.game.treeLevel}/5 — Click để Hiến Tế`;
+      text = `🏛️ Đền Thờ Đại Thụ Cấp ${this.game.treeLevel}/5 — Chạm để Hiến Tế`;
     } else if (tile.type === 'water') {
-      text = `🎣 Hồ Sao Băng — Click để thả câu Cá Chép Koi`;
+      text = `🎣 Hồ Sao Băng — Chạm để thả câu Cá Chép Koi`;
     } else if (tile.type === 'shipping_bin') {
-      text = `📦 Thùng Giao Hàng — Click để bán nhanh toàn bộ nông sản`;
+      text = `📦 Thùng Giao Hàng — Chạm để bán nhanh toàn bộ nông sản`;
     } else if (tile.type === 'kitchen_oven') {
-      text = `🍳 Nhà Bếp — Click để nấu món ăn (giá trị x2.5)`;
+      text = `🍳 Nhà Bếp — Chạm để nấu món ăn (giá trị x2.5)`;
     } else if (tile.type === 'house_zone') {
-      text = `🏡 Nhà Chính — Click để ngủ qua đêm & hồi 100%⚡`;
+      text = `🏡 Nhà Chính — Chạm để ngủ qua đêm & hồi 100%⚡`;
     } else if (tile.crop) {
       const cCfg = window.GAME_CONFIG.CROPS[tile.crop.id];
       const pct = Math.min(100, Math.floor(tile.crop.progress * 100));
       const mutTag = tile.crop.isMutated ? ' [🌠 Ánh Sao x4]' : (tile.crop.isGiant ? ' [✨ Khổng Lồ x3]' : '');
-      text = `${cCfg.emoji} ${cCfg.name} (${pct}%)${mutTag} — ${tile.crop.stage === 4 ? '✔ Click để thu hoạch!' : (tile.watered ? '💧 Đang lớn' : '⚠ Click để tưới nước')}`;
+      text = `${cCfg.emoji} ${cCfg.name} (${pct}%)${mutTag} — ${tile.crop.stage === 4 ? '✔ Chạm để thu hoạch!' : (tile.watered ? '💧 Đang lớn' : '⚠ Chạm để tưới nước')}`;
     } else if (tile.obstacle) {
       const names = { weed: '🌿 Cỏ Dại', rock: '🪨 Đá Cuội', stump: '🪵 Gốc Cây' };
-      text = `${names[tile.obstacle]} — Click để dọn sạch (+5 XP)`;
+      text = `${names[tile.obstacle]} — Chạm để dọn sạch (+5 XP)`;
     } else if (tile.device) {
       const dCfg = window.GAME_CONFIG.DEVICES[tile.device];
       text = `${dCfg.icon} ${dCfg.name} đang hoạt động`;
@@ -3150,11 +3390,11 @@ class GameUI {
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
         <div class="shop-card">
           <div class="shop-meta">💰 Vàng kiếm được</div>
-          <div class="shop-title" style="font-size:16px; color:#b26a00;">+${summaryData.goldEarnedToday.toLocaleString('vi-VN')}G</div>
+          <div class="shop-title" style="font-size:15px; color:#b26a00;">+${summaryData.goldEarnedToday.toLocaleString('vi-VN')}G</div>
         </div>
         <div class="shop-card">
           <div class="shop-meta">🧺 Đã thu hoạch</div>
-          <div class="shop-title" style="font-size:16px; color:#2e7d32;">${summaryData.harvestedToday} nông sản</div>
+          <div class="shop-title" style="font-size:15px; color:#2e7d32;">${summaryData.harvestedToday} nông sản</div>
         </div>
         <div class="shop-card">
           <div class="shop-meta">🌳 Cấp Đại Thụ</div>
@@ -3179,7 +3419,6 @@ class GameUI {
     const body = document.getElementById('modal-body-content');
     body.innerHTML = '';
 
-    // 1. TAB STORY (5 CHƯƠNG NGẮN GỌN, TRỰC QUAN)
     if (this.activeModalTab === 'story') {
       window.GAME_CONFIG.STORY_CHAPTERS.forEach(chap => {
         const isCurrent = chap.chapter === g.storyChapter;
@@ -3192,7 +3431,7 @@ class GameUI {
         card.style.gridColumn = '1 / -1';
         if (isCurrent) card.style.borderColor = '#6a1b9a';
         card.innerHTML = `
-          <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
             <div class="shop-card-top">
               <div class="shop-icon">${npc.icon}</div>
               <div>
@@ -3221,7 +3460,6 @@ class GameUI {
       return;
     }
 
-    // 2. TAB COMMISSIONS (ỦY THÁC DÂN LÀNG)
     if (this.activeModalTab === 'commissions') {
       g.quests.forEach(q => {
         const npc = window.GAME_CONFIG.NPCS[q.npc] || window.GAME_CONFIG.NPCS.bamai;
@@ -3254,7 +3492,6 @@ class GameUI {
       return;
     }
 
-    // 3. TAB SEEDS
     if (this.activeModalTab === 'seeds') {
       const shortHints = {
         radish: 'Lớn siêu tốc 15s',
@@ -3293,7 +3530,6 @@ class GameUI {
       return;
     }
 
-    // 4. TAB ANIMALS & DEVICES
     if (this.activeModalTab === 'animals') {
       Object.values(window.GAME_CONFIG.ANIMALS).forEach(anim => {
         const count = g.animals.filter(a => a.typeId === anim.id).length;
@@ -3339,7 +3575,6 @@ class GameUI {
       return;
     }
 
-    // 5. TAB UPGRADES
     if (this.activeModalTab === 'upgrades') {
       window.GAME_CONFIG.UPGRADES.forEach(up => {
         const isOwned = !!g.upgrades[up.id];
@@ -3365,7 +3600,6 @@ class GameUI {
       return;
     }
 
-    // 6. TAB STAR SHOP
     if (this.activeModalTab === 'starshop') {
       window.GAME_CONFIG.STAR_SHOP_ITEMS.forEach(item => {
         const canBuy = g.starShards >= item.starCost;
@@ -3391,7 +3625,6 @@ class GameUI {
       return;
     }
 
-    // 7. TAB BUNDLES (ĐỀN THỜ ĐẠI THỤ)
     if (this.activeModalTab === 'bundles') {
       window.GAME_CONFIG.BUNDLES.forEach(b => {
         const isDone = g.completedBundles.includes(b.id);
@@ -3430,7 +3663,6 @@ class GameUI {
       return;
     }
 
-    // 8. TAB KITCHEN
     if (this.activeModalTab === 'kitchen') {
       window.GAME_CONFIG.RECIPES.forEach(rec => {
         const ingText = Object.entries(rec.ingredients)
@@ -3463,7 +3695,6 @@ class GameUI {
       return;
     }
 
-    // 9. TAB INVENTORY
     if (this.activeModalTab === 'inventory') {
       const entries = Object.entries(g.inventory).filter(([, qty]) => qty > 0);
       if (entries.length === 0) {
@@ -3473,6 +3704,21 @@ class GameUI {
         </div>`;
         return;
       }
+
+      const sellAllBanner = document.createElement('div');
+      sellAllBanner.className = 'banner-box';
+      sellAllBanner.style.display = 'flex';
+      sellAllBanner.style.justifyContent = 'space-between';
+      sellAllBanner.style.alignItems = 'center';
+      sellAllBanner.innerHTML = `
+        <span style="font-weight:800;">🚚 Bán nhanh toàn bộ nông sản trong kho</span>
+        <button id="btn-modal-sell-all" class="nav-icon-btn gold-btn">💰 Bán Tất Cả Ngay</button>
+      `;
+      sellAllBanner.querySelector('#btn-modal-sell-all').onclick = () => {
+        g.sellAllInventory();
+        this.renderModalContent();
+      };
+      body.appendChild(sellAllBanner);
 
       entries.forEach(([key, qty]) => {
         const unitPrice = g.getItemSellPrice(key);
@@ -3494,7 +3740,6 @@ class GameUI {
       return;
     }
 
-    // 10. TAB ALMANAC (BÁCH KHOA)
     if (this.activeModalTab === 'almanac') {
       const allKeys = [
         ...Object.keys(window.GAME_CONFIG.CROPS),
@@ -3541,12 +3786,11 @@ class GameUI {
       return;
     }
 
-    // 11. TAB RULES (4 THẺ TRỰC QUAN NGẮN GỌN)
     if (this.activeModalTab === 'rules') {
       body.innerHTML = `
         <div class="shop-card">
-          <div class="shop-title">✨ 1. Điều Khiển 1-Chạm & Kéo Chuột</div>
-          <div class="shop-desc">Chỉ cần <b>Click hoặc Giữ & Kéo chuột trái</b> lên ô đất để tự động Cuốc → Gieo → Tưới → Thu hoạch!</div>
+          <div class="shop-title">✨ 1. Chạm & Vuốt Liên Hoàn</div>
+          <div class="shop-desc">Chỉ cần <b>Chạm hoặc Giữ & Vuốt ngón tay</b> trên ruộng để tự động Cuốc → Gieo → Tưới → Thu hoạch!</div>
         </div>
         <div class="shop-card">
           <div class="shop-title">🎃 2. Cây Khổng Lồ 2×2 (×3 Sản Lượng)</div>
@@ -3560,7 +3804,7 @@ class GameUI {
           <div class="shop-title">🏛️ 4. Đánh Thức Cây Đại Thụ</div>
           <div class="shop-desc">Nộp nông sản tại <b>Đền Thờ</b> và hoàn thành <b>5 Chương Nhiệm Vụ</b> để tăng vĩnh viễn giá bán!</div>
         </div>
-        <div class="banner-box" style="display:flex; justify-content:space-between; align-items:center;">
+        <div class="banner-box" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
           <span style="font-weight:800; font-size:12.5px;">💾 Quản lý dữ liệu lưu tự động</span>
           <div style="display:flex; gap:8px;">
             <button id="btn-export-save" class="nav-icon-btn gold-btn">⬇ Tải File Save (.json)</button>
@@ -3579,8 +3823,9 @@ window.GameUI = GameUI;
 
 /**
  * ============================================================================
- * THUNG LŨNG SAO BĂNG (STARLIGHT VALLEY v4.0 - COZY MINIMALIST EDITION)
- * js/main.js - Vòng lặp Game Loop, Tương tác Kéo Chuột Mượt Mà & Điều Hướng Gọn Gàng
+ * THUNG LŨNG SAO BĂNG (STARLIGHT VALLEY v5.0 - MOBILE PORTRAIT & ADAPTIVE)
+ * js/main.js - Hệ thống Thích Ứng Màn Hình Dọc/Ngang, Cảm Ứng Đa Điểm (Touch),
+ *              Camera Zoom 1.35x Bám Theo Nhân Vật & Vòng Lặp Chính
  * ============================================================================
  */
 
@@ -3591,14 +3836,17 @@ class StarlightFarmGame {
     this.ctx.imageSmoothingEnabled = false;
 
     this.world = new window.FarmWorld();
-    this.canvas.width = this.world.cols * this.world.tileSize;
-    this.canvas.height = this.world.rows * this.world.tileSize;
+    this.cameraZoom = 1.0;
+    this.camX = 0;
+    this.camY = 0;
 
-    this.player = new window.PlayerFarmer(3.5 * this.world.tileSize, 3.5 * this.world.tileSize);
-    this.cat = new window.PetCat(2.5 * this.world.tileSize, 3.6 * this.world.tileSize);
+    this.player = new window.PlayerFarmer(2.5 * this.world.tileSize, 3.5 * this.world.tileSize);
+    this.cat = new window.PetCat(1.6 * this.world.tileSize, 3.6 * this.world.tileSize);
     this.animals = [
-      new window.FarmAnimal('chicken', 520, 140)
+      new window.FarmAnimal('chicken', 360, 220)
     ];
+
+    this.syncCanvasOrientation();
 
     this.gold = 260;
     this.starShards = 2;
@@ -3652,7 +3900,7 @@ class StarlightFarmGame {
 
     this.keys = {};
     this.hoverTile = null;
-    this.isMouseDown = false;
+    this.isPointerDown = false;
     this.lastDraggedTileKey = null;
     this.fishingState = null;
 
@@ -3665,11 +3913,37 @@ class StarlightFarmGame {
     requestAnimationFrame(t => this.loop(t));
   }
 
+  syncCanvasOrientation() {
+    const isPortrait = window.innerHeight > window.innerWidth;
+    this.world.updateOrientationMode(isPortrait);
+    this.canvas.width = this.world.cols * this.world.tileSize;
+    this.canvas.height = this.world.rows * this.world.tileSize;
+    this.canvas.style.aspectRatio = `${this.world.cols} / ${this.world.rows}`;
+    this.ctx.imageSmoothingEnabled = false;
+  }
+
+  screenToWorldCoords(clientX, clientY) {
+    const rect = this.canvas.getBoundingClientRect();
+    const scaleX = this.canvas.width / rect.width;
+    const scaleY = this.canvas.height / rect.height;
+    const canvasX = (clientX - rect.left) * scaleX;
+    const canvasY = (clientY - rect.top) * scaleY;
+
+    // Quy đổi qua Camera Zoom nếu đang bật phóng to
+    const worldX = (canvasX - this.canvas.width / 2) / this.cameraZoom + this.camX;
+    const worldY = (canvasY - this.canvas.height / 2) / this.cameraZoom + this.camY;
+    return { wx: worldX, wy: worldY };
+  }
+
   recordDiscovery(key, qty = 1) {
     this.discovered[key] = (this.discovered[key] || 0) + qty;
   }
 
   bindEvents() {
+    window.addEventListener('resize', () => {
+      this.syncCanvasOrientation();
+    });
+
     window.addEventListener('keydown', e => {
       this.keys[e.code] = true;
       if (e.code === 'Digit1') this.selectTool('smart');
@@ -3684,9 +3958,7 @@ class StarlightFarmGame {
         this.ui.closeModal();
         this.ui.closeDaySummaryModal();
       }
-      if (e.code === 'KeyQ') {
-        this.ui.openModalGroup('quests');
-      }
+      if (e.code === 'KeyQ') this.ui.openModalGroup('quests');
       if (e.code === 'KeyE') {
         const modal = document.getElementById('main-modal');
         if (modal.classList.contains('open')) this.ui.closeModal();
@@ -3709,80 +3981,106 @@ class StarlightFarmGame {
       this.keys[e.code] = false;
     });
 
-    window.addEventListener('mouseup', () => {
-      this.isMouseDown = false;
-      this.lastDraggedTileKey = null;
-    });
-
-    this.canvas.addEventListener('mousemove', e => {
-      const rect = this.canvas.getBoundingClientRect();
-      const scaleX = this.canvas.width / rect.width;
-      const scaleY = this.canvas.height / rect.height;
-      const mx = (e.clientX - rect.left) * scaleX;
-      const my = (e.clientY - rect.top) * scaleY;
-      const c = Math.floor(mx / this.world.tileSize);
-      const r = Math.floor(my / this.world.tileSize);
-      this.hoverTile = this.world.getTile(r, c);
-      this.ui.updateTileInspector(this.hoverTile);
-
-      if (this.isMouseDown && this.hoverTile) {
-        const tileKey = `${this.hoverTile.r},${this.hoverTile.c}`;
-        if (tileKey !== this.lastDraggedTileKey) {
-          this.lastDraggedTileKey = tileKey;
-          if (['grass', 'soil'].includes(this.hoverTile.type)) {
-            this.interactWithTile(this.hoverTile);
-          }
-        }
-      }
-    });
-
-    this.canvas.addEventListener('mouseleave', () => {
-      this.hoverTile = null;
-      this.ui.updateTileInspector(null);
-    });
-
-    this.canvas.addEventListener('mousedown', e => {
+    const handlePointerStart = (clientX, clientY) => {
       window.SFX.startBGM();
       if (this.fishingState && this.fishingState.active) {
         this.resolveFishingStrike();
         return;
       }
 
-      this.isMouseDown = true;
-
-      const rect = this.canvas.getBoundingClientRect();
-      const scaleX = this.canvas.width / rect.width;
-      const scaleY = this.canvas.height / rect.height;
-      const mx = (e.clientX - rect.left) * scaleX;
-      const my = (e.clientY - rect.top) * scaleY;
+      this.isPointerDown = true;
+      const { wx, wy } = this.screenToWorldCoords(clientX, clientY);
 
       for (const anim of this.animals) {
-        if (Math.hypot(mx - anim.x, my - anim.y) <= 26) {
+        if (Math.hypot(wx - anim.x, wy - anim.y) <= 28) {
           this.interactWithAnimal(anim);
           return;
         }
       }
 
-      const c = Math.floor(mx / this.world.tileSize);
-      const r = Math.floor(my / this.world.tileSize);
+      const c = Math.floor(wx / this.world.tileSize);
+      const r = Math.floor(wy / this.world.tileSize);
       const tile = this.world.getTile(r, c);
       if (!tile) return;
 
+      this.hoverTile = tile;
+      this.ui.updateTileInspector(tile);
       this.lastDraggedTileKey = `${tile.r},${tile.c}`;
+
       const tx = (c + 0.5) * this.world.tileSize;
       const ty = (r + 0.5) * this.world.tileSize;
       const dist = Math.hypot(this.player.x - tx, this.player.y - ty);
 
-      if (dist <= this.world.tileSize * 3.2) {
+      if (dist <= this.world.tileSize * 3.5) {
         this.interactWithTile(tile);
       } else {
         this.player.moveTo(tx, ty, () => this.interactWithTile(tile));
       }
+    };
+
+    const handlePointerMove = (clientX, clientY) => {
+      const { wx, wy } = this.screenToWorldCoords(clientX, clientY);
+      const c = Math.floor(wx / this.world.tileSize);
+      const r = Math.floor(wy / this.world.tileSize);
+      this.hoverTile = this.world.getTile(r, c);
+      this.ui.updateTileInspector(this.hoverTile);
+
+      if (this.isPointerDown && this.hoverTile) {
+        const tileKey = `${this.hoverTile.r},${this.hoverTile.c}`;
+        if (tileKey !== this.lastDraggedTileKey) {
+          this.lastDraggedTileKey = tileKey;
+          if (['grass', 'soil'].includes(this.hoverTile.type)) {
+            this.player.x = (this.hoverTile.c + 0.5) * this.world.tileSize;
+            this.player.y = (this.hoverTile.r + 0.5) * this.world.tileSize;
+            this.interactWithTile(this.hoverTile);
+          }
+        }
+      }
+    };
+
+    const handlePointerEnd = () => {
+      this.isPointerDown = false;
+      this.lastDraggedTileKey = null;
+    };
+
+    // Mouse Events
+    this.canvas.addEventListener('mousedown', e => handlePointerStart(e.clientX, e.clientY));
+    this.canvas.addEventListener('mousemove', e => handlePointerMove(e.clientX, e.clientY));
+    window.addEventListener('mouseup', handlePointerEnd);
+    this.canvas.addEventListener('mouseleave', () => {
+      this.hoverTile = null;
+      this.ui.updateTileInspector(null);
     });
 
-    document.getElementById('btn-smart-mode').onclick = () => {
+    // Touch Events cho Mobile Màn Hình Dọc (chạm & vuốt mượt mà không bị cuộn trang)
+    this.canvas.addEventListener('touchstart', e => {
+      e.preventDefault();
+      if (e.touches.length > 0) {
+        handlePointerStart(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: false });
+
+    this.canvas.addEventListener('touchmove', e => {
+      e.preventDefault();
+      if (e.touches.length > 0) {
+        handlePointerMove(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: false });
+
+    window.addEventListener('touchend', handlePointerEnd);
+
+    // Toggle 1-Chạm
+    const toggleSmart = () => {
       this.smartMode = !this.smartMode;
       if (this.smartMode) this.selectedTool = 'smart';
+      this.ui.updateHUD();
+    };
+    document.getElementById('btn-smart-mode').onclick = toggleSmart;
+    document.getElementById('btn-smart-top').onclick = toggleSmart;
+
+    // Toggle Camera Zoom 1x / 1.35x
+    document.getElementById('btn-zoom').onclick = () => {
+      this.cameraZoom = this.cameraZoom > 1.0 ? 1.0 : 1.35;
       this.ui.updateHUD();
     };
 
@@ -3795,10 +4093,17 @@ class StarlightFarmGame {
       }
     };
 
+    // Desktop & Mobile Navigation Buttons
     document.getElementById('btn-menu-quests').onclick = () => this.ui.openModalGroup('quests');
     document.getElementById('btn-menu-shop').onclick = () => this.ui.openModalGroup('shop');
     document.getElementById('btn-menu-shrine').onclick = () => this.ui.openModalGroup('shrine');
     document.getElementById('btn-menu-guide').onclick = () => this.ui.openModalGroup('guide');
+
+    document.getElementById('mob-btn-quests').onclick = () => this.ui.openModalGroup('quests');
+    document.getElementById('mob-btn-shop').onclick = () => this.ui.openModalGroup('shop');
+    document.getElementById('mob-btn-shrine').onclick = () => this.ui.openModalGroup('shrine');
+    document.getElementById('mob-btn-guide').onclick = () => this.ui.openModalGroup('guide');
+    document.getElementById('mob-btn-sleep').onclick = () => this.advanceToNextDay(false);
 
     document.getElementById('btn-sell-all').onclick = () => this.sellAllInventory();
     document.getElementById('btn-sleep').onclick = () => this.advanceToNextDay(false);
@@ -4047,7 +4352,7 @@ class StarlightFarmGame {
           this.waterTile(tile);
         } else {
           this.checkSoftlockRelief();
-          this.ui.showToast('🌱 Hết hạt giống đang chọn! Hãy chọn hạt khác ở góc trái trên hoặc mở Cửa Hàng.');
+          this.ui.showToast('🌱 Hết hạt giống đang chọn! Hãy chọn hạt khác hoặc mở Cửa Hàng.');
         }
       } else if (tile.type === 'soil' && tile.crop && !tile.watered) {
         this.waterTile(tile);
@@ -4249,8 +4554,8 @@ class StarlightFarmGame {
       return;
     }
     this.gold -= cfg.price;
-    const ax = 480 + Math.random() * 200;
-    const ay = 110 + Math.random() * 140;
+    const ax = 320 + Math.random() * 130;
+    const ay = 195 + Math.random() * 110;
     this.animals.push(new window.FarmAnimal(typeId, ax, ay));
     window.SFX.playLevelUp();
     this.ui.showToast(`🎉 Đã đón ${cfg.icon} ${cfg.name} về nông trại!`);
@@ -4269,7 +4574,7 @@ class StarlightFarmGame {
     this.devices[devId] = (this.devices[devId] || 0) + 1;
     this.selectTool(devId);
     window.SFX.playCoin();
-    this.ui.showToast(`🛠️ Đã mua ${cfg.name}! Di chuột lên bản đồ để lắp đặt.`);
+    this.ui.showToast(`🛠️ Đã mua ${cfg.name}! Chạm lên ô đất bất kỳ để lắp đặt.`);
     this.ui.updateHUD();
     this.ui.renderModalContent();
     this.saveGame();
@@ -4467,8 +4772,8 @@ class StarlightFarmGame {
       this.world.weather = 'sunny';
     }
 
-    for (let row = 0; row < this.world.rows; row++) {
-      for (let col = 0; col < this.world.cols; col++) {
+    for (let row = 0; row < this.world.maxRows; row++) {
+      for (let col = 0; col < this.world.maxCols; col++) {
         const t = this.world.tiles[row][col];
         if (t.crop && t.watered && t.crop.stage < 4) {
           t.crop.progress = Math.min(1, t.crop.progress + 0.45);
@@ -4507,7 +4812,7 @@ class StarlightFarmGame {
     const discount = this.storyChapter >= 4 ? 0.75 : 1.0;
     const finalCost = amount * discount;
     if (this.energy < finalCost) {
-      this.ui.showToast('😴 Hết năng lượng! Hãy bấm "🌙 Ngủ" ở góc dưới để sang ngày mới nhé!');
+      this.ui.showToast('😴 Hết năng lượng! Hãy bấm "🌙 Ngủ" ở thanh dưới để sang ngày mới nhé!');
       return false;
     }
     this.energy -= finalCost;
@@ -4530,7 +4835,7 @@ class StarlightFarmGame {
 
   exportSaveJson() {
     this.saveGame();
-    const raw = localStorage.getItem('starlight_valley_save_v4') || '{}';
+    const raw = localStorage.getItem('starlight_valley_save_v5') || '{}';
     const blob = new Blob([raw], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -4542,6 +4847,7 @@ class StarlightFarmGame {
   }
 
   resetGameData() {
+    localStorage.removeItem('starlight_valley_save_v5');
     localStorage.removeItem('starlight_valley_save_v4');
     localStorage.removeItem('starlight_valley_save_v3');
     localStorage.removeItem('starlight_valley_save_v2');
@@ -4572,19 +4878,16 @@ class StarlightFarmGame {
         tiles: this.world.tiles,
         animalTypes: this.animals.map(a => a.typeId)
       };
-      localStorage.setItem('starlight_valley_save_v4', JSON.stringify(data));
+      localStorage.setItem('starlight_valley_save_v5', JSON.stringify(data));
     } catch (e) {}
   }
 
   loadGame() {
     try {
-      const raw =
-        localStorage.getItem('starlight_valley_save_v4') ||
-        localStorage.getItem('starlight_valley_save_v3') ||
-        localStorage.getItem('starlight_valley_save_v2');
+      const raw = localStorage.getItem('starlight_valley_save_v5');
       if (!raw) return false;
       const data = JSON.parse(raw);
-      if (data && data.tiles && data.tiles.length === this.world.rows) {
+      if (data && data.tiles && data.tiles.length === this.world.maxRows) {
         this.gold = data.gold ?? this.gold;
         this.starShards = data.starShards ?? this.starShards;
         this.energy = data.energy ?? this.energy;
@@ -4606,7 +4909,7 @@ class StarlightFarmGame {
         this.world.tiles = data.tiles;
         if (this.upgrades.cat_skill) this.cat.upgraded = true;
         if (Array.isArray(data.animalTypes) && data.animalTypes.length > 0) {
-          this.animals = data.animalTypes.map(t => new window.FarmAnimal(t, 480 + Math.random() * 180, 110 + Math.random() * 140));
+          this.animals = data.animalTypes.map(t => new window.FarmAnimal(t, 320 + Math.random() * 130, 195 + Math.random() * 110));
         }
         return true;
       }
@@ -4624,6 +4927,19 @@ class StarlightFarmGame {
     this.cat.update(dt, this.player, this);
     for (const anim of this.animals) {
       anim.update(dt);
+    }
+
+    // Cập nhật vị trí Camera êm ái
+    if (this.cameraZoom > 1.0) {
+      const halfW = (this.canvas.width / 2) / this.cameraZoom;
+      const halfH = (this.canvas.height / 2) / this.cameraZoom;
+      const targetCamX = Math.max(halfW, Math.min(this.canvas.width - halfW, this.player.x));
+      const targetCamY = Math.max(halfH, Math.min(this.canvas.height - halfH, this.player.y));
+      this.camX += (targetCamX - this.camX) * Math.min(1, dt * 8);
+      this.camY += (targetCamY - this.camY) * Math.min(1, dt * 8);
+    } else {
+      this.camX = this.canvas.width / 2;
+      this.camY = this.canvas.height / 2;
     }
 
     if (this.fishingState && this.fishingState.active) {
@@ -4644,6 +4960,13 @@ class StarlightFarmGame {
     }
 
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.save();
+    if (this.cameraZoom > 1.0) {
+      this.ctx.translate(this.canvas.width / 2, this.canvas.height / 2);
+      this.ctx.scale(this.cameraZoom, this.cameraZoom);
+      this.ctx.translate(-this.camX, -this.camY);
+    }
+
     this.world.render(this.ctx, timeSec, this.hoverTile, this.treeLevel, this);
 
     for (const anim of this.animals) {
@@ -4653,6 +4976,7 @@ class StarlightFarmGame {
     this.player.render(this.ctx);
 
     this.world.renderWeatherAndLighting(this.ctx, this.canvas.width, this.canvas.height, timeSec);
+    this.ctx.restore();
 
     requestAnimationFrame(t => this.loop(t));
   }
