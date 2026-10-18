@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Thung Lũng Sao Băng (v11.0 Mythic Astral Genesis — 5 Realms, 14 Crops, +20 Forge & Astral Boss)</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="game-stage">
+
+    <!-- 1. TOP BAR: CLEAN 2-ROW DECK FOR 5 REALMS & 14 CROPS -->
+    <header id="top-bar">
+      <!-- Cluster 1: Status, Clock, Wallet & 5-Realm Switcher -->
+      <div class="hud-cluster">
+        <div class="hud-widget">
+          <span id="level-text" class="level-badge" title="Chạm để mở Kỹ Năng & Đế Chế" style="cursor:pointer;">Lv.1</span>
+          <div class="energy-compact">
+            <div class="energy-top-row">
+              <span>⚡</span>
+              <span id="energy-text">100/100</span>
+            </div>
+            <div class="bar-track">
+              <div id="energy-bar" class="bar-fill-energy" style="width: 100%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hud-widget clock-pill">
+          <span id="hud-season">🌸 Xuân</span>
+          <span>•</span>
+          <span id="hud-day">N.1</span>
+          <span id="hud-clock" class="desktop-only-btn">06:30</span>
+          <span id="hud-weather">☀️</span>
+        </div>
+
+        <div class="hud-widget wallet-pill" id="wallet-widget" title="Chạm để mở Lò Rèn Đập Đồ (+20), Thức Tỉnh ★, Phụ Ma & Xưởng Tự Động" style="cursor:pointer;">
+          <span title="Vàng">💰<span id="hud-gold" class="gold-text">340</span><span id="hud-passive-gps" style="color:#76ff03; font-size:10px; font-weight:800; margin-left:2px;"></span></span>
+          <span title="Đá Cường Hóa Thần Khí">🪨<span id="hud-stones" style="color:#80d8ff; font-weight:800;">8</span></span>
+          <span title="Mảnh Sao Băng">🌠<span id="hud-stars" class="star-text">2</span></span>
+        </div>
+
+        <!-- THANH CHUYỂN 5 BẢN ĐỒ ĐA KHÔNG GIAN (5-REALM SWITCHER) -->
+        <div id="realm-switcher" class="hud-widget realm-switcher-bar" title="Chuyển Map Đa Không Gian (Thung Lũng / Động Pha Lê / Thiên Không / Thần Long / Vương Quốc Tinh Tú)">
+          <button id="btn-map-valley" class="realm-pill active" data-map="valley">🏡 Thung Lũng</button>
+          <button id="btn-map-cavern" class="realm-pill" data-map="crystal_cavern">⛏️ Động Pha Lê</button>
+          <button id="btn-map-sky" class="realm-pill" data-map="sky_island">🌌 Thiên Không</button>
+          <button id="btn-map-dragon" class="realm-pill" data-map="dragon_sanctum">🔥 Thần Long</button>
+          <button id="btn-map-astral" class="realm-pill" data-map="astral_nexus">🪐 Tinh Tú</button>
+        </div>
+
+        <button id="btn-zoom" class="nav-icon-btn desktop-only-btn" title="Phóng to Camera bám theo nhân vật (1x / 1.35x)">🔍 1x</button>
+        <button id="btn-audio" class="nav-icon-btn" title="Bật/Tắt Âm thanh">🔊</button>
+      </div>
+
+      <!-- Cluster 2: 14-Crop Seed Strip + Menu Buttons -->
+      <div class="hud-cluster">
+        <div id="seed-widget" class="hud-widget" title="Chạm để đổi hạt giống (14 Chủng loại cây & 4 Siêu Giống Lai Tạo)">
+          <span style="font-size:10px; font-weight:800; color:#cbbdd9;">Hạt:</span>
+          <div id="seed-strip"></div>
+        </div>
+
+        <button id="btn-smart-top" class="nav-icon-btn active-mode mobile-only-btn" title="Chế độ 1-Chạm thông minh">
+          ✨ 1-Chạm
+        </button>
+
+        <button id="btn-menu-quests" class="nav-icon-btn desktop-only-btn">
+          🏆 Đế Chế
+          <span id="dot-quests" class="notif-dot"></span>
+        </button>
+        <button id="btn-menu-shop" class="nav-icon-btn gold-btn desktop-only-btn">
+          🔨 Đập Đồ & Chợ
+          <span id="dot-forge" class="notif-dot"></span>
+        </button>
+        <button id="btn-menu-shrine" class="nav-icon-btn purple-btn desktop-only-btn">
+          🏛️ Đền & Bếp
+          <span id="dot-shrine" class="notif-dot"></span>
+        </button>
+        <button id="btn-menu-guide" class="nav-icon-btn desktop-only-btn">
+          📖 Cẩm Nang
+        </button>
+      </div>
+    </header>
+
+    <!-- 2. CENTER CANVAS VIEWPORT -->
+    <main id="canvas-viewport">
+      <div id="toast-container"></div>
+
+      <!-- SUBTLE 1-LINE HOVER/TOUCH MICRO-TOOLTIP -->
+      <div id="hover-micro-pill"></div>
+
+      <!-- FISHING MINIGAME POPUP -->
+      <div id="fishing-bar-ui">
+        <h3 style="color:#ffd54f; font-size:15px;">🎣 CÁ CHÉP KOI CẮN CÂU!</h3>
+        <p style="font-size:11.5px; margin-top:4px;">Chạm nút bên dưới hoặc bấm <b>SPACE</b> khi vạch sáng vào vùng xanh!</p>
+        <div class="fish-track">
+          <div id="fish-sweet-spot" class="fish-sweet-spot"></div>
+          <div id="fish-cursor" class="fish-cursor"></div>
+        </div>
+        <button id="btn-strike-fish" class="nav-icon-btn gold-btn" style="width:100%; padding:9px;">⚡ KÉO CẦN NGAY!</button>
+      </div>
+
+      <!-- RPG DIALOGUE BAR -->
+      <div id="rpg-dialogue">
+        <div id="dlg-avatar" class="npc-avatar-box">🧚</div>
+        <div class="dialogue-content">
+          <div id="dlg-speaker" class="dialogue-speaker">Tinh Linh Lumia</div>
+          <div id="dlg-text" class="dialogue-text"></div>
+        </div>
+        <button id="btn-close-dlg" class="nav-icon-btn gold-btn">Đóng ✕</button>
+      </div>
+
+      <!-- MAIN PIXEL ART FARM CANVAS -->
+      <canvas id="game-canvas"></canvas>
+
+      <!-- 1-LINE CONTEXTUAL STEP GUIDE PILL -->
+      <div id="step-guide-pill" title="Chạm để mở Lò Rèn Đập Đồ (+20), Chuyển 5 Map Đa Không Gian & Nấc Thang Đế Chế">
+        👆 Bước 1/3: Chạm vào 2 cây Củ Cải Đỏ đang chín để thu hoạch!
+      </div>
+    </main>
+
+    <!-- 3. BOTTOM DOCK: TOOL HOTBAR + MOBILE THUMB NAVIGATION BAR -->
+    <footer id="hud-bottom">
+      <div class="bottom-primary-row">
+        <button id="btn-smart-mode" class="nav-icon-btn active-mode desktop-action-btn" title="Tự động Cuốc, Đào Quặng, Đánh Boss, Gieo, Tưới & Thu hoạch">
+          ✨ 1-Chạm: BẬT
+        </button>
+
+        <div id="hotbar-slots"></div>
+
+        <button id="btn-sell-all" class="nav-icon-btn gold-btn desktop-action-btn" title="Bán nhanh toàn bộ nông sản trong kho">
+          🚚 Bán Kho
+        </button>
+        <button id="btn-sleep" class="nav-icon-btn desktop-action-btn" title="Ngủ qua đêm để hồi 100% Năng lượng">
+          🌙 Ngủ
+        </button>
+      </div>
+
+      <!-- MOBILE THUMB-ZONE 5-TAB NAVIGATION BAR -->
+      <nav id="mobile-thumb-nav">
+        <button id="mob-btn-quests" class="nav-icon-btn">
+          🏆 Đế Chế
+          <span id="dot-quests-mob" class="notif-dot"></span>
+        </button>
+        <button id="mob-btn-shop" class="nav-icon-btn gold-btn">
+          🔨 Đập Đồ/Chợ
+          <span id="dot-forge-mob" class="notif-dot"></span>
+        </button>
+        <button id="mob-btn-shrine" class="nav-icon-btn purple-btn">
+          🏛️ Đền/Bếp
+          <span id="dot-shrine-mob" class="notif-dot"></span>
+        </button>
+        <button id="mob-btn-guide" class="nav-icon-btn">
+          📖 Sổ Tay
+        </button>
+        <button id="mob-btn-sleep" class="nav-icon-btn">
+          🌙 Ngủ
+        </button>
+      </nav>
+    </footer>
+
+  </div>
+
+  <!-- FOCUSED POPUP / BOTTOM-SHEET MODAL -->
+  <div id="main-modal" class="modal-overlay">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h2 id="modal-title-text">🏪 Cửa Hàng Nông Trại</h2>
+        <button id="btn-close-modal" class="nav-icon-btn">✖ Đóng</button>
+      </div>
+      <div id="modal-tabs-bar" class="modal-tabs"></div>
+      <div id="modal-body-content" class="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- END-OF-DAY SUMMARY MODAL -->
+  <div id="day-summary-modal" class="modal-overlay">
+    <div class="modal-window" style="max-width: 480px;">
+      <div class="modal-header">
+        <h2>🌙 Tổng Kết Ngày — Thung Lũng Sao Băng</h2>
+      </div>
+      <div id="day-summary-body" style="padding: 16px;"></div>
+      <div style="padding: 0 16px 16px; text-align: center;">
+        <button id="btn-close-day-summary" class="nav-icon-btn gold-btn" style="padding: 9px 24px; font-size: 13px;">🌅 Bắt Đầu Ngày Mới!</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/pixel_icons.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/sprites.js"></script>
+  <script src="js/world.js"></script>
+  <script src="js/entities.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
